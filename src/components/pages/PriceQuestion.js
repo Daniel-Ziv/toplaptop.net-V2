@@ -6,11 +6,11 @@ import Header from "../Header";
 
 function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget }) {
   const handleBudgetChange = (value) => {
-    onAnswer({ budget: value });
+    onAnswer({ value });
   };
 
   const handleNext = () => {
-    onAnswer({ budget: savedBudget });
+    onAnswer({ savedBudget });
     nextStep();
   };
 

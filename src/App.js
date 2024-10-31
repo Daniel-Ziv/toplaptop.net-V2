@@ -27,7 +27,7 @@ function App() {
       isStudent: "",
       selectedDegree: ""
     },
-    price: 2000,
+    price: "",
     screenSize: {
       selectedScreenSizes: [],
       wantsTouchscreen: false
