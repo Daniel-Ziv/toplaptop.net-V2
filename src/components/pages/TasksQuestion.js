@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Popover, PopoverTrigger, PopoverContent, Radio, RadioGroup } from "@nextui-org/react";
 import { Info, Brush, Video, Music, Code, Globe, VideoIcon, Cpu, Edit3, Monitor, Bot } from "lucide-react";
 import NavigationButtons from "../NavigationButtons";
+import Container from "../Container"
 
 const taskInfo = {
   "מידול/אנימציה": {
@@ -14,43 +15,57 @@ const taskInfo = {
     description: "עריכה בתוכנות כמו Photoshop, GIMP או Lightroom",
     icon: <Brush className="w-5 h-5" />
   },
-  "עריכת סרטונים": {
-    recommended: true,
-    description: "עריכת וידאו בתוכנות כמו Premiere Pro או DaVinci Resolve",
-    icon: <Video className="w-5 h-5" />
-  },
-  "גיימינג": {
-    recommended: true,
-    description: "",
-    icon: <Monitor className="w-5 h-5" />,
-    levels: {
-      כבד: " כולל משחקים עם גרפיקה תלת-ממדית מורכבת ודרישות מערכת גבוהות, כמו Cyberpunk 2077, Red Dead Redemption 2.",
-      קל: " כולל משחקים שלא דורשים ביצועים גרפיים מתקדמים או מעבד חזק במיוחד, כמו League of Legends, Minecraft."
-    }
-  },
+  
   "עריכת מוזיקה": {
     recommended: false,
     description: "הקלטה ועריכת מוזיקה בתוכנות כמו FL Studio או Ableton",
     icon: <Music className="w-5 h-5" />
   },
-  "תכנות": {
+  "עריכת סרטונים": {
     recommended: true,
-    description: "פיתוח ברמות שונות, כולל קומפילציה של פרויקטים גדולים ועבודה עם מספר מכונות וירטואליות",
-    icon: <Code className="w-5 h-5" />,
-    levels: {
-      כבד: "קומפילציה כבדה, מתאים למפתחים מנוסים  שעובדים על פרויקטים גדולים",
-      קל: "תכנות בסיסי המתאים בעיקר לסטודנטים, מתחילים, או למי שעובד על פרויקטים קטנים."
-    }
+    description: "עריכת וידאו בתוכנות כמו Premiere Pro או DaVinci Resolve",
+    icon: <Video className="w-5 h-5" />
   },
   "שימוש בסיסי": {
     recommended: true,
     description: "גלישה באינטרנט, מיילים, ושימוש בכלים פשוטים כמו Google Docs",
     icon: <Globe className="w-5 h-5" />
   },
-  "שימוש בכלי בינה מלאכותית": {
+  "בינה מלאכותית": {
     recommended: true,
-    description: "עיבוד כבד בתוכנות בינה מלאכותית כמו ChatGPT, Stable Diffusion או כלי עיבוד תמונה מבוססי AI",
+    description:" מתאים למי שעובד עם תוכנות ליצירת תמונות, עיבוד נתונים, או אימון מודלים כמו Stable Diffusion או TensorFlow.",
     icon: <Bot className="w-5 h-5" />
+  },
+  "תכנות": {
+    recommended: true,
+    description: "לחיצה על האפשרות, תפתח שאלון ״איזה סוג תכנות״ ובו תוכלו לבחור במדויק לפי הצורך שלכם",
+    icon: <Code className="w-5 h-5" />,
+    levels: {
+      כבד: {
+        description: "קומפילציה כבדה, מתאים למפתחים מנוסים  שעובדים על פרויקטים גדולים כמו פיתוח משחקים, מודלים של בינה מלאכותית, וניתוח נתונים מאסיבי" ,
+        recommended: true
+      },
+      קל: {
+        description: "תכנות בסיסי המתאים בעיקר לסטודנטים, מתחילים, או למי שעובד על פרויקטים קטנים.",
+        recommended: false
+      }
+    }
+  },
+  "גיימינג": {
+    recommended: true,
+    description: "לחיצה על האפשרות, תפתח שאלון ״איזה סוג גיימינג״ ובו תוכלו לבחור במדויק לפי הצורך שלכם",
+    
+    icon: <Monitor className="w-5 h-5" />,
+    levels: {
+      כבד: {
+        description: "כולל משחקים עם גרפיקה תלת-ממדית מורכבת ודרישות מערכת גבוהות, כמו Cyberpunk 2077, Red Dead Redemption 2.",
+        recommended: true
+      },
+      קל: {
+        description: "כולל משחקים שלא דורשים ביצועים גרפיים מתקדמים או מעבד חזק במיוחד, כמו League of Legends, Minecraft.",
+        recommended: false
+      }
+    }
   }
 };
 
@@ -135,6 +150,7 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
   };
 
   return (
+    
     <div className="w-full max-w-4xl mx-auto p-4">
       <div className="flex flex-col items-center gap-6 mb-8">
         <h1 className="text-2xl font-bold text-center">
@@ -195,12 +211,19 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
                   value={taskLevels[task] || ""}
                   onValueChange={(value) => handleLevelSelect(task, value)}
                 >
-                  {Object.entries(info.levels).map(([level, description]) => (
+                  {Object.entries(info.levels).map(([level, levelInfo]) => (
                     <div key={level} className="flex items-start gap-2 mb-2">
                       <Radio value={level}>
                         <div className="flex flex-col">
-                          <span className="font-medium">{level}</span>
-                          <span className="text-sm text-gray-600">{description}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{level}</span>
+                            {levelInfo.recommended && (
+                              <span className="px-2 py-1 text-xs bg-success-100 text-success-600 rounded-full">
+                                מומלץ
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-sm text-gray-600">{levelInfo.description}</span>
                         </div>
                       </Radio>
                     </div>
@@ -208,6 +231,7 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
                 </RadioGroup>
               </div>
             )}
+
           </div>
         ))}
       </div>
