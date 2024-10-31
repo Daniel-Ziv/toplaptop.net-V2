@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+    padding:0px;
+    margin:0px;
+    font-optical-sizing: auto;
+    font-weight: 450;
+    font-style: normal;
+
+  }
+
+  
