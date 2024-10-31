@@ -3,6 +3,8 @@ import { Button, Popover, PopoverTrigger, PopoverContent, Radio, RadioGroup } fr
 import { Info, Brush, Video, Music, Code, Globe, VideoIcon, Cpu, Edit3, Monitor, Bot } from "lucide-react";
 import NavigationButtons from "../NavigationButtons";
 import Container from "../Container"
+import Header from "../Header";
+
 
 const taskInfo = {
   "מידול/אנימציה": {
@@ -150,12 +152,13 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
   };
 
   return (
-    
+    <Container>
     <div className="w-full max-w-4xl mx-auto p-4">
       <div className="flex flex-col items-center gap-6 mb-8">
-        <h1 className="text-2xl font-bold text-center">
-          באילו משימות תשתמש במחשב?
-        </h1>
+        <Header 
+        text="באילו משימות תשתמש במחשב?"
+        className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display" 
+      />
         <p className="text-gray-600 text-center">
           בחר את כל המשימות שאתה מתכנן לבצע במחשב
         </p>
@@ -242,6 +245,7 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
         disableNext={isNextDisabled()}
       />
     </div>
+    </Container>
   );
 };
 

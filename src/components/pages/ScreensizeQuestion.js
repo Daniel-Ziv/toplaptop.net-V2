@@ -3,38 +3,36 @@ import NavigationButtons from "../NavigationButtons";
 import CustomCheckbox from "../CustomCheckbox";
 import Container from "../Container";
 import Header from "../Header";
-import { CheckboxGroup, Button } from "@nextui-org/react";
+import { CheckboxGroup, Button, Switch } from "@nextui-org/react";
+import { Pointer } from "lucide-react";
 
-function ScreensizeQuestion({ 
-  nextStep, 
-  prevStep, 
-  onAnswer, 
-  selectedScreenSizes = [], 
-  wantsTouchscreen = false 
+function ScreensizeQuestion({
+  nextStep,
+  prevStep,
+  onAnswer,
+  selectedScreenSizes = [],
+  wantsTouchscreen = false
 }) {
-
   const [localScreenSizes, setLocalScreenSizes] = useState(selectedScreenSizes);
   const [localTouchscreen, setLocalTouchscreen] = useState(wantsTouchscreen);
 
-
   const handleScreenSizeChange = (values) => {
     setLocalScreenSizes(values);
+    updateAnswer(values, localTouchscreen);
+  };
+
+  const handleTouchscreenToggle = (isSelected) => {
+    setLocalTouchscreen(isSelected);
+    updateAnswer(localScreenSizes, isSelected);
+  };
+
+  const updateAnswer = (sizes, touchscreen) => {
     onAnswer({
-      selectedScreenSizes: values,
-      wantsTouchscreen: localTouchscreen
+      selectedScreenSizes: sizes,
+      wantsTouchscreen: touchscreen
     });
   };
 
-  const handleTouchscreenToggle = () => {
-    const newTouchscreenValue = !localTouchscreen;
-    setLocalTouchscreen(newTouchscreenValue);
-    onAnswer({
-      selectedScreenSizes: localScreenSizes,
-      wantsTouchscreen: newTouchscreenValue
-    });
-  };
-
-  // Initialize state on mount or when props change
   useEffect(() => {
     setLocalScreenSizes(selectedScreenSizes);
     setLocalTouchscreen(wantsTouchscreen);
@@ -43,10 +41,7 @@ function ScreensizeQuestion({
   const handleSelectAll = () => {
     const allSizes = ["small", "medium", "large", "huge"];
     setLocalScreenSizes(allSizes);
-    onAnswer({
-      selectedScreenSizes: allSizes,
-      wantsTouchscreen: localTouchscreen
-    });
+    updateAnswer(allSizes, localTouchscreen);
   };
 
   return (
@@ -63,6 +58,7 @@ function ScreensizeQuestion({
         >
           אין לי מושג מה לבחור
         </Button>
+
         <CheckboxGroup
           value={localScreenSizes}
           onChange={handleScreenSizeChange}
@@ -105,9 +101,28 @@ function ScreensizeQuestion({
             statusColor="success"
           />
         </CheckboxGroup>
-        <h1>מסך טאצ׳</h1>
-        <h1>קצב רענון</h1>
+
+        {/* Touchscreen Toggle */}
+        <div className="flex flex-col items-center gap-2 w-full max-w-lg p-4 bg-gray-50 rounded-lg">
+          <div className="flex justify-between items-center w-full">
+            <div className="flex flex-col">
+              <span className="text-lg font-medium">מסך מגע</span>
+              <span className="text-sm text-gray-600">שליטה באמצעות מגע במסך</span>
+            </div>
+            <Switch
+              isSelected={localTouchscreen}
+              onValueChange={handleTouchscreenToggle}
+              size="lg"
+              color="success"
+              startContent={<Pointer size={24} />}
+              classNames={{
+                wrapper: "p-0",
+              }}
+            />
+          </div>
+        </div>
       </div>
+
       <NavigationButtons
         onNext={nextStep}
         onBack={prevStep}

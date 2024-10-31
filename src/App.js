@@ -2,11 +2,10 @@ import './styles/output.css';
 import React, { useState } from "react";
 import Progress from "./components/Progress";
 import CustomNavbar from './components/CustomNavbar';
-import {NextUIProvider} from "@nextui-org/system";
+import { NextUIProvider } from "@nextui-org/system";
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-
-
+import { motion, AnimatePresence } from "framer-motion";
 import Welcome from "./components/pages/Welcome.js";
 import StudentQuestion from "./components/pages/StudentQuestion.js";
 import TasksQuestion from "./components/pages/TasksQuestion.js";
@@ -16,30 +15,35 @@ import PortabilityQuestion from "./components/pages/PortabilityQuestion.js";
 import Results from "./components/pages/Results.js";
 import FeaturesQuestion from "./components/pages/FeaturesQuestion.js"
 
-
 function App() {
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState({ 
-    tasks:[],
+  const [direction, setDirection] = useState(0);
+  const [answers, setAnswers] = useState({
+    tasks: [],
     portability: [],
     features: [],
+    connections: [],
     student: {
       isStudent: "",
-      selectedDegree: "" 
-    }, 
-    price: { 
-      budget: 2000,           
-      isFlexible: false,     
-      flexibilityPercent: 0  
+      selectedDegree: ""
     },
-    screenSize: {  
+    price: 2000,
+    screenSize: {
       selectedScreenSizes: [],
       wantsTouchscreen: false
     }
   });
 
-  const nextStep = () => setStep(prevStep => prevStep + 1);
-  const prevStep = () => setStep(prevStep => Math.max(prevStep - 1, 0));
+
+  const nextStep = () => {
+    setDirection(1);
+    setStep(prevStep => prevStep + 1);
+  };
+
+  const prevStep = () => {
+    setDirection(-1);
+    setStep(prevStep => Math.max(prevStep - 1, 0));
+  };
 
   const handleAnswer = (question, answer) => {
     setAnswers((prevAnswers) => {
@@ -47,34 +51,104 @@ function App() {
         ...prevAnswers,
         [question]: answer,
       };
-      console.log("Updated Answers:", updatedAnswers); // Debugging
+      console.log("Updated Answers:", updatedAnswers);
       return updatedAnswers;
     });
   };
 
+  // Animation variants
+  const pageVariants = {
+    enter: (direction) => ({
+      x: direction < 0 ? 500 : -500,  // Flipped the signs here
+      opacity: 0
+    }),
+    center: {
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction) => ({
+      x: direction < 0 ? -500 : 500,  // Flipped the signs here
+      opacity: 0
+    })
+  };
 
+  const pageTransition = {
+    type: "tween",
+    ease: "easeInOut",
+    duration: 0.3  // Faster animation
+  };
 
   const renderStep = () => {
+    let component;
     switch(step) {
       case 0:
-        return <Welcome onAnswer={(answer) => handleAnswer('welcome', answer)} nextStep={nextStep} />
+        component = <Welcome onAnswer={(answer) => handleAnswer('welcome', answer)} nextStep={nextStep} />;
+        break;
       case 1:
-        return <StudentQuestion onAnswer={(answer) => handleAnswer('student', answer)} prevStep={prevStep} nextStep={nextStep}  isStudent={answers.student.isStudent} selectedDegree={answers.student.selectedDegree}/>;
+        component = <StudentQuestion onAnswer={(answer) => handleAnswer('student', answer)} 
+                                   prevStep={prevStep} 
+                                   nextStep={nextStep} 
+                                   isStudent={answers.student.isStudent} 
+                                   selectedDegree={answers.student.selectedDegree}/>;
+        break;
       case 2:
-        return <TasksQuestion onAnswer={(answer) => handleAnswer('tasks', answer)} prevStep={prevStep} nextStep={nextStep} selectedTasks={answers.tasks}/>;
+        component = <TasksQuestion onAnswer={(answer) => handleAnswer('tasks', answer)} 
+                                 prevStep={prevStep} 
+                                 nextStep={nextStep} 
+                                 selectedTasks={answers.tasks}/>;
+        break;
       case 3:
-        return <PriceQuestion onAnswer={(answer) => handleAnswer('price', answer)} prevStep={prevStep} nextStep={nextStep} savedBudget={answers.price.budget}  savedFlexibility={answers.price.isFlexible} savedFlexibilityPercent={answers.price.flexibilityPercent} />
+        component = <PortabilityQuestion onAnswer={(answer) => handleAnswer('portability', answer)} 
+                                       prevStep={prevStep} 
+                                       nextStep={nextStep} 
+                                       savedPortabilityChoices={answers.portability} />;
+        break;
       case 4:
-        return <ScreensizeQuestion onAnswer={(answer) => handleAnswer('screenSize', answer)} prevStep={prevStep} nextStep={nextStep} selectedScreenSizes={answers.screenSize.selectedScreenSizes}   wantsTouchscreen={answers.screenSize.wantsTouchscreen}/>;
+        component = <ScreensizeQuestion onAnswer={(answer) => handleAnswer('screenSize', answer)} 
+                                      prevStep={prevStep} 
+                                      nextStep={nextStep} 
+                                      selectedScreenSizes={answers.screenSize.selectedScreenSizes} 
+                                      wantsTouchscreen={answers.screenSize.wantsTouchscreen}
+                                       />;
+        break;            
       case 5:
-        return <PortabilityQuestion onAnswer={(answer) => handleAnswer('portability', answer)} prevStep={prevStep} nextStep={nextStep} savedPortabilityChoices={answers.portability} />;
+        component = <PriceQuestion onAnswer={(answer) => handleAnswer('price', answer)} 
+                                 prevStep={prevStep} 
+                                 nextStep={nextStep} 
+                                 savedBudget={answers.price} 
+                                  />;
+        break;
       case 6:
-        return <FeaturesQuestion onAnswer={(answer) => handleAnswer('features', answer)} prevStep={prevStep} nextStep={nextStep}  savedFeatures={answers.features} />;
+        component = <FeaturesQuestion onAnswer={(answer) => handleAnswer('features', answer)} 
+                                    prevStep={prevStep} 
+                                    nextStep={nextStep} 
+                                    savedFeatures={answers.features} />;
+        break;
       case 7:
-        return <Results answers={answers} prevStep={prevStep} />;
+        component = <Results answers={answers} prevStep={prevStep} />;
+        break;
       default:
-        return <Welcome onNext={nextStep} />;
+        component = <Welcome onNext={nextStep} />;
     }
+
+    return (
+      <div className="relative overflow-hidden">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={step}
+            custom={direction}
+            variants={pageVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={pageTransition}
+            className="w-full"
+          >
+            {component}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    );
   };
 
   return (
