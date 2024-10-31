@@ -72,6 +72,7 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
               sizeName={option.sizeName}
               statusColor="success"
             />
+          
           ))}
         </CheckboxGroup>
       </div>

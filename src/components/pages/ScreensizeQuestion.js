@@ -105,6 +105,8 @@ function ScreensizeQuestion({
             statusColor="success"
           />
         </CheckboxGroup>
+        <h1>מסך טאצ׳</h1>
+        <h1>קצב רענון</h1>
       </div>
       <NavigationButtons
         onNext={nextStep}

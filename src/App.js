@@ -17,18 +17,16 @@ import Results from "./components/pages/Results.js";
 import FeaturesQuestion from "./components/pages/FeaturesQuestion.js"
 
 
-
-
-
 function App() {
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState({ //I created initial values so we can pass that and always have the selections selected after pressing "back"
+  const [answers, setAnswers] = useState({ 
     tasks:[],
     portability: [],
-    price:"",
-    student: { isStudent: "", selectedDegree: "" }, 
-    portability:"",
-    featues: "",
+    features: [],
+    student: {
+      isStudent: "",
+      selectedDegree: "" 
+    }, 
     price: { 
       budget: 2000,           
       isFlexible: false,     
@@ -71,7 +69,7 @@ function App() {
       case 5:
         return <PortabilityQuestion onAnswer={(answer) => handleAnswer('portability', answer)} prevStep={prevStep} nextStep={nextStep} savedPortabilityChoices={answers.portability} />;
       case 6:
-        return <FeaturesQuestion onAnswer={(answer) => handleAnswer('featues', answer)} prevStep={prevStep} nextStep={nextStep} />;
+        return <FeaturesQuestion onAnswer={(answer) => handleAnswer('features', answer)} prevStep={prevStep} nextStep={nextStep}  savedFeatures={answers.features} />;
       case 7:
         return <Results answers={answers} prevStep={prevStep} />;
       default:

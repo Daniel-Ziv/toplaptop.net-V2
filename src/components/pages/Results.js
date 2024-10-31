@@ -1,6 +1,7 @@
 import React from 'react';
+import { Button } from '@nextui-org/react';
 
-const Results = ({ answers }) => {
+const Results = ({ answers, prevStep}) => {
   // Map keys to human-readable labels for each question
   const questionLabels = {
     student: "סטודנט",
@@ -39,6 +40,19 @@ const Results = ({ answers }) => {
           </li>
         ))}
       </ul>
+
+      <div className="flex flex-col items-center space-y-4 mt-6">
+     
+      <Button 
+        color="black" 
+        size="lg" // Make the button larger
+        onClick={prevStep}
+        className="w-full max-w-md" // Center and limit button width
+      >
+        חזור
+      </Button>
+    </div>
+
     </div>
   );
 };
