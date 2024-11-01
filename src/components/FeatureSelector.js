@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Cpu, MemoryStick, Microchip, MonitorCheck, HardDrive, Cable, Fingerprint, MonitorCog, Laptop, Battery, Wifi, Monitor, Gauge } from 'lucide-react';
+import { Cpu, MemoryStick, Microchip, MonitorCheck, HardDrive, Cable, Fingerprint, MonitorCog, Laptop, Battery, Wifi, Monitor, Gauge, RotateCw, Smartphones } from 'lucide-react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input } from "@nextui-org/react";
 import { Search } from "lucide-react";
 
@@ -135,21 +135,9 @@ const subSelections = {
     "Gigabyte",    // 78
     "Dynabook",    // 78
     "MSI",         // 26
-    "Panasonic",   // 23
-    "Getac",       // 17
+    "Panasonic",   // 23       
     "Razer",       // 16
-    "Gateway",     // 9
-    "LG",          // 6
-    "Emdoor",      // 6
-    "Gurren Buggie", // 5
-    "Huawei",      // 3
-    "Xiaomi",      // 3
-    "Fujitsu",     // 3
-    "Samsung",     // 2
-    "Blackview",   // 1
-    "Alienware",   // 1
-    "AData",       // 1
-    "Iview",       // 1
+  
   ],
   'כרטיס מסך': [
     "Intel Iris Xe Graphics",
@@ -216,6 +204,22 @@ const subSelections = {
     "Card Reader",
     "VGA",
     "S-Video"
+  ],
+  'מסך מתהפך': [
+    "כן",
+    "לא"
+  ],
+  'סוג מסך': [
+    "IPS",
+    "OLED",
+    "LED",
+    "Mini-LED",
+    "LCD",
+    "VA",
+    "TN",
+    "AMOLED",
+    "Retina",
+    "Liquid Retina"
   ]
 };
 
@@ -227,11 +231,11 @@ const features = [
   { name: 'נפח-אחסון', icon: <HardDrive className="w-6 h-6" />, hasSubSelection: true },
   { name: 'כרטיס מסך', icon: <MonitorCog className="w-6 h-6" />, hasSubSelection: true },
   { name: 'יצרן', icon: <Laptop className="w-6 h-6" /> , hasSubSelection: true},
-  { name: 'חיי-סוללה', icon: <Battery className="w-6 h-6" /> },
   { name: 'חיבורים', icon: <Cable className="w-6 h-6" />, hasSubSelection: true },
-  { name: 'אחריות', icon: <Monitor className="w-6 h-6" /> },
-  { name: 'טביעת אצבע', icon: <Fingerprint className="w-6 h-6" />, hasSubSelection: true },
+  { name: 'אבטחה', icon: <Fingerprint className="w-6 h-6" />, hasSubSelection: true },
+  { name: 'מסך מתהפך', icon: <RotateCw className="w-6 h-6" /> }, 
   { name: 'רזולוציית מסך', icon: <MonitorCheck className="w-6 h-6" />, hasSubSelection: true },
+  { name: 'סוג מסך', icon: <MonitorCheck className="w-6 h-6" />, hasSubSelection: true },
   { name: 'קצב רענון', icon: <Gauge className="w-6 h-6" />, hasSubSelection: true }
 ];
 
@@ -257,6 +261,8 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
       return;
     }
 
+    
+
     const newFeatures = {
       ...selectedFeatures,
       [featureName]: selectedFeatures[featureName] ? null : true
@@ -270,7 +276,10 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
   };
 
   const filteredOptions = useMemo(() => {
-    if (!currentFeature || !searchQuery) return subSelections[currentFeature] || [];
+    if (!currentFeature || !searchQuery) {
+      return subSelections[currentFeature] || [];
+    }
+    
     
     return subSelections[currentFeature].filter(option =>
       option.toLowerCase().includes(searchQuery.toLowerCase())
