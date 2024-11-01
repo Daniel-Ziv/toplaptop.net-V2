@@ -1,16 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import NavigationButtons from "../NavigationButtons";
 import { Slider, Button } from "@nextui-org/react";
 import Container from "../Container";
 import Header from "../Header";
 
 function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget }) {
+  // Local state to track the slider value
+  const [sliderValue, setSliderValue] = useState(savedBudget?.value || 3000);
+
+  // Update local state when savedBudget changes
+  useEffect(() => {
+    if (savedBudget?.value) {
+      setSliderValue(savedBudget.value);
+    }
+  }, [savedBudget]);
+
   const handleBudgetChange = (value) => {
-    onAnswer({ value });
+    setSliderValue(value);
+    onAnswer({ value }); // Keep the object structure consistent
   };
 
   const handleNext = () => {
-    onAnswer({ savedBudget });
+    onAnswer({ value: sliderValue }); // Use the current slider value
     nextStep();
   };
 
@@ -21,14 +32,13 @@ function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget }) {
         text="כמה חשבתם להשקיע?"
         className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
-     
+      
       <div className="flex flex-col items-center">
         <Button color="primary" variant="flat" dir="rtl">
           כמה מומלץ?
         </Button>
       </div>
 
-      {/* Budget Slider */}
       <div className="flex flex-col items-center space-y-4 mt-6">
         <Slider
           aria-label="Set your budget"
@@ -51,20 +61,20 @@ function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget }) {
           ]}
           step={100}
           dir="ltr"
-          value={savedBudget}
+          value={sliderValue}
           onChange={handleBudgetChange}
           className="max-w-md"
         />
       </div>
 
       <p dir="rtl" className="text-lg font-normal text-gray-800 dark:text-gray-700 text-center">
-          על סמך הבחירות שלך, כדי לקבל מחשב שהוא בול למה שאתה מחפש אנחנו ממליצים על 
+        על סמך הבחירות שלך, כדי לקבל מחשב שהוא בול למה שאתה מחפש אנחנו ממליצים על
       </p>
 
       <NavigationButtons
         onNext={handleNext}
         onBack={prevStep}
-        disableNext={!savedBudget}
+        disableNext={!sliderValue}
       />
     </Container>
   );
