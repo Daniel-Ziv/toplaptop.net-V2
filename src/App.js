@@ -22,7 +22,6 @@ function App() {
     tasks: [],
     portability: [],
     features: [],
-    connections: [],
     student: {
       isStudent: "",
       selectedDegree: ""
@@ -56,27 +55,6 @@ function App() {
     });
   };
 
-  // Animation variants
-  const pageVariants = {
-    enter: (direction) => ({
-      x: direction < 0 ? 500 : -500,  // Flipped the signs here
-      opacity: 0
-    }),
-    center: {
-      x: 0,
-      opacity: 1
-    },
-    exit: (direction) => ({
-      x: direction < 0 ? -500 : 500,  // Flipped the signs here
-      opacity: 0
-    })
-  };
-
-  const pageTransition = {
-    type: "tween",
-    ease: "easeInOut",
-    duration: 0.3  // Faster animation
-  };
 
   const renderStep = () => {
     let component;
@@ -133,20 +111,7 @@ function App() {
 
     return (
       <div className="relative overflow-hidden">
-        <AnimatePresence mode="wait" custom={direction}>
-          <motion.div
-            key={step}
-            custom={direction}
-            variants={pageVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={pageTransition}
-            className="w-full"
-          >
-            {component}
-          </motion.div>
-        </AnimatePresence>
+        {component}
       </div>
     );
   };

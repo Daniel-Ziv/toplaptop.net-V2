@@ -205,7 +205,7 @@ const subSelections = {
     "VGA",
     "S-Video"
   ],
-  'מסך מתהפך': [
+  'מחשב שהוא גם טאבלט': [
     "כן",
     "לא"
   ],
@@ -233,7 +233,7 @@ const features = [
   { name: 'יצרן', icon: <Laptop className="w-6 h-6" /> , hasSubSelection: true},
   { name: 'חיבורים', icon: <Cable className="w-6 h-6" />, hasSubSelection: true },
   { name: 'אבטחה', icon: <Fingerprint className="w-6 h-6" />, hasSubSelection: true },
-  { name: 'מסך מתהפך', icon: <RotateCw className="w-6 h-6" /> }, 
+  { name: 'מחשב שהוא גם טאבלט', icon: <RotateCw className="w-6 h-6" /> }, 
   { name: 'רזולוציית מסך', icon: <MonitorCheck className="w-6 h-6" />, hasSubSelection: true },
   { name: 'סוג מסך', icon: <MonitorCheck className="w-6 h-6" />, hasSubSelection: true },
   { name: 'קצב רענון', icon: <Gauge className="w-6 h-6" />, hasSubSelection: true }

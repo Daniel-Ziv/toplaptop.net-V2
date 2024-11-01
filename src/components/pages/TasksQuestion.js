@@ -7,38 +7,45 @@ import Header from "../Header";
 
 
 const taskInfo = {
-  "מידול/אנימציה": {
+  "modeling/animation": {
+    displayName: "מידול ואנימציה",
     recommended: true,
     description: "תוכנות כמו Maya, Blender או Cinema 4D ליצירת מודלים תלת-ממדיים ואנימציות",
     icon: <Cpu className="w-5 h-5" />
   },
-  "עריכת תמונות": {
+  "photo-editing": {
+    displayName: "עריכת תמונות",
     recommended: true,
     description: "עריכה בתוכנות כמו Photoshop, GIMP או Lightroom",
     icon: <Brush className="w-5 h-5" />
   },
   
-  "עריכת מוזיקה": {
+  "music-editing": {
+    displayName: "עריכת מוזיקה",
     recommended: false,
     description: "הקלטה ועריכת מוזיקה בתוכנות כמו FL Studio או Ableton",
     icon: <Music className="w-5 h-5" />
   },
-  "עריכת סרטונים": {
+  "video-editing": {
+    displayName: "עריכת סרטונים",
     recommended: true,
     description: "עריכת וידאו בתוכנות כמו Premiere Pro או DaVinci Resolve",
     icon: <Video className="w-5 h-5" />
   },
-  "שימוש בסיסי": {
+  "basic-use": {
+    displayName: "שימוש בסיסי",
     recommended: true,
     description: "גלישה באינטרנט, מיילים, ושימוש בכלים פשוטים כמו Google Docs",
     icon: <Globe className="w-5 h-5" />
   },
-  "בינה מלאכותית": {
+  "ai": {
+    displayName: "בינה מלאכותית",
     recommended: true,
     description:" מתאים למי שעובד עם תוכנות ליצירת תמונות, עיבוד נתונים, או אימון מודלים כמו Stable Diffusion או TensorFlow.",
     icon: <Bot className="w-5 h-5" />
   },
-  "תכנות": {
+  "programming": {
+    displayName: "תכנות",
     recommended: true,
     description: "לחיצה על האפשרות, תפתח שאלון ״איזה סוג תכנות״ ובו תוכלו לבחור במדויק לפי הצורך שלכם",
     icon: <Code className="w-5 h-5" />,
@@ -53,7 +60,8 @@ const taskInfo = {
       }
     }
   },
-  "גיימינג": {
+  "gaming": {
+    displayName: "גיימינג",
     recommended: true,
     description: "לחיצה על האפשרות, תפתח שאלון ״איזה סוג גיימינג״ ובו תוכלו לבחור במדויק לפי הצורך שלכם",
     
@@ -177,7 +185,7 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-2">
                   {info.icon}
-                  <span className="text-lg font-medium">{task}</span>
+                  <span className="text-lg font-medium">{info.displayName}</span>
                   {info.recommended && (
                     <span className="px-2 py-1 text-xs bg-success-100 text-success-600 rounded-full">
                       מומלץ

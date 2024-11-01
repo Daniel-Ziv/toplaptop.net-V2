@@ -44,6 +44,7 @@ function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget }) {
           aria-label="Set your budget"
           label=" "
           size="lg"
+          color="success"
           showTooltip={true}
           formatOptions={{ style: 'currency', currency: 'ILS' }}
           tooltipValueFormatOptions={{ style: 'currency', currency: 'ILS' }}
