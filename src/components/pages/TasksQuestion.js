@@ -21,7 +21,7 @@ const taskInfo = {
   },
   
   "music-editing": {
-    displayName: "עריכת/יצירת מוזיקה",
+    displayName: "עריכת ויצירת מוזיקה",
     recommended: false,
     description: "הקלטה ועריכת מוזיקה בתוכנות כמו FL Studio או Ableton",
     icon: <Music className="w-5 h-5" />
@@ -33,7 +33,7 @@ const taskInfo = {
     icon: <Video className="w-5 h-5" />
   },
   "basic-use": {
-    displayName: "שימוש בסיסי",
+    displayName: "לימודים, שימוש בסיסי",
     recommended: true,
     description: "גלישה באינטרנט, מיילים, ושימוש בכלים פשוטים כמו Google Docs",
     icon: <Globe className="w-5 h-5" />

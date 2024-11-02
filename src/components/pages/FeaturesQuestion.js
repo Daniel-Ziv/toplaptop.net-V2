@@ -28,7 +28,7 @@ function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) 
         className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
       <p dir="rtl" className="text-lg font-normal text-gray-800 dark:text-gray-700 text-center">
-        משהו ספציפי שתרצו לבחור במחשב?
+        אם יש משהו ספציפי שחשוב לכם שיהיה בלפטופ, לחצו עליו
       </p>
       <FeatureSelector
         selectedFeatures={selectedFeatures}

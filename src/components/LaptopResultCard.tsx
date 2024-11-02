@@ -1,108 +1,115 @@
 import { Check } from "lucide-react"
 import React from "react"
-import { Image } from "@nextui-org/react";
+import { Image, CircularProgress, Card, CardBody, CardFooter, Button } from "@nextui-org/react"
+import Container from "./Container"
+import { CircularProgressbar, CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import styles from '../ProductCard.module.css';
 
 
 interface ProductCardProps {
   name: string
   price: number
-  weight: string
-  screenSize: string
+  weight: number
+  screenSize: number
   imageUrl: string
   productUrl: string
-  matchPercentage?: number
+  matchPercentage: number
+  manufacturer: string,
+  laptopSeries: string
+  laptopRam: number
+
+
 }
 
-export default function Component({
-  name = "Lenovo IdeaPad Duet 5 12IAU7",
-  price = 5131,
-  weight = "1.12",
-  screenSize = "12.4",
-  imageUrl = "/placeholder.svg?height=150&width=150",
-  productUrl = "#",
-  matchPercentage = 98
+export default function LaptopResultCard({
+  name,
+  price,
+  weight,
+  screenSize,
+  imageUrl ,
+  productUrl,
+  matchPercentage,
+  laptopRam,
+  manufacturer,
+  laptopSeries
 }: ProductCardProps) {
   return (
-    <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-      <div className="p-6">
-        <div className="flex flex-row-reverse items-center gap-6">
-          {/* Product Image */}
-          <div className="relative shrink-0">
-            <Image
-              src={imageUrl}
-              alt={name}
-              width={150}
-              height={150}
-              className="object-contain"
+    <div className="bg-white rounded-lg border-2 w-full max-w-4xl mx-auto mb-4">
+      <div className="p-5">
+        <div className={styles.responsiveContainer}>
+          {/* Match Percentage */}
+          <div style={{ width: 125, height: 125 }}>
+            <CircularProgressbar
+              value={matchPercentage}
+              text={`${matchPercentage}%`}
+              styles={buildStyles({
+                strokeLinecap: "butt",
+                textColor: "#999",
+                pathColor: "#00E699",
+                textSize: "18px"
+              })}
             />
+            <p className="text-center" style={{ color: '#999' }}>אחוז התאמה</p>
           </div>
 
           {/* Product Details */}
           <div className="flex-1 space-y-4 text-right">
-            <h3 className="text-xl font-semibold">{name}</h3>
-            <div className="flex justify-end gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
-                <span className="font-medium">{screenSize} אינטש</span>
-                <span className="text-gray-500">מסך</span>
+            <h3 className={`text-xl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries}</h3>
+            <div className="flex justify-center text-sm" dir="rtl">
+              <div className="flex items-center gap-2 p-2 w-full">
+                <span  className={`text-center ${styles.laptopCardSpecs}`} style={{ fontSize: '18px' }}>
+                  {price}₪<br/>
+                  <span style={{display: "inline-flex", color:"#888", fontSize:"14px"}}>
+                    <Check className="h-4 w-4 text-success" /> מחיר
+                  </span>
+                </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
-                <span className="font-medium">{weight} ק"ג</span>
-                <span className="text-gray-500">משקל</span>
+              <div className="flex items-center gap-2 p-2 w-full">
+                <p className="text-center" style={{ fontSize: '18px'}}>
+                  {weight} ק"ג <br/>
+                  <span style={{display: "inline-flex", color:"#888", fontSize:"14px"}}>
+                    <Check className="h-4 w-4 text-success" /> משקל
+                  </span>
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
-                <span className="font-medium">₪{price}</span>
-                <span className="text-gray-500">מחיר</span>
+              <div className="flex items-center gap-2 p-2 w-full">
+                
+                <span className="text-center" style={{ fontSize: '18px' }}>
+                  <span className="inline">{screenSize} אינטש </span><br/>
+                  <span style={{display: "inline-flex", color:"#888", fontSize:"14px"}}>
+                    <Check className="h-4 w-4 text-success" /> מסך
+                  </span>
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Match Percentage */}
-          <div className="flex flex-col items-center gap-2 w-32">
-            <div className="relative w-24 h-24">
-              <svg className="w-24 h-24 transform -rotate-90">
-                <circle
-                  className="text-gray-200"
-                  strokeWidth="8"
-                  stroke="currentColor"
-                  fill="transparent"
-                  r="44"
-                  cx="48"
-                  cy="48"
-                />
-                <circle
-                  className="text-green-500"
-                  strokeWidth="8"
-                  strokeDasharray={44 * 2 * Math.PI}
-                  strokeDashoffset={44 * 2 * Math.PI * (1 - matchPercentage / 100)}
-                  strokeLinecap="round"
-                  stroke="currentColor"
-                  fill="transparent"
-                  r="44"
-                  cx="48"
-                  cy="48"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xl font-medium">{matchPercentage}%</span>
-              </div>
-            </div>
-            <span className="text-sm text-gray-500">אחוז התאמה</span>
+          {/* Product Image */}
+          <div className="relative shrink-0">
+            <img
+              src={imageUrl}
+              alt={name}
+              className="object-contain"
+              width="200"
+              height="200"
+            />
           </div>
+          
         </div>
-
-        {/* Product Link Button */}
-        <div className="mt-6 flex justify-center">
+        <div className={`block ${styles.responsiveButton}`}>
+        
           <button
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors w-40"
             onClick={() => window.open(productUrl, '_blank')}
+            className={`bg-black text-white font-medium py-2 px-5 rounded transition-colors `}
           >
             קישור למוצר
           </button>
-        </div>
       </div>
+        
     </div>
-  )
-}
+  </div>
+
+    
+  );
+};

@@ -13,6 +13,7 @@ import ScreensizeQuestion from "./components/pages/ScreensizeQuestion.js";
 import PortabilityQuestion from "./components/pages/PortabilityQuestion.js";
 import Results from "./components/pages/Results.tsx";
 import FeaturesQuestion from "./components/pages/FeaturesQuestion.js"
+import { MantineProvider } from '@mantine/core';
 
 
 function App() {
@@ -115,12 +116,14 @@ function App() {
 
   return (
     <Router>
-      <NextUIProvider dir="rtl">
-        <div className="App">
-          <CustomNavbar />
-          {renderStep()}
-        </div>
-      </NextUIProvider>
+      
+        <NextUIProvider>
+          <div className="App" dir="rtl">
+            <CustomNavbar />
+            {renderStep()}
+          </div>
+        </NextUIProvider>
+     
     </Router>
   );
 }
