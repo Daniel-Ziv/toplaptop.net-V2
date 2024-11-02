@@ -21,7 +21,7 @@ const taskInfo = {
   },
   
   "music-editing": {
-    displayName: "עריכת מוזיקה",
+    displayName: "עריכת/יצירת מוזיקה",
     recommended: false,
     description: "הקלטה ועריכת מוזיקה בתוכנות כמו FL Studio או Ableton",
     icon: <Music className="w-5 h-5" />
@@ -50,11 +50,13 @@ const taskInfo = {
     description: "לחיצה על האפשרות, תפתח שאלון ״איזה סוג תכנות״ ובו תוכלו לבחור במדויק לפי הצורך שלכם",
     icon: <Code className="w-5 h-5" />,
     levels: {
-      כבד: {
+      heavy: {
+        displayName: "כבד",
         description: "קומפילציה כבדה, מתאים למפתחים מנוסים  שעובדים על פרויקטים גדולים כמו פיתוח משחקים, מודלים של בינה מלאכותית, וניתוח נתונים מאסיבי" ,
         recommended: true
       },
-      קל: {
+      light: {
+        displayName: "קל",
         description: "תכנות בסיסי המתאים בעיקר לסטודנטים, מתחילים, או למי שעובד על פרויקטים קטנים.",
         recommended: false
       }
@@ -67,11 +69,13 @@ const taskInfo = {
     
     icon: <Monitor className="w-5 h-5" />,
     levels: {
-      כבד: {
+      heavy: {
+        displayName: "כבד",
         description: "כולל משחקים עם גרפיקה תלת-ממדית מורכבת ודרישות מערכת גבוהות, כמו Cyberpunk 2077, Red Dead Redemption 2.",
         recommended: true
       },
-      קל: {
+      light: {
+        displayName: "קל",
         description: "כולל משחקים שלא דורשים ביצועים גרפיים מתקדמים או מעבד חזק במיוחד, כמו League of Legends, Minecraft.",
         recommended: false
       }
@@ -80,18 +84,18 @@ const taskInfo = {
 };
 
 const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => {
-  // Initialize state with saved tasks and their levels
+
   const [localSelectedTasks, setLocalSelectedTasks] = useState([]);
   const [taskLevels, setTaskLevels] = useState({});
 
-  // Update local state when selectedTasks prop changes
+
   useEffect(() => {
     if (Array.isArray(selectedTasks)) {
-      // Handle array of simple tasks
+
       if (selectedTasks.length > 0 && typeof selectedTasks[0] === 'string') {
         setLocalSelectedTasks(selectedTasks);
       }
-      // Handle array of task objects with levels
+
       else if (selectedTasks.length > 0 && typeof selectedTasks[0] === 'object') {
         const tasks = selectedTasks.map(t => t.task);
         const levels = selectedTasks.reduce((acc, t) => {
@@ -109,7 +113,7 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
   const handleSelectionChange = (task) => {
     let updatedTasks;
     if (localSelectedTasks.includes(task)) {
-      // Remove task and its level if exists
+
       updatedTasks = localSelectedTasks.filter(t => t !== task);
       const updatedLevels = { ...taskLevels };
       delete updatedLevels[task];
@@ -227,7 +231,7 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
                       <Radio value={level}>
                         <div className="flex flex-col">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium">{level}</span>
+                            <span className="font-medium">{levelInfo.displayName}</span>
                             {levelInfo.recommended && (
                               <span className="px-2 py-1 text-xs bg-success-100 text-success-600 rounded-full">
                                 מומלץ

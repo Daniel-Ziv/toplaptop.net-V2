@@ -5,19 +5,18 @@ import CustomNavbar from './components/CustomNavbar';
 import { NextUIProvider } from "@nextui-org/system";
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from "framer-motion";
 import Welcome from "./components/pages/Welcome.js";
 import StudentQuestion from "./components/pages/StudentQuestion.js";
 import TasksQuestion from "./components/pages/TasksQuestion.js";
 import PriceQuestion from "./components/pages/PriceQuestion.js";
 import ScreensizeQuestion from "./components/pages/ScreensizeQuestion.js";
 import PortabilityQuestion from "./components/pages/PortabilityQuestion.js";
-import Results from "./components/pages/Results.js";
+import Results from "./components/pages/Results.tsx";
 import FeaturesQuestion from "./components/pages/FeaturesQuestion.js"
+
 
 function App() {
   const [step, setStep] = useState(0);
-  const [direction, setDirection] = useState(0);
   const [answers, setAnswers] = useState({
     tasks: [],
     portability: [],
@@ -35,12 +34,10 @@ function App() {
 
 
   const nextStep = () => {
-    setDirection(1);
     setStep(prevStep => prevStep + 1);
   };
 
   const prevStep = () => {
-    setDirection(-1);
     setStep(prevStep => Math.max(prevStep - 1, 0));
   };
 
