@@ -35,7 +35,7 @@ function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget }) {
       
       <div className="flex flex-col items-center">
         <Button color="primary" variant="flat" dir="rtl">
-          כמה מומלץ?
+          תמליצו לי
         </Button>
       </div>
 

@@ -37,7 +37,6 @@ function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) 
       <NavigationButtons
         onNext={nextStep}
         onBack={prevStep}
-        disableNext={!hasSelectedFeatures}
       />
     </Container>
   );
