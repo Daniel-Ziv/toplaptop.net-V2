@@ -3,7 +3,7 @@ import React from "react";
 import { Image, CircularProgress, Card, CardBody, CardFooter, Button } from "@nextui-org/react";
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { useComparison } from './ComparisonContext.tsx';
+import { useComparison } from './ComparisonContext';
 import styles from "./ProductCard.module.css";
 import { motion } from "framer-motion";
 
