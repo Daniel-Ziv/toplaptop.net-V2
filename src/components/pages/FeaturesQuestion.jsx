@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import NavigationButtons from "../NavigationButtons";
-import FeatureSelector from "../FeatureSelector";
-import Container from "../Container";
-import Header from "../Header";
+import NavigationButtons from "../NavigationButtons.js";
+import FeatureSelector from "../FeatureSelector.tsx";
+import Container from "../Container.js";
+import Header from "../Header.js";
 
 function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) {
   const [selectedFeatures, setSelectedFeatures] = useState(savedFeatures);
@@ -24,11 +24,12 @@ function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) 
     <Container>
       <Header
         dir="rtl"
-        text="לפני שנסיים.."
+        text="לפני שנתחיל..."
         className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
       <p dir="rtl" className="text-lg font-normal text-gray-800 dark:text-gray-700 text-center">
-        אם יש משהו ספציפי שחשוב לכם שיהיה בלפטופ, לחצו עליו
+        האם יש רכיב מסוים שאתם כבר יודעים שאתם צריכים?
+        בתוך כל מעבד, למיין חזק חלש וכו גם ראם סטנדרטי ונחשב הרבה
       </p>
       <FeatureSelector
         selectedFeatures={selectedFeatures}

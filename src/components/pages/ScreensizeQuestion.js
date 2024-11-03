@@ -107,7 +107,7 @@ function ScreensizeQuestion({
           <div className="flex justify-between items-center w-full">
             <div className="flex flex-col">
               <span className="text-lg font-medium">מסך מגע</span>
-              <span className="text-sm text-gray-600">שליטה באמצעות מגע במסך</span>
+              <span className="text-sm text-gray-600">בדרך כלל משפיע על המחיר</span>
             </div>
             <Switch
               isSelected={localTouchscreen}

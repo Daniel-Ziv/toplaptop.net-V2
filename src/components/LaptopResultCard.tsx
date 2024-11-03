@@ -1,36 +1,71 @@
-import { Check } from "lucide-react"
-import React from "react"
-import { Image, CircularProgress, Card, CardBody, CardFooter, Button } from "@nextui-org/react"
-import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar'
-import 'react-circular-progressbar/dist/styles.css'
-import { useComparison } from './ComparisonContext.tsx'
-import styles from '../ProductCard.module.css'
-import { motion } from "framer-motion"
+import { Check, ChevronDown } from "lucide-react";
+import React from "react";
+import { Image, CircularProgress, Card, CardBody, CardFooter, Button } from "@nextui-org/react";
+import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { useComparison } from './ComparisonContext.tsx';
+import styles from "./ProductCard.module.css";
+import { motion } from "framer-motion";
+
 
 interface ProductCardProps {
-  name: string
-  price: number
-  weight: number
-  screenSize: number
-  imageUrl: string
-  productUrl: string
-  matchPercentage: number
-  manufacturer: string
-  laptopSeries: string
-  laptopRam: number
+  name: string;
+  price: number;
+  weight: number;
+  screen_size: number;
+  product_img: string;
+  url: string;
+  matchPercentage: number;
+  manufacturer: string;
+  laptopSeries: string;
+  ram_size: number;
+  ram_type: string;
+  storage_space: string;
+  storage_type: string;
+  for_gaming: boolean;
+  cpu: string;
+  cpu_ghz: number;
+  screenhz: number;
+  screenRes: string;
+  screenType: string;
+  connections: string[];
+  touchscreen: boolean;
+  security: string[];
+  flippingScreen: boolean;
+  cpuModel: string;
+  cpuGen: string;
+  withOs: string;
+  gpu: string;
 }
 
 export default function LaptopResultCard({
   name,
   price,
   weight,
-  screenSize,
-  imageUrl,
-  productUrl,
+  screen_size,
+  product_img,
+  url,
   matchPercentage,
-  laptopRam,
   manufacturer,
-  laptopSeries
+  laptopSeries,
+  ram_size,
+  ram_type,
+  storage_space,
+  storage_type,
+  for_gaming,
+  cpu,
+  cpu_ghz,
+  screenhz,
+  screenRes,
+  screenType,
+  connections,
+  touchscreen,
+  security,
+  flippingScreen,
+  cpuModel,
+  cpuGen,
+  withOs,
+  gpu
 }: ProductCardProps) {
   const { selectedLaptops, toggleLaptopSelection, isCompareMode } = useComparison();
   const isSelected = selectedLaptops.some(laptop => laptop.name === name);
@@ -46,13 +81,30 @@ export default function LaptopResultCard({
       name,
       price,
       weight,
-      screenSize,
-      imageUrl,
-      productUrl,
+      screen_size,
+      product_img,  // Note the property name change to match the data
+      url,        // Note the property name change to match the data
       matchPercentage,
-      laptopRam,
       manufacturer,
-      laptopSeries
+      laptopSeries,
+      ram_size,    // Note the property name change to match the data
+      ram_type,
+      storage_space,
+      storage_type,
+      for_gaming,
+      cpu,
+      cpu_ghz,
+      screenhz,
+      screenRes,
+      screenType,
+      connections,
+      touchscreen,
+      security,
+      flippingScreen,
+      cpuModel,
+      cpuGen,
+      withOs,
+      gpu
     });
   };
   return (
@@ -72,7 +124,7 @@ export default function LaptopResultCard({
         </div>
       )}
 
-      <div className="p-5">
+      <div className="p-2">
         <div className={styles.responsiveContainer}>
           {/* Match Percentage */}
           <div style={{ width: 125, height: 125 }}>
@@ -83,14 +135,14 @@ export default function LaptopResultCard({
                 pathColor: "#00E699",
               })}
             >
-              <div className="text-2xl font-semibold text-gray-600">{matchPercentage}%</div>
-              <div className="text-sm text-gray-500">אחוז התאמה</div>
+              <div className="text-2xl  text-gray-600">{matchPercentage}%</div>
+              <div style={{ fontSize: '14px', color: "grey" }}>לחצו לפירוט</div>
             </CircularProgressbarWithChildren>
           </div>
-
+          ¸
           {/* Product Details */}
           <div className="flex-1 space-y-4 text-right">
-            <h3 className={`text-xl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries}</h3>
+            <h3 className={`text-xl rtl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries}</h3>
             <div className="flex justify-center text-sm" dir="rtl">
               <div className="flex items-center gap-2 p-2 w-full">
                 <span className={`text-center ${styles.laptopCardSpecs}`} style={{ fontSize: '18px' }}>
@@ -110,7 +162,7 @@ export default function LaptopResultCard({
               </div>
               <div className="flex items-center gap-2 p-2 w-full">
                 <span className="text-center" style={{ fontSize: '18px' }}>
-                  <span className="inline">{screenSize} אינטש </span><br/>
+                  <span className="inline">{screen_size} אינטש </span><br/>
                   <span style={{display: "inline-flex", color:"#888", fontSize:"14px"}}>
                     <Check className="h-4 w-4 text-success" /> מסך
                   </span>
@@ -118,11 +170,11 @@ export default function LaptopResultCard({
               </div>
             </div>
           </div>
-
+              
           {/* Product Image */}
           <div className="relative shrink-0">
             <img
-              src={imageUrl}
+              src={product_img}
               alt={name}
               className="object-contain"
               width="200"
@@ -131,18 +183,29 @@ export default function LaptopResultCard({
           </div>
         </div>
 
-        <div className={`block ${styles.responsiveButton}`}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open(productUrl, '_blank');
-            }}
-            className="product-link bg-black text-white font-medium py-2 px-5 rounded transition-colors"
-          >
-            קישור למוצר
-          </button>
-        </div>
+
+        
+
+        
+        <div className="relative w-full">
+      <div className={`${styles.responsiveButton} flex justify-start `}>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isCompareMode) {
+              window.open(url, '_blank');
+            }
+          }}
+          className={`mb-2 product-link bg-black text-white font-medium py-2 px-5 rounded transition-colors`}
+        >
+          קישור למוצר
+        </button>
       </div>
+      
+    </div>
+        
+      </div>
+      
 
       {/* Selection overlay */}
       <motion.div

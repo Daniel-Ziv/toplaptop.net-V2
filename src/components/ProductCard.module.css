@@ -1,0 +1,50 @@
+.responsiveContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+
+  /* hide mobile read more on pc */
+.responsiveReadmore{
+  display: none;
+}
+
+/* read more for pc */
+.readMore{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 50px;
+  padding-left: 50px;
+}
+  
+@media (max-width: 768px) {
+  /* product card for mobile */
+    .responsiveContainer {
+      flex-direction: column-reverse;
+      text-align: center;
+    }
+
+    /* buy now buttom for mobile */
+    .responsiveButton{
+        justify-content: center;
+        margin-top: 20px;
+        display: flex;
+        
+    }
+    /* read more for mobile */
+    .responsiveReadmore{
+      justify-content: center;
+      display: flex;
+    }
+   
+    .responsiveHeader{
+        text-align: center;
+    }
+    /* hide read more for pc on mobile */
+    .readMore{
+      display: none;
+    }
+  }

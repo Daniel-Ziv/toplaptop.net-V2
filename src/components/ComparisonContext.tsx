@@ -1,17 +1,35 @@
 import React, { createContext, useContext, useState } from 'react';
 
 interface Laptop {
-  name: string;
-  price: number;
-  weight: number;
-  screenSize: number;
-  imageUrl: string;
-  productUrl: string;
-  matchPercentage: number;
-  manufacturer: string;
-  laptopSeries: string;
-  laptopRam?: number;
-}
+    name: string;
+    price: number;
+    weight: number;
+    screen_size: number;
+    product_img: string;
+    url: string;
+    matchPercentage: number;
+    manufacturer: string;
+    laptopSeries: string;
+    ram_size: number;
+    ram_type: string;
+    storage_space: string;
+    storage_type: string;
+    for_gaming: boolean;
+    cpu: string;
+    cpu_ghz: number;
+    screenhz: number;
+    screenRes: string;
+    screenType: string;
+    connections: string[];
+    touchscreen: boolean;
+    security: string[];
+    flippingScreen: boolean;
+    cpuModel: string;
+    cpuGen: string;
+    withOs: string;
+    gpu: string;
+  }
+  
 
 interface ComparisonContextType {
   selectedLaptops: Laptop[];
