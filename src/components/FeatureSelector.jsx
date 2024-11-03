@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Cpu, MemoryStick, Microchip, MonitorCheck, HardDrive, Cable, Fingerprint, MonitorCog, Laptop, Battery, Wifi, Monitor, Gauge, RotateCw, Smartphones } from 'lucide-react';
+import { Cpu, MemoryStick, Microchip, MonitorCheck, HardDrive, Cable, Fingerprint, MonitorCog, Laptop, Battery, Wifi, Monitor, Gauge, RotateCw, Smartphone } from 'lucide-react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input } from "@nextui-org/react";
 import { Search } from "lucide-react";
 

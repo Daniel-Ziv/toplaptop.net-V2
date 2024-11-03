@@ -5,14 +5,14 @@ import CustomNavbar from './components/CustomNavbar';
 import { NextUIProvider } from "@nextui-org/system";
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import Welcome from "./components/pages/Welcome.tsx";
+import Welcome from "./components/pages/Welcome";
 import StudentQuestion from "./components/pages/StudentQuestion.js";
-import TasksQuestion from "./components/pages/TasksQuestion.tsx";
+import TasksQuestion from "./components/pages/TasksQuestion";
 import PriceQuestion from "./components/pages/PriceQuestion.js";
 import ScreensizeQuestion from "./components/pages/ScreensizeQuestion.js";
 import PortabilityQuestion from "./components/pages/PortabilityQuestion.js";
-import Results from "./components/pages/Results.tsx";
-import FeaturesQuestion from "./components/pages/FeaturesQuestion.jsx";
+import Results from "./components/pages/Results";
+import FeaturesQuestion from "./components/pages/FeaturesQuestion";
 import { MantineProvider } from '@mantine/core';
 
 

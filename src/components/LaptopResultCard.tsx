@@ -3,7 +3,7 @@ import React from "react";
 import { Image, CircularProgress, Card, CardBody, CardFooter, Button } from "@nextui-org/react";
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { useComparison } from './ComparisonContext';
+import {useComparison}  from './ComparisonContext';
 import styles from "./ProductCard.module.css";
 import { motion } from "framer-motion";
 
@@ -20,7 +20,7 @@ interface ProductCardProps {
   laptopSeries: string;
   ram_size: number;
   ram_type: string;
-  storage_space: string;
+  storage_space: any;
   storage_type: string;
   for_gaming: boolean;
   cpu: string;
@@ -33,7 +33,7 @@ interface ProductCardProps {
   security: string[];
   flippingScreen: boolean;
   cpuModel: string;
-  cpuGen: string;
+  cpuGen: any;
   withOs: string;
   gpu: string;
 }

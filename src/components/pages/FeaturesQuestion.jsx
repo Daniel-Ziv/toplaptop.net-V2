@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavigationButtons from "../NavigationButtons.js";
-import FeatureSelector from "../FeatureSelector.tsx";
+import FeatureSelector from "../FeatureSelector.jsx";
 import Container from "../Container.js";
 import Header from "../Header.js";
 

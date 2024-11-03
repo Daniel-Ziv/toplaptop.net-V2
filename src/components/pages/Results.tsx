@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import LaptopResultCard from '../LaptopResultCard.tsx'
+import LaptopResultCard from '../LaptopResultCard'
 import Header from '../Header'
 import laptops from '../../data/laptops.json'
 import FloatingCompareButton from '../FloatingCompareButton'
-import { ComparisonProvider } from '../ComparisonContext.tsx';
+import { ComparisonProvider } from '../ComparisonContext';
 
 interface ResultsProps {
   prevStep: () => void
@@ -16,12 +16,12 @@ interface Laptop {
   screen_size: number;
   product_img: string;
   url: string;
-  matchPercentage: number;
+  matchPercentage?: number;
   manufacturer: string;
   laptopSeries: string;
   ram_size: number;
   ram_type: string;
-  storage_space: string;
+  storage_space: any;
   storage_type: string;
   for_gaming: boolean;
   cpu: string;
@@ -34,7 +34,7 @@ interface Laptop {
   security: string[];
   flippingScreen: boolean;
   cpuModel: string;
-  cpuGen: string;
+  cpuGen: any;
   withOs: string;
   gpu: string;
 }
