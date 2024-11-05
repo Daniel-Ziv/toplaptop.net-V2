@@ -20,18 +20,24 @@ function App() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({
     tasks: [],
-    portability: [],
+    portability: "",
     features: [],
     student: {
       isStudent: "",
       selectedDegree: ""
     },
-    price: "0",
+    budget:{
+      price: 0,
+      priceImportance: ""
+    },
     screenSize: {
       selectedScreenSizes: [],
-      wantsTouchscreen: false
+      wantsTouchscreen: false,
+      screenSizeImprontace: ""
     }
   });
+  
+  const [laptopResults, setLaptopResults] = useState([]);
 
 
   const nextStep = () => {
@@ -85,13 +91,14 @@ function App() {
                                       nextStep={nextStep} 
                                       selectedScreenSizes={answers.screenSize.selectedScreenSizes} 
                                       wantsTouchscreen={answers.screenSize.wantsTouchscreen}
+                                      screenSizeImprontace={answers.screenSize.screenSizeImprontace}
                                        />;
         break;            
       case 5:
-        component = <PriceQuestion onAnswer={(answer) => handleAnswer('price', answer)} 
+        component = <PriceQuestion onAnswer={(answer) => handleAnswer('budget', answer)} 
                                  prevStep={prevStep} 
                                  nextStep={nextStep} 
-                                 savedBudget={answers.price} 
+                                 savedBudget={answers.budget}
                                   />;
         break;
       case 6:

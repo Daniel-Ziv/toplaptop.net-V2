@@ -3,7 +3,7 @@ import NavigationButtons from "../NavigationButtons";
 import CustomCheckbox from "../CustomCheckbox";
 import Container from "../Container";
 import Header from "../Header";
-import { CheckboxGroup, Button, Switch } from "@nextui-org/react";
+import { CheckboxGroup, Button, Switch, RadioGroup } from "@nextui-org/react";
 import { Pointer } from "lucide-react";
 
 function ScreensizeQuestion({
@@ -11,27 +11,43 @@ function ScreensizeQuestion({
   prevStep,
   onAnswer,
   selectedScreenSizes = [],
+  screenSizeImprontace = "",
   wantsTouchscreen = false
 }) {
   const [localScreenSizes, setLocalScreenSizes] = useState(selectedScreenSizes);
   const [localTouchscreen, setLocalTouchscreen] = useState(wantsTouchscreen);
+  const [sizeImportance, setSizeImportance] = useState(screenSizeImprontace); 
+
 
   const handleScreenSizeChange = (values) => {
     setLocalScreenSizes(values);
-    updateAnswer(values, localTouchscreen);
-  };
+    updateAnswer(values, localTouchscreen, sizeImportance); // Pass current importance
+};
 
-  const handleTouchscreenToggle = (isSelected) => {
-    setLocalTouchscreen(isSelected);
-    updateAnswer(localScreenSizes, isSelected);
-  };
+const handleTouchscreenToggle = (isSelected) => {
+  setLocalTouchscreen(isSelected);
+  updateAnswer(localScreenSizes, isSelected, sizeImportance); // Pass current importance
+};
 
-  const updateAnswer = (sizes, touchscreen) => {
+  const updateAnswer = (sizes, touchscreen, importance) => {
     onAnswer({
       selectedScreenSizes: sizes,
-      wantsTouchscreen: touchscreen
+      wantsTouchscreen: touchscreen,
+      sizeImportance: importance || sizeImportance
     });
   };
+
+  const handleImportanceChange = (value) => {
+    setSizeImportance(value);
+    if (value === "any") {
+      const allSizes = ["small", "medium", "large", "huge"];
+      setLocalScreenSizes(allSizes);
+      updateAnswer(allSizes, localTouchscreen, value); // Pass value here
+    }
+    else {
+      updateAnswer(localScreenSizes, localTouchscreen, value);
+    }
+};
 
   useEffect(() => {
     setLocalScreenSizes(selectedScreenSizes);
@@ -58,6 +74,50 @@ function ScreensizeQuestion({
         >
           אין לי מושג מה לבחור
         </Button>
+
+        <div className="w-full max-w-lg">
+          <RadioGroup 
+            value={sizeImportance}
+            onValueChange={handleImportanceChange}
+            classNames={{
+              wrapper: "gap-4"
+            }}
+          >
+            <div className="flex items-center gap-2 p-4 border rounded-lg hover:bg-gray-50">
+              <input
+                type="radio"
+                value="any"
+                checked={sizeImportance === "any"}
+                onChange={(e) => handleImportanceChange(e.target.value)}
+                className="w-4 h-4"
+              />
+              <label className="text-lg">כל גודל מסך</label>
+            </div>
+            
+            <div className="flex items-center gap-2 p-4 border rounded-lg hover:bg-gray-50">
+              <input
+                type="radio"
+                value="somewhat"
+                checked={sizeImportance === "somewhat"}
+                onChange={(e) => handleImportanceChange(e.target.value)}
+                className="w-4 h-4"
+              />
+              <label className="text-lg">חשוב טיפה</label>
+            </div>
+            
+            <div className="flex items-center gap-2 p-4 border rounded-lg hover:bg-gray-50">
+              <input
+                type="radio"
+                value="specific"
+                checked={sizeImportance === "specific"}
+                onChange={(e) => handleImportanceChange(e.target.value)}
+                className="w-4 h-4"
+              />
+              <label className="text-lg">חשוב לי מאוד</label>
+            </div>
+          </RadioGroup>
+        </div>
+
 
         <CheckboxGroup
           value={localScreenSizes}
