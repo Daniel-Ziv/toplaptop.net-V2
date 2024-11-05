@@ -17,16 +17,13 @@ const CustomCheckbox = ({ sizeName, statusColor, value }) => {
       }}
       value={value}
     >
-      <div className="w-full flex justify-between items-center gap-2 ">
-        {/* Display main name for the size */}
+        <div className="w-full flex justify-between items-center gap-2">
         <div>
           <p className="text-lg font-bold text-default-900 dark:text-default-900">
             {sizeName.name}
           </p>
           <p className="text-sm text-default-500">{sizeName.description}</p>
         </div>
-
-        {/* Optional status chip */}
         <Chip color={statusColor} size="sm" variant="flat">
           {sizeName.isRecommended}
         </Chip>

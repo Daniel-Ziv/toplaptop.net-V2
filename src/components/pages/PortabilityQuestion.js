@@ -3,7 +3,8 @@ import NavigationButtons from "../NavigationButtons";
 import Container from "../Container";
 import Header from "../Header";
 import CustomCheckbox from "../CustomCheckbox";
-import { CheckboxGroup } from "@nextui-org/react";
+import { RadioGroup } from "@nextui-org/react";
+import CustomRadio from "../CustomRadiobox";
 
 function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityChoices = [] }) {
   const [selectedPortability, setSelectedPortability] = useState(savedPortabilityChoices);
@@ -15,25 +16,25 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
 
   const portabilityOptions = [
     {
-      value: "lightWeight",
+      value: "veryImportant",
       sizeName: {
-        name: " מאוד נייד (עד 1.5 קילו)",
-        description: "אם אתם צריכים מחשב לדברים בסיסיים ולא רוצים להתעסק עם משקל מיותר, זה בשבילכם.",
+        name: " מאוד חשוב (עד 1.5 קילו)",
+        description: "מתאים למי שהלפטופ איתו תמיד ומשתמש בו לדברים פשוטים כמו גלישה באינטרנט, זום, מסמכים",
         isRecommended: "מומלץ!"
       }
     },
     {
-      value: "mediumWeight",
+      value: "important",
       sizeName: {
-        name: "משקל סטנדרטי (1.5-2 קילו)",
-        description: "אם אתם מחפשים את האיזון המושלם - גם שיהיה נוח לסחוב מסביב אבל גם שיוכל להריץ משימות בכיף, זאת אופציה מצוינת.",
+        name: "חשוב (עד 2 קילו)",
+        description: "עד 2 קילו זה המשקל הסטנדרטי לרוב המחשבים",
         isRecommended: "מומלץ!"
       }
     },
     {
-      value: "heavyWeight",
+      value: "notImportant",
       sizeName: {
-        name: "לנשיאה מדי פעם (מעל 2 קילו)",
+        name: "לא חשוב (כל משקל)",
         description: "אם אתם מריצים פרויקטים כבדים ומורכבים, ולא יכולים להרשות לעצמכם פחות ממחשב עוצמתי לידכם, זה הפתרון המושלם. גם אם הוא פחות נייד.",
         isRecommended: "מומלץ!"
       }
@@ -48,13 +49,13 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
   return (
     <Container>
       <Header
-        text="ניידות המחשב"
+        text="מחשב נייד?"
         className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
       
       <div className="flex flex-col items-center space-y-6 mt-6">
         <div className="text-center mb-4">
-          <h3 className="text-xl font-semibold mb-2">העדפת משקל</h3>
+          <h3 className="text-xl font-semibold mb-2">כמה חשוב לכם המשקל?</h3>
           <p className="text-gray-600">
             המשקל משפיע על הניידות, אבל גם על הביצועים. בחר את האיזון המתאים לך.
             <br />
@@ -62,20 +63,20 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
           </p>
         </div>
         
-        <CheckboxGroup
+        <RadioGroup
           value={selectedPortability}
-          onChange={handlePortabilityChange}
-          className="w-full max-w-lg space-y-4 items-center"
+          onValueChange={handlePortabilityChange}
+          className="w-full max-w-lg space-y-4"
         >
           {portabilityOptions.map((option) => (
-            <CustomCheckbox
+            <CustomRadio
+              key={option.value}
               value={option.value}
               sizeName={option.sizeName}
               statusColor="success"
             />
-          
           ))}
-        </CheckboxGroup>
+        </RadioGroup>
       </div>
 
       <NavigationButtons

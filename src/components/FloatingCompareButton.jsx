@@ -4,13 +4,27 @@ import { useComparison } from './ComparisonContext.tsx';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
 
+// Connection element in the laptoptop: 
 
+
+const compareConnections = (connections1, connections2) => {
+  if (!Array.isArray(connections1)) connections1 = [];
+  if (!Array.isArray(connections2)) connections2 = [];
+  
+  return {
+    unique1: connections1.filter(conn => !connections2.includes(conn)),
+    unique2: connections2.filter(conn => !connections1.includes(conn)),
+    common: connections1.filter(conn => connections2.includes(conn))
+  };
+};
 
 
 const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
   if (!laptops || laptops.length !== 2) {
     return null;
   }
+
+  
 
   const compareSpecs = (spec, laptop1, laptop2) => {
     if (!laptop1 || !laptop2) return { comparison: 'נסו שוב או עם מחשבים אחרים', winner: null };
@@ -26,7 +40,7 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
         return null;
     }
 
-    
+   
 
     // Special handling for different specs
     switch (spec) {
@@ -141,6 +155,8 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
                 winner: null
             };
     }
+
+    
 };
 
   const specs = [
@@ -172,6 +188,10 @@ const renderSpec = (spec, laptopIndex) => {
   const value1 = laptops[0][spec.key];
   const value2 = laptops[1][spec.key];
   
+
+
+ 
+
   // Skip only if both values are unavailable
   if (value1 === 'לא זמין' && value2 === 'לא זמין') {
       return null;
@@ -179,27 +199,72 @@ const renderSpec = (spec, laptopIndex) => {
 
   // For image, always render without highlighting
   if (spec.key === 'product_img') {
-      return (
-          <div key={spec.key} style={{ padding: '8px' }}>
-              <img 
-                  src={laptops[laptopIndex].product_img}
-                  alt={laptops[laptopIndex].name}
-                  style={{ 
-                      width: '100%', 
-                      height: 'auto', 
-                      borderRadius: '4px' 
-                  }}
-              />
-          </div>
-      );
+    return (
+      <div className="h-48 flex items-center justify-center">
+        <img 
+          src={laptops[laptopIndex].product_img}
+          alt={laptops[laptopIndex].name}
+          className="max-h-full w-auto object-contain rounded-lg"
+        />
+      </div>
+    );
   }
 
   const value = laptops[laptopIndex][spec.key];
   const valueStyle = getValueStyle(spec, laptopIndex);
-  
+
+  //fixing connections looks in the comparison
+  if (spec.key === 'connections') {
+    const thisLaptopConnections = laptops[laptopIndex].connections || [];
+    const otherLaptopConnections = laptops[1 - laptopIndex].connections || [];
+    
+    // Get missing connections that the other laptop has
+    const missingConnections = otherLaptopConnections.filter(conn => !thisLaptopConnections.includes(conn));
+    
+    return (
+      <div className="grid grid-cols-1 gap-1 p-2">
+        <div className="font-medium text-sm">{spec.label}</div>
+        <div className="text-sm break-words flex flex-wrap gap-1">
+          {/* Current laptop connections */}
+          {thisLaptopConnections.map((conn, i) => (
+            <span key={i} style={{
+              padding: '2px 8px',
+              borderRadius: '4px',
+              backgroundColor: !otherLaptopConnections.includes(conn) ? '#dcfce7' : 'transparent'
+            }}>
+              {conn} • 
+            </span>
+          ))}
+          {/* Missing connections in white */}
+          {missingConnections.map((conn, i) => (
+            <span key={`missing-${i}`} style={{
+              padding: '2px 8px',
+              borderRadius: '4px',
+              color: 'white'
+            }}>
+              {conn} • 
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  if (spec.key === 'gpu') {
+    const gpu = laptops[laptopIndex].gpu;
+    
+    return (
+      <div className="grid grid-cols-1 gap-1 p-2" style={{ paddingBottom: '24px' }}>
+        <div className="font-medium text-sm">{spec.label}</div>
+        <div className="text-sm break-words">
+          {gpu || 'לא זמין'}
+        </div>
+      </div>
+    );
+  }
   return (
       <div key={spec.key} style={{ padding: '8px' }}>
           <div style={{ fontWeight: 500, marginBottom: '4px' }}>{spec.label}</div>
+
           {/* For boolean values */}
           {['for_gaming', 'touchscreen', 'flippingScreen'].includes(spec.key) ? (
               <span style={valueStyle}>
@@ -266,11 +331,11 @@ const generateSummary = () => {
   });
 
   return (
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-lg font-bold mb-3">סיכום השוואה</h3>
+      <div className=" p-3 bg-gray-50 rounded-lg">
+          <h3 className="text-lg font-bold mb-4 text-center">סיכום השוואה</h3>
           <div className="grid grid-cols-2 gap-4">
               <div>
-                  <h4 className="font-bold text-sm mb-2">{laptops[0].manufacturer} {laptops[0].laptopSeries} - יתרונות:</h4>
+                  <h4 className="font-bold text-sm text-center mb-2">{laptops[0].manufacturer} {laptops[0].laptopSeries} - יתרונות:</h4>
                   {advantages.laptop1.length > 0 ? (
                       <ul className="list-disc list-inside">
                           {advantages.laptop1.map(adv => (
@@ -282,7 +347,7 @@ const generateSummary = () => {
                   )}
               </div>
               <div>
-                  <h4 className="font-bold text-sm mb-2">{laptops[1].manufacturer} {laptops[1].laptopSeries} - יתרונות:</h4>
+                  <h4 className="font-bold text-sm text-center mb-2">{laptops[1].manufacturer} {laptops[1].laptopSeries} - יתרונות:</h4>
                   {advantages.laptop2.length > 0 ? (
                       <ul className="list-disc list-inside">
                           {advantages.laptop2.map(adv => (
@@ -299,55 +364,69 @@ const generateSummary = () => {
 };
 
   return (
-      <Modal 
-        isOpen={isOpen} 
-        onClose={onClose}
-        size="2xl"
-        scrollBehavior="inside"
-        className="rtl h-[90vh] sm:h-auto mx-auto w-full max-w-full sm:max-w-4xl"
-        hideCloseButton
-        isDismissable={true}
-        onClickOutside={onClose}
-      >
-        <ModalContent className="h-full">
-          <ModalHeader className="flex flex-col gap-1 border-b">
-            השוואת מחשבים ניידים
-          </ModalHeader>
-          <ModalBody className="overflow-x-hidden">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Left Column - First Laptop */}
-              <div>
-                <h3 className="text-lg font-bold mb-4 text-center">{laptops[0].manufacturer} {laptops[0].laptopSeries}</h3>
-                <div className="space-y-4">
-                  {specs.map(spec => renderSpec(spec, 0))}
-                </div>
+    <Modal 
+    isOpen={isOpen} 
+    onClose={onClose}
+    size="2xl"
+    scrollBehavior="inside"
+    className="rtl h-[90vh] sm:h-auto mx-auto w-full max-w-full sm:max-w-4xl"
+    hideCloseButton
+    isDismissable={true}
+    onClickOutside={onClose}
+  >
+    <ModalContent className="h-full" dir="rtl">
+      <ModalHeader className="flex flex-col gap-1 border-b text-center">
+        השוואת מחשבים ניידים
+      </ModalHeader>
+      <ModalBody className="overflow-x-hidden">
+        <div className="grid grid-cols-2 gap-1">
+          {/* Column Headers */}
+          <div className="text-lg font-bold text-center ">
+            {laptops[0].manufacturer} {laptops[0].laptopSeries}
+          </div>
+          <div className="text-lg font-bold text-center ">
+            {laptops[1].manufacturer} {laptops[1].laptopSeries}
+          </div>
+
+          {/* Specs Grid */}
+          <div className="space-y-0 border-l">
+            {specs.map((spec, index) => (
+              <div
+                key={`${spec.key}-0`}
+                className={`border-b ${getBackgroundColor(spec, 0)}`}
+              >
+                {renderSpec(spec, 0)}
               </div>
-  
-              {/* Right Column - Second Laptop */}
-              <div>
-                <h3 className="text-lg font-bold mb-4 text-center">{laptops[1].manufacturer} {laptops[1].laptopSeries}</h3>
-                <div className="space-y-4">
-                  {specs.map(spec => renderSpec(spec, 1))}
-                </div>
+            ))}
+          </div>
+          <div className="space-y-0">
+            {specs.map((spec, index) => (
+              <div
+                key={`${spec.key}-1`}
+                className={`border-b ${getBackgroundColor(spec, 1)}`}
+              >
+                {renderSpec(spec, 1)}
               </div>
-            </div>
-  
-            {generateSummary()}
-          </ModalBody>
-          <ModalFooter className="border-t">
-            <Button 
-              color="danger" 
-              variant="light" 
-              onPress={onClose}
-              className="mx-auto"
-            >
-              סגור
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    );
-  };
+            ))}
+          </div>
+        </div>
+
+        {generateSummary()}
+      </ModalBody>
+      <ModalFooter className="border-t">
+        <Button 
+          color="danger" 
+          variant="light" 
+          onPress={onClose}
+          className="mx-auto"
+        >
+          סגור
+        </Button>
+      </ModalFooter>
+    </ModalContent>
+  </Modal>
+);
+};
 // Rest of the FloatingCompareButton component remains the same
 const FloatingCompareButton = () => {
   const [isVisible, setIsVisible] = useState(true);
