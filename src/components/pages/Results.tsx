@@ -1,12 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import LaptopResultCard from '../LaptopResultCard'
 import Header from '../Header'
 import laptops from '../../data/laptops.json'
 import FloatingCompareButton from '../FloatingCompareButton'
 import { ComparisonProvider } from '../ComparisonContext';
+import calculateLaptopScore from '../algo/calculateLaptopScore';
+
 
 interface ResultsProps {
-  prevStep: () => void
+  prevStep: () => void;
+  answers: any;
 }
 
 interface Laptop {
@@ -39,15 +42,27 @@ interface Laptop {
   gpu: string;
 }
 
-const Results: React.FC<ResultsProps> = ({ prevStep }) => {
+const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
   const [displayCount, setDisplayCount] = useState(5)
-  const typedLaptops = laptops as Laptop[]
+  const [sortedLaptops, setSortedLaptops] = useState<Laptop[]>([]); // Use sortedLaptops to render results
   
-  const showMore = () => {
-    setDisplayCount(prev => Math.min(prev + 5, typedLaptops.length))
-  }
+  useEffect(() => {
+    // Calculate match percentage for each laptop
+    const scoredLaptops: Laptop[] = laptops.map((laptop) => ({  //its red because it thinks some fields might be missing in laptops.json
+      ...laptop,
+      matchPercentage: calculateLaptopScore(laptop, answers),
+    }));
 
-  const hasMoreLaptops = displayCount < typedLaptops.length
+    // Sort laptops by match percentage in descending order
+    scoredLaptops.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
+    setSortedLaptops(scoredLaptops);
+  }, [answers]);
+
+  const showMore = () => {
+    setDisplayCount((prev) => Math.min(prev + 5, sortedLaptops.length));
+  };
+
+  const hasMoreLaptops = displayCount < sortedLaptops.length;
 
   return (
     <ComparisonProvider>
@@ -58,7 +73,8 @@ const Results: React.FC<ResultsProps> = ({ prevStep }) => {
             className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
           />
           <div className="flex flex-col gap-8">
-            {typedLaptops.slice(0, displayCount).map((laptop, index) => (
+            {sortedLaptops.slice(0, displayCount).map((laptop, index) => ( // Use sortedLaptops here
+
               <LaptopResultCard
               key={index}
               name={laptop.name}
@@ -67,7 +83,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep }) => {
               screen_size={laptop.screen_size}
               product_img={laptop.product_img}     
               url={laptop.url}                      
-              matchPercentage={40}
+              matchPercentage={laptop.matchPercentage || 0}
               manufacturer={laptop.manufacturer}
               laptopSeries={laptop.laptopSeries}
               ram_size={laptop.ram_size}            
@@ -97,7 +113,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep }) => {
                   onClick={showMore}
                   className="w-full max-w-md px-4 py-2 bg-blue-500 text-white rounded-md transition-colors hover:bg-blue-600 text-lg"
                 >
-                  הצג עוד {Math.min(5, typedLaptops.length - displayCount)} מחשבים
+                  הצג עוד {Math.min(5, sortedLaptops.length - displayCount)} מחשבים
                 </button>
               )}
               
