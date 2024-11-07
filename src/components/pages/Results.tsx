@@ -12,6 +12,11 @@ interface ResultsProps {
   answers: any;
 }
 
+interface ComponentScore {
+  name: string;
+  score: number;
+}
+
 interface Laptop {
   name: string;
   price: number;
@@ -40,6 +45,8 @@ interface Laptop {
   cpuGen: any;
   withOs: string;
   gpu: string;
+  componentScores?: ComponentScore[];
+
 }
 
 
@@ -50,16 +57,19 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
   
   useEffect(() => {
     // Calculate match percentage for each laptop
-    const scoredLaptops: Laptop[] = laptops.map((laptop) => ({  //its red because it thinks some fields might be missing in laptops.json
-      ...laptop,
-      matchPercentage: calculateLaptopScore(laptop, answers),
-    }));
-
+    const scoredLaptops: Laptop[] = laptops.map((laptop) => {
+      const { finalScore, componentScores } = calculateLaptopScore(laptop, answers);
+      return {
+        ...laptop,
+        matchPercentage: finalScore,
+        componentScores: componentScores
+      };
+    });
+  
     // Sort laptops by match percentage in descending order
     scoredLaptops.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
     setSortedLaptops(scoredLaptops);
   }, [answers]);
-
   const showMore = () => {
     setDisplayCount((prev) => Math.min(prev + 5, sortedLaptops.length));
   };
@@ -106,6 +116,8 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
               cpuGen={laptop.cpuGen}        
               withOs={laptop.withOs}
               gpu={laptop.gpu}
+              componentScores={laptop.componentScores || []}
+
             />
             ))}
             

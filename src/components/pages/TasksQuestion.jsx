@@ -110,27 +110,16 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
     }
   }, [selectedTasks]);
 
-  const handleSelectionChange = (task) => {
-    let updatedTasks;
-    if (localSelectedTasks.includes(task)) {
-
-      updatedTasks = localSelectedTasks.filter(t => t !== task);
-      const updatedLevels = { ...taskLevels };
-      delete updatedLevels[task];
-      setTaskLevels(updatedLevels);
-    } else {
-      // Add task
-      updatedTasks = [...localSelectedTasks, task];
-    }
-    setLocalSelectedTasks(updatedTasks);
-    
-    // Update parent with tasks and their levels
-    const tasksWithLevels = updatedTasks.map(t => ({
-      task: t,
-      level: taskLevels[t] || null
-    }));
-    onAnswer(tasksWithLevels);
-  };
+ const handleSelectionChange = (task) => {
+  let updatedTasks;
+  if (localSelectedTasks.some(t => t.includes(task))) {
+    updatedTasks = localSelectedTasks.filter(t => !t.includes(task)); // Remove all levels of this task
+  } else {
+    updatedTasks = [...localSelectedTasks, task];
+  }
+  setLocalSelectedTasks(updatedTasks);
+  onAnswer(updatedTasks);
+};
 
   const handleLevelSelect = (task, level) => {
     const updatedLevels = {

@@ -1,11 +1,18 @@
 import { Check, ChevronDown } from "lucide-react";
-import React from "react";
-import { Image, CircularProgress, Card, CardBody, CardFooter, Button } from "@nextui-org/react";
+import React, { useState } from "react";
+import { Image, CircularProgress, Card, CardBody, CardFooter, Button, Modal } from "@nextui-org/react";
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import {useComparison}  from './ComparisonContext';
 import styles from "./ProductCard.module.css";
 import { motion } from "framer-motion";
+import LaptopDetailsModal from './LaptopDetailsModal';
+
+interface ComponentScore {
+  name: string;
+  score: number;
+}
+
 
 
 interface ProductCardProps {
@@ -36,6 +43,8 @@ interface ProductCardProps {
   cpuGen: any;
   withOs: string;
   gpu: string;
+  componentScores: ComponentScore[];
+
 }
 
 export default function LaptopResultCard({
@@ -65,10 +74,12 @@ export default function LaptopResultCard({
   cpuModel,
   cpuGen,
   withOs,
-  gpu
+  gpu,
+  componentScores
 }: ProductCardProps) {
   const { selectedLaptops, toggleLaptopSelection, isCompareMode } = useComparison();
   const isSelected = selectedLaptops.some(laptop => laptop.name === name);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't trigger selection if clicking the product link button
@@ -104,7 +115,8 @@ export default function LaptopResultCard({
       cpuModel,
       cpuGen,
       withOs,
-      gpu
+      gpu,
+      
     });
   };
   return (
@@ -127,7 +139,12 @@ export default function LaptopResultCard({
       <div className="p-2">
         <div className={styles.responsiveContainer}>
           {/* Match Percentage */}
-          <div style={{ width: 125, height: 125 }}>
+          <div style={{ width: 125, height: 125 }} 
+           onClick={(e) => {
+            e.stopPropagation(); // Prevent card selection
+            setIsModalOpen(true);
+          }}
+          >
             <CircularProgressbarWithChildren
               value={matchPercentage}
               styles={buildStyles({
@@ -139,7 +156,14 @@ export default function LaptopResultCard({
               <div style={{ fontSize: '14px', color: "grey" }}>לחצו לפירוט</div>
             </CircularProgressbarWithChildren>
           </div>
-          ¸
+          
+           {/* Add LaptopDetailsModal */}
+          <LaptopDetailsModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            matchPercentage={matchPercentage}
+            componentScores={componentScores}
+          />
           {/* Product Details */}
           <div className="flex-1 space-y-4 text-right">
             <h3 className={`text-xl rtl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries}</h3>
