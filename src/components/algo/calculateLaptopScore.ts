@@ -6,13 +6,13 @@ interface ComponentScoreRange {
 interface TaskRequirements {
   cpu: ComponentScoreRange;
   ram: ComponentScoreRange;
+  ramType: ComponentScoreRange;
   gpu: ComponentScoreRange;
+  storageSpace: ComponentScoreRange;
   storageType: ComponentScoreRange;
-  screenSize: ComponentScoreRange;
-  weight: ComponentScoreRange;
-  // Add more components as needed
 }
 
+// Define CPU model base scores
 const cpuModelDetails: Record<string, number> = {
 
   "Intel Core i5": 6,
@@ -117,35 +117,30 @@ const cpuModelDetails: Record<string, number> = {
  
  };
 
-
-
-// Define ideal ranges for each task (example)
+// Ideal ranges for each task
 const taskRequirements: Record<string, TaskRequirements> = {
   "Heavy Programming": {
     cpu: { min: 7, max: 10 },
     ram: { min: 8, max: 10 },
     gpu: { min: 5, max: 8 },
     storageType: { min: 6, max: 8 },
-    screenSize: { min: 6, max: 8 },
-    weight: { min: 3, max: 6 }
-    // Add other components as needed
   },
   // Define other tasks as needed
 };
 
-// Function to calculate component score based on Euclidean distance
+// Calculate component score based on Euclidean distance
 function calculateComponentScore(
   componentScore: number,
   idealRange: ComponentScoreRange
 ): number {
   const midpoint = (idealRange.min + idealRange.max) / 2;
+  const maxDistance = Math.abs(idealRange.max - idealRange.min) / 2 || 1; // Ensure non-zero maxDistance
   const distance = Math.abs(midpoint - componentScore);
-  const maxDistance = Math.abs(idealRange.max - idealRange.min) / 2; // Half of the range is the maximum distance
   const normalizedScore = 100 - (distance / maxDistance) * 100; // Scale to 0-100
   return Math.max(0, normalizedScore); // Ensure score is at least 0
 }
 
-// Calculate Euclidean distance for laptop score
+// Main function to calculate laptop score
 export function calculateLaptopScore(laptop: any, answers: any): number {
   const { tasks } = answers;
 
@@ -154,12 +149,9 @@ export function calculateLaptopScore(laptop: any, answers: any): number {
     (acc: TaskRequirements, task: string) => {
       const requirements = taskRequirements[task];
       for (const key in requirements) {
-        if (acc[key as keyof TaskRequirements].min < requirements[key as keyof TaskRequirements].min) {
-          acc[key as keyof TaskRequirements].min = requirements[key as keyof TaskRequirements].min;
-        }
-        if (acc[key as keyof TaskRequirements].max < requirements[key as keyof TaskRequirements].max) {
-          acc[key as keyof TaskRequirements].max = requirements[key as keyof TaskRequirements].max;
-        }
+        const component = key as keyof TaskRequirements;
+        acc[component].min = Math.max(acc[component].min, requirements[component].min);
+        acc[component].max = Math.max(acc[component].max, requirements[component].max);
       }
       return acc;
     },
@@ -172,8 +164,10 @@ export function calculateLaptopScore(laptop: any, answers: any): number {
       weight: { min: 0, max: 10 }
     }
   );
+  console.log("Combined Task Requirements:", combinedTaskRequirements);
 
-  // Scores and weights for each component
+
+  // Define weights for each component
   const weights = {
     cpu: 0.25,
     ram: 0.2,
@@ -183,18 +177,22 @@ export function calculateLaptopScore(laptop: any, answers: any): number {
     weight: 0.1
   };
 
-  // Component scores (objectively scored out of 10)
+  // Objective component scores (out of 10)
   const cpuScore = cpuModelDetails[laptop.cpu] || 0;
-  const ramScore = laptop.ram_size / 16 * 10; // Assume 16GB as full score of 10
-  const gpuScore = laptop.gpu_score; // Assume this is scored 1-10 based on your data
+  const ramScore = (laptop.ram_size / 16) * 10; // Example: 16GB as full score
+  const gpuScore = laptop.gpu_score || 5; // Use a default if missing
   const storageTypeScore = laptop.storageType === "SSD" ? 8 : 5; // Example: SSD scores 8, HDD scores 5
-  const screenSizeScore = laptop.screen_size >= 15 ? 8 : 5; // Example: larger screens get higher score
-  const weightScore = laptop.weight <= 2.0 ? 8 : 5; // Example: lighter weight gets higher score
+  const screenSizeScore = laptop.screen_size >= 15 ? 8 : 5;
+  const weightScore = laptop.weight <= 2.0 ? 8 : 5;
+
+  console.log("Component Scores:", { cpuScore, ramScore, gpuScore, storageTypeScore, screenSizeScore, weightScore });
+
 
   // Calculate weighted sum of distances
   let totalDistance = 0;
   let maxDistance = 0;
 
+  // Sum the Euclidean distances for each component
   totalDistance += weights.cpu * Math.pow(calculateComponentScore(cpuScore, combinedTaskRequirements.cpu) - 100, 2);
   totalDistance += weights.ram * Math.pow(calculateComponentScore(ramScore, combinedTaskRequirements.ram) - 100, 2);
   totalDistance += weights.gpu * Math.pow(calculateComponentScore(gpuScore, combinedTaskRequirements.gpu) - 100, 2);
@@ -202,14 +200,15 @@ export function calculateLaptopScore(laptop: any, answers: any): number {
   totalDistance += weights.screenSize * Math.pow(calculateComponentScore(screenSizeScore, combinedTaskRequirements.screenSize) - 100, 2);
   totalDistance += weights.weight * Math.pow(calculateComponentScore(weightScore, combinedTaskRequirements.weight) - 100, 2);
 
-  maxDistance += weights.cpu * Math.pow(100, 2); // max distance for each component
+  // Calculate max possible distance for normalization
+  maxDistance += weights.cpu * Math.pow(100, 2);
   maxDistance += weights.ram * Math.pow(100, 2);
   maxDistance += weights.gpu * Math.pow(100, 2);
   maxDistance += weights.storageType * Math.pow(100, 2);
   maxDistance += weights.screenSize * Math.pow(100, 2);
   maxDistance += weights.weight * Math.pow(100, 2);
 
-  const finalScore = 100 - Math.sqrt(totalDistance) / Math.sqrt(maxDistance) * 100;
-
+  // Normalize to get final score as a percentage
+  const finalScore = 100 - (Math.sqrt(totalDistance) / Math.sqrt(maxDistance)) * 100;
   return Math.max(0, Math.round(finalScore));
 }

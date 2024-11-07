@@ -4,7 +4,7 @@ import Header from '../Header'
 import laptops from '../../data/laptops.json'
 import FloatingCompareButton from '../FloatingCompareButton'
 import { ComparisonProvider } from '../ComparisonContext';
-import calculateLaptopScore from '../algo/calculateLaptopScore';
+import {calculateLaptopScore} from '../algo/calculateLaptopScore';
 
 
 interface ResultsProps {
@@ -41,6 +41,8 @@ interface Laptop {
   withOs: string;
   gpu: string;
 }
+
+
 
 const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
   const [displayCount, setDisplayCount] = useState(5)
