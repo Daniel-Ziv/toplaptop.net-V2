@@ -6,7 +6,6 @@ import { NextUIProvider } from "@nextui-org/system";
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Welcome from "./components/pages/Welcome";
-import StudentQuestion from "./components/pages/StudentQuestion.js";
 import TasksQuestion from "./components/pages/TasksQuestion";
 import PriceQuestion from "./components/pages/PriceQuestion.js";
 import ScreensizeQuestion from "./components/pages/ScreensizeQuestion.js";
@@ -17,23 +16,19 @@ import { MantineProvider } from '@mantine/core';
 
 
 function App() {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState({
     tasks: [],
-    portability: "",
+    weightImportance: 0,
     features: [],
-    student: {
-      isStudent: "",
-      selectedDegree: ""
-    },
     budget:{
       price: 0,
-      priceImportance: ""
+      priceImportance: 0
     },
     screenSize: {
       selectedScreenSizes: [],
       wantsTouchscreen: false,
-      screenSizeImprontace: ""
+      sizeImportance: 0
     }
   });
   
@@ -63,15 +58,8 @@ function App() {
   const renderStep = () => {
     let component;
     switch(step) {
-      case 0:
-        component = <Welcome onAnswer={(answer) => handleAnswer('welcome', answer)} nextStep={nextStep} />;
-        break;
       case 1:
-        component = <StudentQuestion onAnswer={(answer) => handleAnswer('student', answer)} 
-                                   prevStep={prevStep} 
-                                   nextStep={nextStep} 
-                                   isStudent={answers.student.isStudent} 
-                                   selectedDegree={answers.student.selectedDegree}/>;
+        component = <Welcome onAnswer={(answer) => handleAnswer('welcome', answer)} nextStep={nextStep} />;
         break;
       case 2:
         component = <TasksQuestion onAnswer={(answer) => handleAnswer('tasks', answer)} 
@@ -80,10 +68,10 @@ function App() {
                                  selectedTasks={answers.tasks}/>;
         break;
       case 3:
-        component = <PortabilityQuestion onAnswer={(answer) => handleAnswer('portability', answer)} 
+        component = <PortabilityQuestion onAnswer={(answer) => handleAnswer('weightImportance', answer)} 
                                        prevStep={prevStep} 
                                        nextStep={nextStep} 
-                                       savedPortabilityChoices={answers.portability} />;
+                                       savedPortabilityChoices={answers.weightImportance} />;
         break;
       case 4:
         component = <ScreensizeQuestion onAnswer={(answer) => handleAnswer('screenSize', answer)} 
@@ -91,7 +79,7 @@ function App() {
                                       nextStep={nextStep} 
                                       selectedScreenSizes={answers.screenSize.selectedScreenSizes} 
                                       wantsTouchscreen={answers.screenSize.wantsTouchscreen}
-                                      screenSizeImprontace={answers.screenSize.screenSizeImprontace}
+                                      screenSizeImportance={answers.screenSize.sizeImportance}
                                        />;
         break;            
       case 5:

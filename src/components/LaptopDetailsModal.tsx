@@ -44,7 +44,7 @@ const LaptopDetailsModal: React.FC<LaptopDetailsModalProps> = ({
                         <div className="w-48 bg-gray-200 rounded-full h-2.5">
                           <div 
                             className="bg-primary h-2.5 rounded-full" 
-                            style={{ width: `${component.score}%` }}
+                            style={{ width: `${component.score}` }}
                           />
                         </div>
                         <span className="text-primary min-w-[3ch]">{component.score}%</span>

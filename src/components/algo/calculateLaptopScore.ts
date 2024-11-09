@@ -429,15 +429,15 @@ const taskRequirements: Record<string, TaskRequirements> = {
     ramType: { min: 4, max: 10, weight: 0.1 },       // RAM type helps with performance.
     gpu: { min: 7, max: 10, weight: 0.25 },          // GPU is essential for rendering and playback.
     storageSpace: { min: 6, max: 10, weight: 0.1 },  // Storage is important for large video files.
-    storageType: { min: 6, max: 8, weight: 0.05 }    // Fast storage type improves access to large files.
+    storageType: { min: 6, max: 10, weight: 0.05 }    // Fast storage type improves access to large files.
   },
   "basic-use": {
     cpu: { min: 3, max: 5, weight: 0.15 },           // CPU is sufficient for basic tasks.
-    ram: { min: 2, max: 4, weight: 0.2 },            // RAM for multitasking basic applications.
+    ram: { min: 5, max: 6, weight: 0.2 },            // RAM for multitasking basic applications.
     ramType: { min: 2, max: 10, weight: 0.05 },      // RAM type is not a priority.
     gpu: { min: 2, max: 5, weight: 0.1 },            // Minimal GPU needed for simple graphics.
     storageSpace: { min: 3, max: 6, weight: 0.25 },  // Storage is important for general usage files.
-    storageType: { min: 3, max: 6, weight: 0.25 }    // Storage type should be reliable, but speed is less crucial.
+    storageType: { min: 3, max: 10, weight: 0.25 }    // Storage type should be reliable, but speed is less crucial.
   },
   "ai": {
     cpu: { min: 8, max: 10, weight: 0.3 },           // High CPU power is crucial for AI processing.
@@ -448,7 +448,7 @@ const taskRequirements: Record<string, TaskRequirements> = {
     storageType: { min: 6, max: 10, weight: 0.05 }    // Storage type matters somewhat for loading data quickly.
   },
   "light-programming": {
-    cpu: { min: 4, max: 7, weight: 0.2 },            // CPU is helpful but doesn’t need to be very high.
+    cpu: { min: 5, max: 8, weight: 0.2 },            // CPU is helpful but doesn’t need to be very high.
     ram: { min: 4, max: 6, weight: 0.25 },           // RAM is valuable for handling larger projects.
     ramType: { min: 3, max: 10, weight: 0.1 },       // RAM type matters moderately.
     gpu: { min: 3, max: 5, weight: 0.1 },            // GPU is less critical for light programming.
@@ -481,12 +481,105 @@ function calculateComponentScore(
   componentScore: number,
   idealRange: ComponentScoreRange
 ): number {
-  const midpoint = (idealRange.min + idealRange.max) / 2;
-  const maxDistance = (idealRange.max - idealRange.min) / 2 || 1; // Avoid division by zero
-  const distance = Math.abs(componentScore - midpoint);
-  const normalizedScore = Math.max(0, 100 - (distance / maxDistance) * 100);
-  return normalizedScore;
+  if (componentScore >= idealRange.min && componentScore <= idealRange.max) {
+    return 100; // Perfect score within ideal range
+  } else {
+    const distance = componentScore < idealRange.min
+      ? idealRange.min - componentScore
+      : componentScore - idealRange.max;
+    const maxDistance = 10; // Maximum possible score difference
+    const penalty = (distance / maxDistance) * 100;
+    const normalizedScore = Math.max(0, 100 - penalty);
+    return normalizedScore;
+  }
 }
+
+function calculatePriceScore(laptopPrice: number, userBudget: number): number {
+  if (laptopPrice <= userBudget) {
+    return 100; // Perfect score within budget
+  } else {
+    const overBudgetPercentage = (laptopPrice - userBudget) / userBudget;
+    const penalty = Math.min(100, overBudgetPercentage * 100); // Cap penalty at 100%
+    const score = Math.max(0, 100 - penalty);
+    return score;
+  }
+}
+
+function calculateWeightScore(laptopWeight: number | undefined, weightImportance: number): number {
+  // Assume laptopWeight is in kg; default weight if undefined
+  const weight = laptopWeight ?? 2; // Assume 2 kg if weight is undefined
+
+  // Determine maximum acceptable weight based on weight importance
+  let maxAcceptableWeight: number;
+
+  if (weightImportance === 0) {
+    return 100; // All weights are acceptable, full score
+  } else if (weightImportance === 0.125) {
+    maxAcceptableWeight = 2; // Accept up to 2 kg
+  } else if (weightImportance === 0.25) {
+    maxAcceptableWeight = 1.5; // Accept up to 1.5 kg
+  } else {
+    maxAcceptableWeight = 2.5 - weightImportance * 4; // Adjust dynamically for other values
+  }
+
+  // Calculate penalty for weights above maxAcceptableWeight
+  if (weight <= maxAcceptableWeight) {
+    return 100; // Full score for weights within the acceptable range
+  } else {
+    const excessWeight = weight - maxAcceptableWeight;
+    const penalty = (excessWeight / maxAcceptableWeight) * 100;
+    return Math.max(0, 100 - penalty); // Ensure score is within 0-100
+  }
+}
+
+
+function calculateScreenSizeScore(
+  laptopScreenSize: number,
+  selectedScreenSizes: string[]
+): number {
+  // Define screen size ranges for each category
+  const screenSizeRanges = {
+    small: { min: 0, max: 13 },
+    medium: { min: 13, max: 14 },
+    large: { min: 14, max: 16 },
+    huge: { min: 16, max: 50 },
+  };
+
+  // Determine laptop's screen size category
+  let laptopCategory = "";
+  if (laptopScreenSize < 13) {
+    laptopCategory = "small";
+  } else if (laptopScreenSize >= 13 && laptopScreenSize < 14) {
+    laptopCategory = "medium";
+  } else if (laptopScreenSize >= 14 && laptopScreenSize <= 16) {
+    laptopCategory = "large";
+  } else if (laptopScreenSize > 16) {
+    laptopCategory = "huge";
+  }
+
+  // If laptop's category is one of the selected sizes, score is 100
+  if (selectedScreenSizes.includes(laptopCategory)) {
+    return 100;
+  }
+
+  // Calculate penalty if not within selected categories
+  // Penalty increases the further the screen size is from selected preferences
+  let minPenalty = 100; // Start with the max penalty
+  for (const selectedSize of selectedScreenSizes) {
+    const { min, max } = screenSizeRanges[selectedSize as keyof typeof screenSizeRanges];
+    const distanceToCategory =
+      laptopScreenSize < min ? min - laptopScreenSize : laptopScreenSize - max;
+    const penalty = Math.min(100, (distanceToCategory / 5) * 100); // Assuming max 5" as acceptable difference
+    minPenalty = Math.min(minPenalty, penalty);
+  }
+
+  const score =  Math.max(0, Math.min(100, 100 - minPenalty));
+  // Ensure score stays within 0-100
+  return score;
+}
+
+
+
 
 // Main function to calculate laptop score
 export function calculateLaptopScore(laptop: any, answers: any): { finalScore: number; componentScores: { name: string; score: number; }[] } {
@@ -555,64 +648,111 @@ export function calculateLaptopScore(laptop: any, answers: any): { finalScore: n
   const storageSpaceScore = storageSpaceScores[laptop.storage_space] || 0;
   const storageTypeScore = storageTypeScores[laptop.storage_type] || 0;
 
+  // Normalize component scores to out of 100
+  const normalizedCpuScore = (cpuScore / 10) * 100;
+  const normalizedRamScore = (ramScore / 10) * 100;
+  const normalizedRamTypeScore = (ramTypeScore / 10) * 100;
+  const normalizedGpuScore = (gpuScore / 10) * 100;
+  const normalizedStorageSpaceScore = (storageSpaceScore / 10) * 100;
+  const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
+
   console.log("Component Scores:", {
-    cpuScore,
-    ramScore,
-    ramTypeScore,
-    gpuScore,
-    storageSpaceScore,
-    storageTypeScore,
+    normalizedCpuScore,
+    normalizedRamScore,
+    normalizedRamTypeScore,
+    normalizedGpuScore,
+    normalizedStorageSpaceScore,
+    normalizedStorageTypeScore,
   });
-  const weightedScores = {
-    cpu:
-      combinedTaskRequirements.cpu.weight *
-      calculateComponentScore(cpuScore, combinedTaskRequirements.cpu),
-    ram:
-      combinedTaskRequirements.ram.weight *
-      calculateComponentScore(ramScore, combinedTaskRequirements.ram),
-    ramType:
-      combinedTaskRequirements.ramType.weight *
-      calculateComponentScore(ramTypeScore, combinedTaskRequirements.ramType),
-    gpu:
-      combinedTaskRequirements.gpu.weight *
-      calculateComponentScore(gpuScore, combinedTaskRequirements.gpu),
-    storageSpace:
-      combinedTaskRequirements.storageSpace.weight *
-      calculateComponentScore(storageSpaceScore, combinedTaskRequirements.storageSpace),
-    storageType:
-      combinedTaskRequirements.storageType.weight *
-      calculateComponentScore(storageTypeScore, combinedTaskRequirements.storageType),
+
+  // Calculate individual component scores based on requirements
+  const componentScoresMap = {
+    cpu: calculateComponentScore(normalizedCpuScore / 10, combinedTaskRequirements.cpu),
+    ram: calculateComponentScore(normalizedRamScore / 10, combinedTaskRequirements.ram),
+    ramType: calculateComponentScore(normalizedRamTypeScore / 10, combinedTaskRequirements.ramType),
+    gpu: calculateComponentScore(normalizedGpuScore / 10, combinedTaskRequirements.gpu),
+    storageSpace: calculateComponentScore(
+      normalizedStorageSpaceScore / 10,
+      combinedTaskRequirements.storageSpace
+    ),
+    storageType: calculateComponentScore(
+      normalizedStorageTypeScore / 10,
+      combinedTaskRequirements.storageType
+    ),
   };
-  if (!gpuModelScores[laptop.gpu]) {
-    console.warn(`GPU model not found in scoring dictionary: "${laptop.gpu}"`);
-  }
 
-  // Check if RAM type exists in dictionary
-  if (!ramTypeScores[laptop.ram_type]) {
-    console.warn(`RAM type not found in scoring dictionary: "${laptop.ram_type}"`);
-  }
-  
+  // Multiply by weights
+  const weightedScores = {
+    cpu: componentScoresMap.cpu * combinedTaskRequirements.cpu.weight,
+    ram: componentScoresMap.ram * combinedTaskRequirements.ram.weight,
+    ramType: componentScoresMap.ramType * combinedTaskRequirements.ramType.weight,
+    gpu: componentScoresMap.gpu * combinedTaskRequirements.gpu.weight,
+    storageSpace: componentScoresMap.storageSpace * combinedTaskRequirements.storageSpace.weight,
+    storageType: componentScoresMap.storageType * combinedTaskRequirements.storageType.weight,
+  };
 
-  const totalWeight = Object.values(combinedTaskRequirements).reduce(
+  const taskComponentTotalWeight = Object.values(combinedTaskRequirements).reduce(
     (sum, component) => sum + component.weight,
     0
   );
 
-  const finalScore =
-    Object.values(weightedScores).reduce((sum, score) => sum + score, 0) / totalWeight;
+  // Calculate the task final score
+  const taskFinalScore =
+    Object.values(weightedScores).reduce((sum, score) => sum + score, 0) / taskComponentTotalWeight;
 
-    const componentScores =[
-      { name: "מעבד", score: Math.round(cpuScore) },
-      { name: "כרטיס מסך", score: Math.round(gpuScore) },
-      { name: "זיכרון RAM", score: Math.round(ramScore) },
-      { name: "סוג זיכרון", score: Math.round(ramTypeScore) },
-      { name: "נפח אחסון", score: Math.round(storageSpaceScore) },
-      { name: "סוג אחסון", score: Math.round(storageTypeScore) }
-    ];
+   // New price, weight, and screen size scores based on answers format
+   const priceScore = calculatePriceScore(laptop.price, answers.budget.price);
+   const weightScore = calculateWeightScore(laptop.weight, answers.weightImportance);
+   const screenSizeScore = calculateScreenSizeScore(
+    laptop.screen_size,
+    answers.screenSize.selectedScreenSizes
+  );
 
-    console.log(componentScores)
-  return {
-    finalScore: Math.round(finalScore),
-    componentScores: componentScores
-  };
-}
+  console.log("screen size importance", answers.screenSize.sizeImportance);
+   // Normalize importance weights
+   const totalImportance =
+     answers.budget.priceImportance +
+     answers.weightImportance +
+     answers.screenSize.sizeImportance;
+ 
+   const taskImportance = 1 - totalImportance;
+   console.log("Importance Weights:", {
+      taskImportance,
+      priceImportance: answers.budget.priceImportance,
+      weightImportance: answers.weightImportance,
+      sizeImportance: answers.screenSize.sizeImportance,
+    });
+ 
+   // Compute the final score
+   const finalScore =
+     taskFinalScore * taskImportance +
+     priceScore * answers.budget.priceImportance +
+     weightScore * answers.weightImportance +
+     screenSizeScore * answers.screenSize.sizeImportance;
+ 
+   const componentScores = [
+     { name: "מעבד", score: Math.round(componentScoresMap.cpu) },
+     { name: "כרטיס מסך", score: Math.round(componentScoresMap.gpu) },
+     { name: "זיכרון RAM", score: Math.round(componentScoresMap.ram) },
+     { name: "סוג זיכרון", score: Math.round(componentScoresMap.ramType) },
+     { name: "נפח אחסון", score: Math.round(componentScoresMap.storageSpace) },
+     { name: "סוג אחסון", score: Math.round(componentScoresMap.storageType) },
+     { name: "מחיר", score: Math.round(priceScore) },
+     { name: "משקל", score: Math.round(weightScore) },
+     { name: "גודל מסך", score: Math.round(screenSizeScore) },
+   ];
+ 
+   console.log("Scores Breakdown:", {
+    taskFinalScore,
+    priceScore,
+    weightScore,
+    screenSizeScore,
+    taskImportance,
+    finalScore,
+    componentScores
+  }); 
+   return {
+     finalScore: Math.round(finalScore),
+     componentScores: componentScores,
+   };
+ }

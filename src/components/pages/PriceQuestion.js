@@ -1,30 +1,33 @@
 import React, { useState, useEffect } from "react";
 import NavigationButtons from "../NavigationButtons";
-import { Slider, Button } from "@nextui-org/react";
+import { Slider, Button, RadioGroup } from "@nextui-org/react";
 import Container from "../Container";
 import Header from "../Header";
+import CustomRadio from "../CustomRadiobox";
+import { motion, AnimatePresence } from "framer-motion";
 
-function PriceQuestion({ nextStep, prevStep, onAnswer ,savedBudget = { price: 3000, priceImportance: "" }, }) {
-  // Local state to track the slider value
-  const [sliderValue, setSliderValue] = useState(savedBudget?.value || 3000);
-  const [localImportance, setImportance] = useState(savedBudget?.priceImportance || "");
+function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget = { price: 3000, priceImportance: 0 } }) {
+  const [sliderValue, setSliderValue] = useState(savedBudget?.price || 3000);
+  const [localImportance, setImportance] = useState(savedBudget?.priceImportance || 0);
 
-
-  // Update local state when savedBudget changes
   useEffect(() => {
-    if (savedBudget?.value) {
-      setSliderValue(savedBudget.value);
+    if (savedBudget?.price) {
+      setSliderValue(savedBudget.price);
+    }
+    if (savedBudget?.priceImportance !== undefined) {
+      setImportance(savedBudget.priceImportance);
     }
   }, [savedBudget]);
 
   const handleBudgetChange = (value) => {
     setSliderValue(value);
-    updateAnswer(value, localImportance)
+    updateAnswer(value, localImportance);
   };
 
   const handleImportanceChange = (value) => {
-    setImportance(value);
-    updateAnswer(sliderValue, value);
+    const numValue = Number(value);
+    setImportance(numValue);
+    updateAnswer(sliderValue, numValue);
   };
 
   const handleNext = () => {
@@ -38,9 +41,36 @@ function PriceQuestion({ nextStep, prevStep, onAnswer ,savedBudget = { price: 30
   const updateAnswer = (value, importance) => {
     onAnswer({ 
       price: value,
-      priceImportance: importance || localImportance
+      priceImportance: importance
     });
   };
+
+  const importanceOptions = [
+    {
+      value: 0,
+      sizeName: {
+        name: "לא חשוב",
+        description: "המחיר לא משפיע על הבחירה שלי",
+        isRecommended: ""
+      }
+    },
+    {
+      value: 0.125,
+      sizeName: {
+        name: "קצת חשוב",
+        description: "אני מוכן להתגמש במחיר, אבל יש לי העדפה",
+        isRecommended: ""
+      }
+    },
+    {
+      value: 0.25,
+      sizeName: {
+        name: "חשוב",
+        description: "המחיר הוא גורם משמעותי בהחלטה שלי",
+        isRecommended: ""
+      }
+    }
+  ];
 
   return (
     <Container>
@@ -57,78 +87,73 @@ function PriceQuestion({ nextStep, prevStep, onAnswer ,savedBudget = { price: 30
       </div>
 
       <div className="flex flex-col items-center space-y-4 mt-6">
-
-         {/* Add Radio Group for Importance */}
-      <div className="w-full max-w-lg mx-auto mb-6">
-        <p className="text-lg text-center mb-4" dir="rtl">
-          במידה ויש לכם תקציב, כמה חשוב לכם שהמחשב יהיה בתקציב
-        </p>
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 p-4 border rounded-lg hover:bg-gray-50">
-            <input
-              type="radio"
-              value="not-important"
-              checked={localImportance === "not-important"}
-              onChange={(e) => handleImportanceChange(e.target.value)}
-              className="w-4 h-4"
-            />
-            <label className="text-lg" dir="rtl">לא חשוב</label>
-          </div>
-          
-          <div className="flex items-center gap-2 p-4 border rounded-lg hover:bg-gray-50">
-            <input
-              type="radio"
-              value="somewhat-important"
-              checked={localImportance === "somewhat-important"}
-              onChange={(e) => handleImportanceChange(e.target.value)}
-              className="w-4 h-4"
-            />
-            <label className="text-lg" dir="rtl">קצת חשוב</label>
-          </div>
-          
-          <div className="flex items-center gap-2 p-4 border rounded-lg hover:bg-gray-50">
-            <input
-              type="radio"
-              value="important"
-              checked={localImportance === "important"}
-              onChange={(e) => handleImportanceChange(e.target.value)}
-              className="w-4 h-4"
-            />
-            <label className="text-lg" dir="rtl">חשוב</label>
-          </div>
+        <div className="w-full max-w-lg mx-auto mb-6">
+          <p className="text-lg text-center mb-4" dir="rtl">
+            במידה ויש לכם תקציב, כמה חשוב לכם שהמחשב יהיה בתקציב
+          </p>
+          <RadioGroup
+            value={localImportance.toString()}
+            onValueChange={handleImportanceChange}
+            className="w-full max-w-lg space-y-4"
+          >
+            {importanceOptions.map((option) => (
+              <CustomRadio
+                key={option.value}
+                value={option.value.toString()}
+                sizeName={option.sizeName}
+                statusColor="success"
+              />
+            ))}
+          </RadioGroup>
         </div>
+
+        <AnimatePresence>
+          {localImportance !== 0 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="overflow-hidden w-full max-w-lg"
+            >
+              <motion.div
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <Slider
+                  aria-label="Set your budget"
+                  label=" "
+                  size="lg"
+                  color="success"
+                  showTooltip={true}
+                  formatOptions={{ style: 'currency', currency: 'ILS' }}
+                  tooltipValueFormatOptions={{ style: 'currency', currency: 'ILS' }}
+                  minValue={1000}
+                  maxValue={10000}
+                  marks={[
+                    {
+                      value: 3000,
+                      label: (
+                        <div dir="rtl" className="text-sm text-gray-700 dark:text-gray-600">
+                          תקציב מומלץ!
+                        </div>
+                      ),
+                    },
+                  ]}
+                  step={100}
+                  dir="ltr"
+                  value={sliderValue}
+                  onChange={handleBudgetChange}
+                  className="max-w-md"
+                />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-
-        <Slider
-          aria-label="Set your budget"
-          label=" "
-          size="lg"
-          color="success"
-          showTooltip={true}
-          formatOptions={{ style: 'currency', currency: 'ILS' }}
-          tooltipValueFormatOptions={{ style: 'currency', currency: 'ILS' }}
-          minValue={1000}
-          maxValue={10000}
-          marks={[
-            {
-              value: 3000,
-              label: (
-                <div dir="rtl" className="text-sm text-gray-700 dark:text-gray-600">
-                  תקציב מומלץ!
-                </div>
-              ),
-            },
-          ]}
-          step={100}
-          dir="ltr"
-          value={sliderValue}
-          onChange={handleBudgetChange}
-          className="max-w-md"
-        />
-      </div>
-
-      <p dir="rtl" className="text-lg font-normal text-gray-800 dark:text-gray-700 text-center">
+      <p dir="rtl" className="text-lg font-normal text-gray-800 dark:text-gray-700 text-center mt-6">
         על סמך הבחירות שלך, כדי לקבל מחשב שהוא בול למה שאתה מחפש אנחנו ממליצים על
       </p>
 

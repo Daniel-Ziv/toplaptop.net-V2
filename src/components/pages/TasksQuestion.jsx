@@ -9,13 +9,13 @@ import Header from "../Header";
 const taskInfo = {
   "modeling/animation": {
     displayName: "מידול ואנימציה",
-    recommended: true,
+    recommended: false,
     description: "תוכנות כמו Maya, Blender או Cinema 4D ליצירת מודלים תלת-ממדיים ואנימציות",
     icon: <Cpu className="w-5 h-5" />
   },
   "photo-editing": {
     displayName: "עריכת תמונות",
-    recommended: true,
+    recommended: false,
     description: "עריכה בתוכנות כמו Photoshop, GIMP או Lightroom",
     icon: <Brush className="w-5 h-5" />
   },
@@ -28,32 +28,32 @@ const taskInfo = {
   },
   "video-editing": {
     displayName: "עריכת סרטונים",
-    recommended: true,
+    recommended: false,
     description: "עריכת וידאו בתוכנות כמו Premiere Pro או DaVinci Resolve",
     icon: <Video className="w-5 h-5" />
   },
   "basic-use": {
     displayName: "לימודים, שימוש בסיסי",
-    recommended: true,
+    recommended: false,
     description: "גלישה באינטרנט, מיילים, ושימוש בכלים פשוטים כמו Google Docs",
     icon: <Globe className="w-5 h-5" />
   },
   "ai": {
     displayName: "בינה מלאכותית",
-    recommended: true,
+    recommended: false,
     description:" מתאים למי שעובד עם תוכנות ליצירת תמונות, עיבוד נתונים, או אימון מודלים כמו Stable Diffusion או TensorFlow.",
     icon: <Bot className="w-5 h-5" />
   },
   "programming": {
     displayName: "תכנות",
-    recommended: true,
+    recommended: false,
     description: "לחיצה על האפשרות, תפתח שאלון ״איזה סוג תכנות״ ובו תוכלו לבחור במדויק לפי הצורך שלכם",
     icon: <Code className="w-5 h-5" />,
     levels: {
       heavy: {
         displayName: "כבד",
         description: "קומפילציה כבדה, מתאים למפתחים מנוסים  שעובדים על פרויקטים גדולים כמו פיתוח משחקים, מודלים של בינה מלאכותית, וניתוח נתונים מאסיבי" ,
-        recommended: true
+        recommended: false
       },
       light: {
         displayName: "קל",
@@ -64,7 +64,7 @@ const taskInfo = {
   },
   "gaming": {
     displayName: "גיימינג",
-    recommended: true,
+    recommended: false,
     description: "לחיצה על האפשרות, תפתח שאלון ״איזה סוג גיימינג״ ובו תוכלו לבחור במדויק לפי הצורך שלכם",
     
     icon: <Monitor className="w-5 h-5" />,
@@ -72,7 +72,7 @@ const taskInfo = {
       heavy: {
         displayName: "כבד",
         description: "כולל משחקים עם גרפיקה תלת-ממדית מורכבת ודרישות מערכת גבוהות, כמו Cyberpunk 2077, Red Dead Redemption 2.",
-        recommended: true
+        recommended: false
       },
       light: {
         displayName: "קל",

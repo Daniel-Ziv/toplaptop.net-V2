@@ -166,7 +166,7 @@ export default function LaptopResultCard({
           />
           {/* Product Details */}
           <div className="flex-1 space-y-4 text-right">
-            <h3 className={`text-xl rtl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries}</h3>
+            <h3 className={`text-m rtl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries} - {ram_size}GB RAM {ram_type} {cpu} {screenType} {screenhz}hz</h3>
             <div className="flex justify-center text-sm" dir="rtl">
               <div className="flex items-center gap-2 p-2 w-full">
                 <span className={`text-center ${styles.laptopCardSpecs}`} style={{ fontSize: '18px' }}>
@@ -206,10 +206,6 @@ export default function LaptopResultCard({
             />
           </div>
         </div>
-
-
-        
-
         
         <div className="relative w-full">
       <div className={`${styles.responsiveButton} flex justify-start `}>

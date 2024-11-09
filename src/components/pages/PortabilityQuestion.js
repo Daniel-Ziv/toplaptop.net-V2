@@ -16,7 +16,7 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
 
   const portabilityOptions = [
     {
-      value: "veryImportant",
+      value: 0.25,
       sizeName: {
         name: " מאוד חשוב (עד 1.5 קילו)",
         description: "מתאים למי שהלפטופ איתו תמיד ומשתמש בו לדברים פשוטים כמו גלישה באינטרנט, זום, מסמכים",
@@ -24,7 +24,7 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
       }
     },
     {
-      value: "important",
+      value: 0.125,
       sizeName: {
         name: "חשוב (עד 2 קילו)",
         description: "עד 2 קילו זה המשקל הסטנדרטי לרוב המחשבים",
@@ -32,7 +32,7 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
       }
     },
     {
-      value: "notImportant",
+      value: 0,
       sizeName: {
         name: "לא חשוב (כל משקל)",
         description: "אם אתם מריצים פרויקטים כבדים ומורכבים, ולא יכולים להרשות לעצמכם פחות ממחשב עוצמתי לידכם, זה הפתרון המושלם. גם אם הוא פחות נייד.",
@@ -66,7 +66,7 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
         <RadioGroup
           value={selectedPortability}
           onValueChange={handlePortabilityChange}
-          className="w-full max-w-lg space-y-4"
+          className="w-full max-w-lg space-y-4 items-center"
         >
           {portabilityOptions.map((option) => (
             <CustomRadio
