@@ -3,7 +3,7 @@ import { Button } from "@nextui-org/react";
 import { ArrowRight } from "lucide-react"; // Import the arrow icon
 
 
-const NavigationButtons = ({ onNext, onBack, disableNext = false }) => {
+const NavigationButtons = ({ onNext, onBack, disableNext = false, nextText = "הבא", backText = "חזור"}) => {
   return (
     <div className="flex flex-col items-center  mt-6">
       <Button 
@@ -13,7 +13,7 @@ const NavigationButtons = ({ onNext, onBack, disableNext = false }) => {
   disabled={disableNext} // Disables if `disableNext` is true
   className={`w-full max-w-md ${!disableNext ? 'bg-black text-white' : 'default-700 text-gray-500'}`} // Black when enabled, gray when disabled
 >
-  הבא
+  {nextText} {/* Text passed as prop */}
 </Button>
 
 
@@ -25,7 +25,7 @@ const NavigationButtons = ({ onNext, onBack, disableNext = false }) => {
       >
                 <ArrowRight size={20} className="" /> {/* Back arrow icon */}
 
-        חזור
+        {backText} {/* Text passed as prop */}
       </Button>
     </div>
   );

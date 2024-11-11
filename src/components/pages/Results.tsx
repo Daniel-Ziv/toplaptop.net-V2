@@ -5,7 +5,8 @@ import laptops from '../../data/laptops.json'
 import FloatingCompareButton from '../FloatingCompareButton'
 import { ComparisonProvider } from '../ComparisonContext';
 import {calculateLaptopScore} from '../algo/calculateLaptopScore';
-
+import NavigationButtons from '../NavigationButtons'
+import { Skeleton } from "@nextui-org/react";
 
 interface ResultsProps {
   prevStep: () => void;
@@ -54,22 +55,56 @@ interface Laptop {
 const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
   const [displayCount, setDisplayCount] = useState(5)
   const [sortedLaptops, setSortedLaptops] = useState<Laptop[]>([]); // Use sortedLaptops to render results
-  
+  const [isLoading, setIsLoading] = useState(true);
+
+  const LaptopSkeleton = () => (
+    <div className="w-full p-4 rounded-lg border border-gray-200">
+      <div className="flex flex-col md:flex-row gap-4">
+        <Skeleton className="rounded-lg">
+          <div className="h-48 w-48"></div>
+        </Skeleton>
+        <div className="flex-1 space-y-4">
+          <Skeleton className="h-8 w-3/4 rounded-lg" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-1/2 rounded-lg" />
+            <Skeleton className="h-4 w-2/3 rounded-lg" />
+            <Skeleton className="h-4 w-1/3 rounded-lg" />
+          </div>
+        </div>
+        <div className="w-32 flex flex-col items-center justify-center">
+          <Skeleton className="h-16 w-16 rounded-full" />
+          <Skeleton className="h-6 w-24 mt-2 rounded-lg" />
+        </div>
+      </div>
+    </div>
+  );
   useEffect(() => {
-    // Calculate match percentage for each laptop
-    const scoredLaptops: Laptop[] = laptops.map((laptop) => {
-      const { finalScore, componentScores } = calculateLaptopScore(laptop, answers);
-      return {
-        ...laptop,
-        matchPercentage: finalScore,
-        componentScores: componentScores
-      };
-    });
+    const calculateScores = async () => {
+      setIsLoading(true);
+      
+      // Calculate match percentage for each laptop
+      const scoredLaptops: Laptop[] = laptops.map((laptop) => {
+        const { finalScore, componentScores } = calculateLaptopScore(laptop, answers);
+        return {
+          ...laptop,
+          matchPercentage: finalScore,
+          componentScores: componentScores
+        };
+      });
   
-    // Sort laptops by match percentage in descending order
-    scoredLaptops.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
-    setSortedLaptops(scoredLaptops);
+      // Filter out laptops with a matchPercentage of 0
+      const filteredLaptops = scoredLaptops.filter((laptop) => laptop.matchPercentage && laptop.matchPercentage > 0);
+  
+      // Sort laptops by match percentage
+      filteredLaptops.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
+  
+      setSortedLaptops(filteredLaptops);
+      setIsLoading(false);
+    };
+  
+    calculateScores();
   }, [answers]);
+  
   const showMore = () => {
     setDisplayCount((prev) => Math.min(prev + 5, sortedLaptops.length));
   };
@@ -84,8 +119,20 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
             text="המחשבים המומלצים עבורך"
             className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
           />
-          <div className="flex flex-col gap-8">
-            {sortedLaptops.slice(0, displayCount).map((laptop, index) => ( // Use sortedLaptops here
+         <div className="flex flex-col gap-8">
+         {isLoading ? (
+            // Show skeletons while loading
+            Array(displayCount).fill(0).map((_, index) => (
+              <LaptopSkeleton key={`skeleton-${index}`} />
+            ))
+          ) : sortedLaptops.length === 0 ? (
+            // Show message if no laptops match
+            <p className="text-center text-gray-600 text-xl mt-8">
+              אין מחשבים שעומדים בדרישות. ייתכן שהמאפיינים שהגדרת מחמירים מדי.
+              נסה להרפות כמה מהתנאים לקבלת תוצאות נוספות.
+            </p>
+            ) : (
+            sortedLaptops.slice(0, displayCount).map((laptop, index) => ( // Use sortedLaptops here
 
               <LaptopResultCard
               key={index}
@@ -118,25 +165,11 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
               gpu={laptop.gpu}
               componentScores={laptop.componentScores || []}
 
-            />
-            ))}
-            
-            <div className="flex flex-col gap-4 items-center mt-4">
-              {hasMoreLaptops && (
-                <button
-                  onClick={showMore}
-                  className="w-full max-w-md px-4 py-2 bg-blue-500 text-white rounded-md transition-colors hover:bg-blue-600 text-lg"
-                >
-                  הצג עוד {Math.min(5, sortedLaptops.length - displayCount)} מחשבים
-                </button>
-              )}
-              
-              <button
-                onClick={prevStep}
-                className="w-full max-w-md px-4 py-2 bg-black text-white rounded-md transition-colors text-lg"
-              >
-                חזרה לשאלון
-              </button>
+              />
+            ))
+          )}
+            <div className="mb-6">
+            <NavigationButtons onNext={showMore} onBack={prevStep} disableNext={!hasMoreLaptops} nextText="הצג עוד" backText="חזרה לשאלון"/>
             </div>
           </div>
         </div>

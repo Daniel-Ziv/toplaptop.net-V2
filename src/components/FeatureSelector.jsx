@@ -205,10 +205,6 @@ const subSelections = {
     "VGA",
     "S-Video"
   ],
-  'מחשב שהוא גם טאבלט': [
-    "כן",
-    "לא"
-  ],
   'סוג מסך': [
     "IPS",
     "OLED",
@@ -222,6 +218,20 @@ const subSelections = {
     "Liquid Retina"
   ]
 };
+const featureNameMapping = {
+  'מעבד': 'cpu',
+  'ראם': 'ram_size',
+  'סוג זכרון': 'ram_type',
+  'נפח-אחסון': 'storage_space',
+  'רזולוציית מסך': 'screenRes',
+  'קצב רענון': 'screenhz',
+  'יצרן': 'manufacturer',
+  'כרטיס מסך': 'gpu',
+  'אבטחה': 'security',
+  'חיבורים': 'connections',
+  'מחשב שהוא גם טאבלט': 'flippingScreen',
+  'סוג מסך': 'screenType'
+};
 
 // Update the features array to mark all features that have sub-selections
 const features = [
@@ -233,7 +243,7 @@ const features = [
   { name: 'יצרן', icon: <Laptop className="w-6 h-6" /> , hasSubSelection: true},
   { name: 'חיבורים', icon: <Cable className="w-6 h-6" />, hasSubSelection: true },
   { name: 'אבטחה', icon: <Fingerprint className="w-6 h-6" />, hasSubSelection: true },
-  { name: 'מחשב שהוא גם טאבלט', icon: <RotateCw className="w-6 h-6" /> }, 
+  { name: 'מחשב שהוא גם טאבלט', icon: <RotateCw className="w-6 h-6" />, isBooleanToggle: true },
   { name: 'רזולוציית מסך', icon: <MonitorCheck className="w-6 h-6" />, hasSubSelection: true },
   { name: 'סוג מסך', icon: <MonitorCheck className="w-6 h-6" />, hasSubSelection: true },
   { name: 'קצב רענון', icon: <Gauge className="w-6 h-6" />, hasSubSelection: true }
@@ -242,108 +252,139 @@ const features = [
 
 
 export default function FeatureSelector({ selectedFeatures, onSelectionChange }) {
-  const {isOpen, onOpen, onClose} = useDisclosure();
-  const [currentFeature, setCurrentFeature] = useState(null);
-  const [tempSelections, setTempSelections] = useState({});
-  const [searchQuery, setSearchQuery] = useState("");
+  const {isOpen, onOpen, onClose} = useDisclosure()
+  const [currentFeature, setCurrentFeature] = useState(null)
+  const [tempSelections, setTempSelections] = useState({})
+  const [searchQuery, setSearchQuery] = useState("")
 
   const toggleFeature = (featureName) => {
-    const feature = features.find(f => f.name === featureName);
-    
+    const feature = features.find(f => f.name === featureName)
+    const englishName = featureNameMapping[featureName]
+  
+    if (feature?.isBooleanToggle) {
+      const newFeatures = { ...selectedFeatures }
+      if (selectedFeatures[englishName]) {
+        delete newFeatures[englishName]
+      } else {
+        newFeatures[englishName] = true
+      }
+      onSelectionChange(newFeatures)
+      return
+    }
+  
     if (feature?.hasSubSelection) {
-      setCurrentFeature(featureName);
-      setSearchQuery(""); // Reset search when opening modal
+      setCurrentFeature(featureName)
+      setSearchQuery("")
       setTempSelections(prevSelections => ({
         ...prevSelections,
-        [featureName]: selectedFeatures[featureName] || []
-      }));
-      onOpen();
-      return;
+        [englishName]: selectedFeatures[englishName] || []
+      }))
+      onOpen()
     }
-
+  }
+  
+  const isFeatureSelected = (feature) => {
+    const englishName = featureNameMapping[feature.name]
     
-
-    const newFeatures = {
-      ...selectedFeatures,
-      [featureName]: selectedFeatures[featureName] ? null : true
-    };
-
-    if (newFeatures[featureName] === null) {
-      delete newFeatures[featureName];
+    if (feature.isBooleanToggle) {
+      return selectedFeatures[englishName] === true
     }
+    
+    return Array.isArray(selectedFeatures[englishName]) && 
+           selectedFeatures[englishName].length > 0
+  }
 
-    onSelectionChange(newFeatures);
-  };
+  const getSelectionCount = (feature) => {
+    const englishName = featureNameMapping[feature.name]
+    return selectedFeatures[englishName]?.length || 0
+  }
 
   const filteredOptions = useMemo(() => {
     if (!currentFeature || !searchQuery) {
-      return subSelections[currentFeature] || [];
+      return subSelections[currentFeature] || []
     }
-    
     
     return subSelections[currentFeature].filter(option =>
       option.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [currentFeature, searchQuery]);
-
+    )
+  }, [currentFeature, searchQuery])
+  
   const toggleSubSelection = (item) => {
+    const englishName = featureNameMapping[currentFeature]
+  
+    const cleanedItem = ["ram_size", "storage_space", "screenhz"].includes(englishName)
+      ? parseInt(item.replace(/[^\d]/g, ""), 10)
+      : item
+  
     setTempSelections(prev => {
-      const current = prev[currentFeature] || [];
-      const newSelections = current.includes(item)
-        ? current.filter(i => i !== item)
-        : [...current, item];
-      return { ...prev, [currentFeature]: newSelections };
-    });
-  };
-
+      const current = prev[englishName] || []
+      const newSelections = current.includes(cleanedItem)
+        ? current.filter(i => i !== cleanedItem)
+        : [...current, cleanedItem]
+      return { ...prev, [englishName]: newSelections }
+    })
+  }
+  
   const handleModalSave = () => {
+    const englishName = featureNameMapping[currentFeature]
+    const selections = tempSelections[englishName] || []
+    
     const newFeatures = {
       ...selectedFeatures,
-      [currentFeature]: tempSelections[currentFeature]
-    };
-
-    if (newFeatures[currentFeature].length === 0) {
-      delete newFeatures[currentFeature];
+      [englishName]: selections,
     }
-
-    onSelectionChange(newFeatures);
-    onClose();
-  };
-
+  
+    if (newFeatures[englishName].length === 0) {
+      delete newFeatures[englishName]
+    }
+  
+    onSelectionChange(newFeatures)
+    onClose()
+  }
+  
   const handleModalClose = () => {
-    setSearchQuery(""); // Reset search when closing
-    onClose();
-  };
+    setSearchQuery("")
+    onClose()
+  }
+
+  const isItemSelected = (item) => {
+    const englishName = featureNameMapping[currentFeature]
+    const cleanedItem = ["ram_size", "storage_space", "screenhz"].includes(englishName)
+      ? parseInt(item.replace(/[^\d]/g, ""), 10)
+      : item
+    return tempSelections[englishName]?.includes(cleanedItem)
+  }
 
   return (
     <>
       <div className="w-full max-w-2xl mx-auto p-4 bg-white shadow-md rounded-md">
         <div className="grid grid-cols-2 gap-4">
-          {features.map((feature) => (
-            <button
-              key={feature.name}
-              onClick={() => toggleFeature(feature.name)}
-              className={`h-24 p-2 border rounded-lg flex flex-col items-center justify-center transition-colors
-                ${selectedFeatures[feature.name] === true
-                  ? 'bg-blue-500 text-white'
-                  : Array.isArray(selectedFeatures[feature.name]) && selectedFeatures[feature.name].length > 0
+          {features.map((feature) => {
+            const isSelected = isFeatureSelected(feature)
+            const selectionCount = getSelectionCount(feature)
+            
+            return (
+              <button
+                key={feature.name}
+                onClick={() => toggleFeature(feature.name)}
+                className={`h-24 p-2 border rounded-lg flex flex-col items-center justify-center transition-colors
+                  ${isSelected
                     ? 'bg-blue-500 text-white'
-                    : feature.hasSubSelection
-                      ? 'bg-green-100 hover:bg-green-200'
-                      : 'bg-gray-200 hover:bg-blue-400 hover:text-white'}`}
-            >
-              <div>{feature.icon}</div>
-              <span className="mt-2">{feature.name}</span>
-              {feature.tooltip && (
-                <span className="text-xs mt-1 opacity-75">{feature.tooltip}</span>
-              )}
-              {feature.hasSubSelection && selectedFeatures[feature.name]?.length > 0 && (
-                <span className="text-xs mt-1">
-                  {selectedFeatures[feature.name].length} נבחרו
-                </span>
-              )}
-            </button>
-          ))}
+                    : 'bg-green-100 hover:bg-green-200'}`}
+              >
+                <div>{feature.icon}</div>
+                <span className="mt-2">{feature.name}</span>
+                {feature.tooltip && (
+                  <span className="text-xs mt-1 opacity-75">{feature.tooltip}</span>
+                )}
+                {feature.hasSubSelection && selectionCount > 0 && (
+                  <span className="text-xs mt-1">
+                    {selectionCount} נבחרו
+                  </span>
+                )}
+              </button>
+            )
+          })}
         </div>
       </div>
 
@@ -376,8 +417,8 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
                   {filteredOptions.map((item) => (
                     <Button
                       key={item}
-                      color={tempSelections[currentFeature]?.includes(item) ? "primary" : "default"}
-                      variant={tempSelections[currentFeature]?.includes(item) ? "solid" : "bordered"}
+                      color={isItemSelected(item) ? "primary" : "default"}
+                      variant={isItemSelected(item) ? "solid" : "bordered"}
                       onClick={() => toggleSubSelection(item)}
                       className="h-12 w-full px-2"
                       style={{
@@ -394,7 +435,7 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
                   ))}
                 </div>
                 {filteredOptions.length === 0 && searchQuery && (
-                  <p className="text-center text-gray-500 my-4">
+                  <p className="text-center text-gray-500 my-4" dir="rtl">
                     לא נמצאו תוצאות עבור "{searchQuery}"
                   </p>
                 )}
@@ -404,7 +445,12 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
                   ביטול
                 </Button>
                 <Button color="primary" onPress={handleModalSave}>
-                  שמור {tempSelections[currentFeature]?.length > 0 ? `(${tempSelections[currentFeature].length})` : ''}
+                  שמור {(() => {
+                    const englishName = featureNameMapping[currentFeature]
+                    return tempSelections[englishName]?.length > 0 
+                      ? `(${tempSelections[englishName].length})`
+                      : ''
+                  })()}
                 </Button>
               </ModalFooter>
             </>
@@ -412,5 +458,5 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
         </ModalContent>
       </Modal>
     </>
-  );
+  )
 }

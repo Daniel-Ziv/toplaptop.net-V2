@@ -20,7 +20,21 @@ function App() {
   const [answers, setAnswers] = useState({
     tasks: [],
     weightImportance: 0,
-    features: [],
+    features: {
+      cpu: [],
+      ram_size: [],
+      ram_type: [],
+      storage_space: [],
+      screenRes: [],
+      screenhz: [],
+      manufacturer: [],
+      gpu: [],
+      security: [],
+      connections: [],  
+      flippingScreen: false,
+      screenType: []
+
+    },
     budget:{
       price: 0,
       priceImportance: 0

@@ -474,8 +474,6 @@ const taskRequirements: Record<string, TaskRequirements> = {
 };
 
 
-
-
 // Calculate component score based on Euclidean distance
 function calculateComponentScore(
   componentScore: number,
@@ -532,7 +530,6 @@ function calculateWeightScore(laptopWeight: number | undefined, weightImportance
   }
 }
 
-
 function calculateScreenSizeScore(
   laptopScreenSize: number,
   selectedScreenSizes: string[]
@@ -583,7 +580,63 @@ function calculateScreenSizeScore(
 
 // Main function to calculate laptop score
 export function calculateLaptopScore(laptop: any, answers: any): { finalScore: number; componentScores: { name: string; score: number; }[] } {
-  const { tasks } = answers;
+  const { tasks, features } = answers;
+
+  for (const [feature, selectedValue] of Object.entries(features)) {
+    // Skip if the selected value is empty (e.g., no CPUs were selected)
+    if (Array.isArray(selectedValue) && selectedValue.length === 0) {
+        continue; // No selection for this feature, so proceed without filtering
+    }
+
+    const laptopFeatureValue = laptop[feature]; // Value from laptop JSON data
+
+    // Check if feature is an array (like `cpu`, `gpu`, etc.)
+    if (Array.isArray(selectedValue)) {
+        const normalizedSelectedValue = selectedValue.map(val =>
+            typeof val === "string"
+                ? val.trim().toLowerCase()
+                : val
+        );
+        
+        const normalizedLaptopValue = typeof laptopFeatureValue === "string"
+            ? laptopFeatureValue.trim().toLowerCase()
+            : laptopFeatureValue;
+
+        if (!normalizedSelectedValue.includes(normalizedLaptopValue)) {
+            console.log(`Mismatch for feature ${feature}: Selected ${normalizedSelectedValue} vs Laptop ${normalizedLaptopValue}`);
+            return { finalScore: 0, componentScores: [] };
+        }
+    }
+    // Check for boolean fields (like `flippingScreen`)
+    else if (typeof selectedValue === "boolean") {
+        if (laptopFeatureValue !== selectedValue && laptopFeatureValue !== true) {
+            console.log(`Boolean mismatch for feature ${feature}: Selected ${selectedValue} vs Laptop ${laptopFeatureValue}`);
+            return { finalScore: 0, componentScores: [] };
+        }
+    }
+    // Check for direct value comparisons (e.g., `manufacturer`)
+    else {
+        const normalizedSelectedValue = typeof selectedValue === "string"
+            ? selectedValue.trim().toLowerCase()
+            : selectedValue;
+
+        const normalizedLaptopValue = typeof laptopFeatureValue === "string"
+            ? laptopFeatureValue.trim().toLowerCase()
+            : laptopFeatureValue;
+
+        if (normalizedLaptopValue !== normalizedSelectedValue) {
+            console.log(`Direct mismatch for feature ${feature}: Selected ${normalizedSelectedValue} vs Laptop ${normalizedLaptopValue}`);
+            return { finalScore: 0, componentScores: [] };
+        }
+    }
+}
+
+// Continue with scoring as normal
+
+// Continue with scoring as normal
+
+
+
 
   // Initialize combined requirements with default values
   const combinedTaskRequirements: TaskRequirements = {
