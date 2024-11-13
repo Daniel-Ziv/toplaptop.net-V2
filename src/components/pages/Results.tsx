@@ -7,6 +7,9 @@ import { ComparisonProvider } from '../ComparisonContext';
 import {calculateLaptopScore} from '../algo/calculateLaptopScore';
 import NavigationButtons from '../NavigationButtons'
 import { Skeleton } from "@nextui-org/react";
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { encodeParameters, decodeParameters } from '../../assets/utils/urlParams';
+
 
 interface ResultsProps {
   prevStep: () => void;
@@ -56,6 +59,10 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
   const [displayCount, setDisplayCount] = useState(5)
   const [sortedLaptops, setSortedLaptops] = useState<Laptop[]>([]); // Use sortedLaptops to render results
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+ 
 
   const LaptopSkeleton = () => (
     <div className="w-full p-4 rounded-lg border border-gray-200">
@@ -82,28 +89,42 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
     const calculateScores = async () => {
       setIsLoading(true);
       
-      // Calculate match percentage for each laptop
-      const scoredLaptops: Laptop[] = laptops.map((laptop) => {
-        const { finalScore, componentScores } = calculateLaptopScore(laptop, answers);
-        return {
-          ...laptop,
-          matchPercentage: finalScore,
-          componentScores: componentScores
-        };
-      });
-  
-      // Filter out laptops with a matchPercentage of 0
-      const filteredLaptops = scoredLaptops.filter((laptop) => laptop.matchPercentage && laptop.matchPercentage > 0);
-  
-      // Sort laptops by match percentage
-      filteredLaptops.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
-  
-      setSortedLaptops(filteredLaptops);
+      const encodedParams = searchParams.get('q');
+      const answersToUse = encodedParams ? decodeParameters(encodedParams) : answers;
+
+      if (answersToUse) {
+        // Calculate match percentage for each laptop
+        const scoredLaptops: Laptop[] = laptops.map((laptop) => {
+          const { finalScore, componentScores } = calculateLaptopScore(laptop, answersToUse);
+          return {
+            ...laptop,
+            matchPercentage: finalScore,
+            componentScores: componentScores
+          };
+        });
+
+        // Filter out laptops with a matchPercentage of 0
+        const filteredLaptops = scoredLaptops.filter((laptop) => 
+          laptop.matchPercentage && laptop.matchPercentage > 0
+        );
+
+        // Sort laptops by match percentage
+        filteredLaptops.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
+
+        setSortedLaptops(filteredLaptops);
+        
+        // If this is a new search (not from URL), update the URL
+        if (!encodedParams && answers) {
+          const encoded = encodeParameters(answers);
+          setSearchParams({ q: encoded });
+        }
+      }
+      
       setIsLoading(false);
     };
-  
+
     calculateScores();
-  }, [answers]);
+  }, [answers, searchParams]);
   
   const showMore = () => {
     setDisplayCount((prev) => Math.min(prev + 5, sortedLaptops.length));
