@@ -4,18 +4,351 @@ import { useComparison } from './ComparisonContext.tsx';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
 
-// Connection element in the laptoptop: 
+//data on each spec so we know who is better and tell the user:
+const cpuModelScores = {
 
+  "Intel Core i5": 6,
+ 
+ "Intel Core i7": 8,
+ 
+ "Intel Core Ultra 7": 8,
+ 
+ "Intel Core i9": 10,
+ 
+ "Intel Core i3": 4,
+ 
+ "M1": 8,
+ 
+ "Intel Core Ultra 5": 6,
+ 
+ "Intel Celeron": 3,
+ 
+ "AMD Ryzen 7": 8,
+ 
+ "M3": 8,
+ 
+ "AMD Athlon Silver": 4,
+ 
+ "Intel Core Ultra 9": 10,
+ 
+ "M2": 8,
+ 
+ "Intel Processor": 4,
+ 
+ "Intel Core 7": 8,
+ 
+ "AMD Ryzen 5": 6,
+ 
+ "M3 Pro": 8,
+ 
+ "Intel Core 5": 6,
+ 
+ "AMD Ryzen Ai 9": 10,
+ 
+ "Intel Pentium": 3,
+ 
+ "Intel Pentium Silver": 3,
+ 
+ "AMD Ryzen 9": 10,
+ 
+ "Intel N200": 3,
+ 
+ "AMD Ryzen 7 PRO": 8,
+ 
+ "Qualcomm Snapdragon": 8,
+ 
+ "AMD": 4,
+ 
+ "M3 Max": 10,
+ 
+ "Intel N100": 2,
+ 
+ "Intel Core 3": 4,
+ 
+ "Qualcomm Snapdragon X Plus": 8,
+ 
+ "M2 Max": 10,
+ 
+ "M2 PRO": 8,
+ 
+ "Intel Pentium Gold": 3,
+ 
+ "AMD A4": 2,
+ 
+ "X Elite": 6,
+ 
+ "Intel Core 2 Duo": 2,
+ 
+ "M1 Max": 10,
+ 
+ "AMD Ryzen 5 PRO": 6,
+ 
+ "Intel Atom": 2,
+ 
+ "Intel Core M3": 4,
+ 
+ "AMD Athlon Silver APU": 4,
+ 
+ "Intel Core Duo": 2,
+ 
+ "M1 Pro": 8,
+ 
+ "Intel Core M5": 4,
+ 
+ "Intel Xeon": 6,
+ 
+ "AMD Ryzen 3": 4,
+ 
+ "Intel Mobile": 4,
+ 
+ "M4 Pro": 8,
+ 
+ "M4": 8,
+ 
+ "M4 Max": 10,
+ 
+ };
 
-const compareConnections = (connections1, connections2) => {
-  if (!Array.isArray(connections1)) connections1 = [];
-  if (!Array.isArray(connections2)) connections2 = [];
-  
-  return {
-    unique1: connections1.filter(conn => !connections2.includes(conn)),
-    unique2: connections2.filter(conn => !connections1.includes(conn)),
-    common: connections1.filter(conn => connections2.includes(conn))
-  };
+ // RAM scores: mapping GB size to an objective score out of 10
+const ramSizeScores = {
+  1: 1,
+  2: 2,
+  3: 3,
+  4: 4,
+  6: 5,
+  8: 6,
+  12: 7,
+  16: 8,
+  18: 8,
+  24: 8,
+  32: 9,
+  36: 9,
+  48: 9,
+  64: 10,
+  93: 10,
+  96: 10,
+  128: 10,
+};
+
+const ramTypeScores = {
+  "DDR2": 2,
+  "DDR3": 3,
+  "DDR4": 4,
+  "DDR5": 5,
+  "DDR6": 6,
+  "DDRAM": 1
+}
+
+// GPU scores: mapping specific models to objective scores
+const gpuModelScores = {
+  "NVIDIA GTX 1650": 6,
+  "NVIDIA GTX 1650 Ti": 6,
+  "NVIDIA GeForce GTX 1060": 6,
+  "NVIDIA GeForce GTX 1660Ti": 7,
+  "NVIDIA GeForce GTX 960M": 5,
+  "NVIDIA RTX 2060": 7,
+  "NVIDIA RTX 3050": 7,
+  "NVIDIA GeForce RTX 2060 Max-Q": 7,
+  "NVIDIA GeForce RTX 3050 Ti": 7,
+  "NVIDIA RTX 3060": 8,
+  "NVIDIA GeForce RTX 3060": 8,
+  "NVIDIA GeForce RTX 3070": 9,
+  "NVIDIA GeForce RTX 3070 Ti": 9,
+  "NVIDIA RTX 3070": 9,
+  "NVIDIA GeForce RTX 3080": 10,
+  "NVIDIA GeForce RTX 3080 Ti": 10,
+  "NVIDIA RTX 3080": 10,
+  "NVIDIA RTX 4060": 9,
+  "NVIDIA RTX 4070": 9,
+  "NVIDIA RTX 4080": 10,
+  "NVIDIA RTX 4090": 10,
+  "Intel UHD Graphics": 4,
+  "Intel Iris Xe": 5,
+  "Intel Iris Xe Graphics": 5,
+  "Intel UHD Graphics 600": 3,
+  "Intel UHD Graphics 605": 3,
+  "Intel Iris Plus": 4,
+  "Intel HD Graphics 620": 3,
+  "Intel HD Graphics 520": 3,
+  "Intel HD Graphics 4000": 3,
+  "Intel HD Graphics 530": 3,
+  "Intel HD Graphics": 2,
+  "Intel UHD 600": 3,
+  "Intel Iris Xe Max": 5,
+  "Integrated Intel Iris Xe Graphics": 5,
+  "Integrated Intel UHD Graphics": 4,
+  "Intel Iris Plus Graphics": 4,
+  "AMD Radeon RX 5600M": 7,
+  "AMD Radeon RX 6800M": 9,
+  "AMD Radeon RX 6800S": 9,
+  "AMD Radeon RX 6500M": 6,
+  "AMD Radeon RX Vega": 6,
+  "AMD Radeon RX Vega 8": 5,
+  "AMD Radeon Vega 7 Graphics": 5,
+  "AMD Radeon 880M": 5,
+  "AMD Radeon Pro 560": 5,
+  "Integrated AMD Radeon 780M": 5,
+  "AMD Radeon RX 890M": 6,
+  "AMD Radeon Graphics": 5,
+  "AMD Radeon R5": 2,
+  "Integrated AMD Radeon": 4,
+  "NVIDIA Quadro RTX 3000": 6,
+  "NVIDIA Quadro RTX 4000": 7,
+  "NVIDIA Quadro RTX 5000": 8,
+  "NVIDIA Quadro T500": 4,
+  "NVIDIA Quadro T2000": 5,
+  "NVIDIA T1200": 5,
+  "NVIDIA T600": 5,
+  "NVIDIA RTX A500": 6,
+  "NVIDIA RTX A1000": 7,
+  "NVIDIA RTX A2000": 7,
+  "NVIDIA RTX A3000": 8,
+  "NVIDIA RTX A4000": 8,
+  "NVIDIA RTX A5000": 9,
+  "Intel Arc A370M": 6,
+  "Intel Arc Graphics": 5,
+  "Integrated Intel Arc Graphics": 5,
+  "NVIDIA GeForce MX330": 4,
+  "NVIDIA GeForce MX350": 5,
+  "NVIDIA GeForce MX450": 5,
+  "NVIDIA GeForce MX550": 6,
+  "NVIDIA GeForce MX570": 6,
+  "NVIDIA GeForce 940MX": 4,
+  "Integrated Intel HD Graphics": 3,
+  "Intel UHD Graphics 620": 4,
+  "NVIDIA RTX 2000": 6,
+  "NVIDIA RTX 2000 Ada": 7,
+  "Intel Integrated Graphics": 3,
+  "Intel Iris X Graphics": 5,
+  "Core GPU-8": 6,
+  "Core GPU-10": 7,
+  "Core GPU-14": 8,
+  "Core GPU-16": 8,
+  "Core GPU-24": 9,
+  "Core GPU-30": 9,
+  "Core GPU-38": 10,
+  "Core GPU-40": 10,
+  "Qualcomm Adreno": 3,
+  "Integrated Qualcomm Adreno GPU": 3,
+  "NVIDIA RTX 5000 Ada": 9,
+  "NVIDIA RTX 4000 Ada": 8,
+  "NVIDIA RTX 3000 Ada": 7,
+  "Intel GMA HD": 2,
+  "Intel HD Graphics 400": 2,
+  "NVIDIA GeForce GT 740M": 2,
+  "NVIDIA GeForce GT 750M": 3,
+  "NVIDIA GeForce GT 840M": 3,
+  "NVIDIA GeForce GT 920M": 2,
+  "NVIDIA GeForce GT 930M": 3,
+  "NVIDIA GeForce GT 820M": 2,
+  "NVIDIA GeForce GTX1070": 8,
+  "NVIDIA GeForce GTX 950M": 4,
+  "AMD Radeon R2": 1,
+  "AMD Radeon R3": 2,
+  "Intel Iris Graphics": 3,
+  "Intel HD Graphics 3000": 2,
+  "Intel HD Graphics 4400": 3,
+  "Intel HD Graphics 5500": 3,
+  "NVIDIA RTX 4000": 8,
+  "NVIDIA Quadro T550": 5,
+  "AMD Radeon RX 6850M": 8,
+  "ATI Radeon hd3450": 1,
+  "Intel HD Graphics 4200": 2,
+  "Intel HD Graphics 515": 3,
+  "NVIDIA GeForce GT 710M": 2,
+  "NVIDIA GeForce GT 525M": 2,
+  "NVIDIA GeForce GT 610M": 2,
+  "NVIDIA GeForce RTX 4050": 8,  
+  "7-Core GPU": 6,            
+  "Intel Graphics": 3,        
+  "10-Core GPU": 7,             
+  "Integrated AMD Radeon 610M": 4,
+  "NVIDIA Geforce RTX 2050": 6, 
+  "Intel UMA": 3,               
+  "Integrated AMD Radeon 680M Graphics": 5,
+  "Integrated Intel UHD GRAPHICS 600": 3,
+  "NVIDIA GeFORCE 920MX": 3,
+  "NVIDIA RTX 500 ADA": 6,      
+  "Nvidia RTX 3000 Ada": 7,     
+  "GPU-618": 3,                  
+  "AMD Radeon": 4,               
+  "Integrated graphics": 3,    
+  "AMD Radeon 610": 4,
+  "AMD Radeon R7 M445": 4,
+  "NVIDIA GeForce MX570 A": 6,   
+  "Intel Premium UHD Graphics": 4,
+  "Core GPU-19": 8,            
+  "NVIDIA RTX A4500": 8,         
+  "NVIDIA GeForce GTX1060": 6,  
+  "Intel Iris Xe Graphics Eligible": 5, 
+  "Integrated Intel UHD GRAPHICS 605": 3, 
+  "NVIDIA RTX 3500": 7,
+  "NVIDIA RTX 3500 Ada": 7,
+  "Nvidia RTX 1000 Ada": 6,
+  "Core GPU-32": 9,           
+  "AMD Radeon 520": 3,
+  "Intel HD Graphics 500": 2,
+  "Intel HD Graphics 5000": 3,
+  "Nvidia GeForce GTX 850M": 4,
+  "AMD FirePro W4170M": 5,
+  "NAVIDIA GeForce GTX970M": 6,
+  "NVIDIA RTX A5500": 9,
+  "Nvidia Quadro T1000": 5,
+  "Integrated Qualcomm Adreno 680 GPU": 3,
+  "ATI JET LE R5 M230": 2,
+  "AMD FirePro W5130M": 5,
+  "NVIDIA GeForce MX250": 4,
+  "NVIDIA GeForce GTX1660": 7, 
+  "NVIDIA GeForce RTX3000": 7,   
+  "AMD Radeon R5 M335": 3,
+  "Intel HD graphics 2000": 2,
+  "AMD Radeon R9 M265X": 5,
+  "NVIDIA Quardro RTX 3000": 6,  
+  "AMD Radeon Pro 555X": 5,
+  "Core GPU-20": 8,
+  "Intel Graphic Media Accelerator": 2,
+  "NVidia GeForce GT 525M": 2,   
+  "NVIDIA GeForce GT 420M": 2,
+  "NVIDIA GeForce GT 635M": 3,
+  "Intel GMA 950": 1,
+  "AMD Radeon HD 7730M": 4,
+  "AMD Radeon HD7570M": 3,
+  "Intel GMA X4500": 1,
+  "NVIDIA GeForce GTX880M": 5,
+  "AMD Radeon HD 8870M": 4,
+  "ATI Radeon HD 5145": 2,
+  "ATI Radeon HD 5650": 3,
+  "ATI JET LE R5": 2,
+  "16-Core GPU": 8,             
+  "AMD Radeon R5 M230": 2,
+  "AMD Radeon R3 Graphics": 2,   
+  "Intel HD Graphics 630": 3,
+  "Intel HD Graphics 600": 3,     
+  "NVIDIA GeForce RTX 4090": 10, 
+  "NVIDIA GeForce RTX 4080": 10, 
+  "NVIDIA GeForce RTX 4070": 9,   
+  "NVIDIA GeForce RTX 4060": 9,   
+  "NVIDIA GeForce RTX 3050": 7,   
+  "NVIDIA Geforce RTX 2060": 7,   
+  "Intel Arc A350M": 5,
+  "NVIDIA GeForce MX130": 3,
+  "NVIDIA GeForce MX150": 3,
+  "NVIDIA GeForce RTX 2070": 8,
+  "NVIDIA GeForce RTX 2080": 9,
+  "NVIDIA Quadro P520": 4,
+  "NVIDIA Quadro P2000": 5,
+  "AMD Radeon 890M": 5,
+  "AMD Radeon R5 M430": 3,
+  "Integrated AMD Radeon 660M": 4,
+  "Integrated Intel Iris Plus Graphics": 4,
+  "Core GPU-18": 8,
+};
+
+// Storage type scores: objective scores for storage types
+const storageTypeScores = {
+  "HDD": 4,
+  "SSD": 8,
+  "NVMe SSD": 10,
 };
 
 
@@ -40,7 +373,8 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
         return null;
     }
 
-   
+ 
+  
 
     // Special handling for different specs
     switch (spec) {
@@ -65,19 +399,79 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
             return null;
             
         case 'cpu':
+          if (!value1 || !value2) return null;
+            
+          const cpuScore1 = cpuModelScores[value1] || 0;
+          const cpuScore2 = cpuModelScores[value2] || 0;
+          
+          if (cpuScore1 === cpuScore2) {
+              return { comparison: 'מעבד זהה', winner: 'tie' };
+          }
+          console.log(cpuScore1, cpuScore2);
+          return {
+              comparison: `מעבד חזק יותר`,
+              winner: cpuScore1 > cpuScore2 ? 'laptop1' : 'laptop2',
+          };
         case 'cpuModel':
+          
         case 'cpuGeneration':
+         
         case 'ram_type':
+                if (
+                  (!value1 && !value2) || 
+                  (value1 === 'לא זמין' && value2 === 'לא זמין')
+              ) {
+                  return null; // Skip comparison if both are not available
+              }
+                  
+                const ramTypeScore1 = ramTypeScores[value1] || 0;
+                const ramTypeScore2 = ramTypeScores[value2] || 0;
+                
+                if (ramTypeScore1 === ramTypeScore2) {
+                    return { comparison: 'סוג זכרון ראם זהה', winner: 'tie' };
+                }
+                return {
+                    comparison: "זכרון ראם מהיר יותר",
+                    winner: ramTypeScore1 > ramTypeScore2 ? 'laptop1' : 'laptop2',
+                };
         case 'storage_type':
+                if (
+                  (!value1 && !value2) || 
+                  (value1 === 'לא זמין' && value2 === 'לא זמין')
+              ) {
+                  return null; // Skip comparison if both are not available
+              }
+                  
+                const storageTypeScore1 = storageTypeScores[value1] || 0;
+                const storageTypeScore2 = storageTypeScores[value2] || 0;
+                
+                if (storageTypeScore1 === storageTypeScore2) {
+                    return { comparison: 'סוג זכרון פנימי זהה', winner: 'tie' };
+                }
+                return {
+                    comparison: "זכרון מהיר יותר",
+                    winner: storageTypeScore1 > storageTypeScore2 ? 'laptop1' : 'laptop2',
+                };
         case 'screenType':
-        case 'operatingSystem':
-            // For text-based comparisons
-            if (!value1 || !value2 || value1 === 'לא זמין' || value2 === 'לא זמין') return null;
-            return {
-                comparison: value1 === value2 ? 'זהה' : 'שונה',
-                winner: null
-            };
-
+        case 'gpu':
+          if (
+            (!value1 && !value2) || 
+            (value1 === 'לא זמין' && value2 === 'לא זמין')
+        ) {
+            return null; // Skip comparison if both are not available
+        }
+            
+          const gpuScore1 = gpuModelScores[value1] || 0;
+          const gpuScore2 = gpuModelScores[value2] || 0;
+          console.log(gpuScore1, gpuScore2);
+          if (gpuScore1 === gpuScore2) {
+            
+              return { comparison: 'כרטיסי מסך עם כח זהה', winner: 'tie' };
+          }
+          return {
+              comparison: "כרטיס מסך עם כח גבוה יותר",
+              winner: gpuScore1 > gpuScore2 ? 'laptop1' : 'laptop2',
+          };
         case 'cpu_ghz':
             const speed1 = parseFloat(value1);
             const speed2 = parseFloat(value2);
@@ -114,7 +508,7 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
             }
             return null;
 
-        case 'screenRefreshRate':
+        case 'screenhz':
             const rate1 = parseInt(value1);
             const rate2 = parseInt(value2);
             if (!isNaN(rate1) && !isNaN(rate2)) {
@@ -145,10 +539,9 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
                 winner: null
             };
 
-        // Add any remaining specific cases here
         default:
-            // Only compare if both values are present and not 'לא זמין'
-            if (!value1 || !value2 || value1 === 'לא זמין' || value2 === 'לא זמין') return null;
+
+          if (!value1 || !value2 || value1 === 'לא זמין' || value2 === 'לא זמין') return null;
             if (value1 === value2) return { comparison: 'זהה', winner: 'tie' };
             return { 
                 comparison: 'שונה',
@@ -170,7 +563,7 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
     { key: 'storage_space', label: 'נפח אחסון' }, // changed from 'storage'
     { key: 'storage_type', label: 'סוג אחסון' }, // added
     { key: 'screen_size', label: 'גודל מסך' }, // changed from 'display'
-    { key: 'screenRefreshRate', label: 'קצב רענון מסך' }, // added
+    { key: 'screenhz', label: 'קצב רענון מסך' }, // added
     { key: 'screenResolution', label: 'רזולוציה' }, // added
     { key: 'screenType', label: 'סוג מסך' }, // added
     { key: 'for_gaming', label: 'לגיימינג' }, // added
@@ -178,7 +571,6 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
     { key: 'flippingScreen', label: 'מסך מתהפך' }, // added
     { key: 'connections', label: 'חיבורים' }, // added
     { key: 'security', label: 'אבטחה' }, // added
-    { key: 'operatingSystem', label: 'מערכת הפעלה' }, // added
     { key: 'weight', label: 'משקל' }, // added
     { key: 'price', label: 'מחיר' },
     { key: 'gpu' , label: 'כרטיס מסך' }, // added
@@ -193,23 +585,27 @@ const renderSpec = (spec, laptopIndex) => {
  
 
   // Skip only if both values are unavailable
-  if (value1 === 'לא זמין' && value2 === 'לא זמין') {
-      return null;
+  if ((value1 === 'לא זמין' || !value1) && (value2 === 'לא זמין' || !value2)) {
+    return null;
   }
-
   // For image, always render without highlighting
   if (spec.key === 'product_img') {
     return (
-      <div className="h-48 flex items-center justify-center">
-        <img 
-          src={laptops[laptopIndex].product_img}
-          alt={laptops[laptopIndex].name}
-          className="max-h-full w-auto object-contain rounded-lg"
-        />
+      <div className="flex items-center justify-center p-2">
+        <div className="w-[250px] h-[250px] relative flex items-center justify-center">
+          <img 
+            src={laptops[laptopIndex].product_img}
+            alt={laptops[laptopIndex].name}
+            className="max-w-full max-h-full object-contain"
+            style={{
+              width: '250px',
+              height: '250px'
+            }}
+          />
+        </div>
       </div>
     );
   }
-
   const value = laptops[laptopIndex][spec.key];
   const valueStyle = getValueStyle(spec, laptopIndex);
 
@@ -249,18 +645,7 @@ const renderSpec = (spec, laptopIndex) => {
       </div>
     );
   }
-  if (spec.key === 'gpu') {
-    const gpu = laptops[laptopIndex].gpu;
-    
-    return (
-      <div className="grid grid-cols-1 gap-1 p-2" style={{ paddingBottom: '24px' }}>
-        <div className="font-medium text-sm">{spec.label}</div>
-        <div className="text-sm break-words">
-          {gpu || 'לא זמין'}
-        </div>
-      </div>
-    );
-  }
+  
   return (
       <div key={spec.key} style={{ padding: '8px' }}>
           <div style={{ fontWeight: 500, marginBottom: '4px' }}>{spec.label}</div>
@@ -280,6 +665,7 @@ const renderSpec = (spec, laptopIndex) => {
 };
 const getBackgroundColor = (spec, laptopIndex) => {
   const result = compareSpecs(spec.key, laptops[0], laptops[1]);
+
   // Check if result is null before trying to access winner property
   if (!result) return '';
   if (result.winner === 'tie' || result.winner === null) return '';
@@ -319,19 +705,49 @@ const generateSummary = () => {
       laptop2: []
   };
 
+  // Helper function to get descriptive advantage text
+  const getAdvantageDescription = (spec, laptop1Value, laptop2Value) => {
+    switch(spec.key) {
+      case 'cpu':
+        return 'מעבד חזק יותר - ביצועים טובים יותר למשימות מורכבות ועבודה מהירה יותר';
+      case 'cpu_ghz':
+        return `מהירות מעבד גבוהה יותר - תגובה מהירה יותר של המחשב`;
+      case 'ram_size':
+        return 'זיכרון RAM גדול יותר - יכולת לפתוח יותר תוכניות במקביל וביצועים טובים יותר';
+      case 'ram_type':
+        return 'סוג זיכרון RAM מתקדם יותר - מהירות העברת נתונים גבוהה יותר';
+      case 'storage_space':
+        return 'נפח אחסון גדול יותר - יותר מקום לקבצים, תוכנות ומשחקים';
+      case 'storage_type':
+        return 'סוג אחסון מהיר יותר - זמני טעינה קצרים יותר של תוכנות וקבצים';
+      case 'screen_size':
+        return 'מסך גדול יותר - חווית צפייה טובה יותר ונוחות עבודה משופרת';
+      case 'screenhz':
+        return 'קצב רענון מסך גבוה יותר - תצוגה חלקה יותר, מתאים במיוחד למשחקים';
+      case 'gpu':
+        return 'כרטיס מסך חזק יותר - ביצועים טובים יותר בעריכת וידאו, עיצוב ומשחקים';
+      case 'weight':
+        return 'משקל קל יותר - ניידות משופרת ונוחות נשיאה';
+      case 'price':
+        return 'מחיר נמוך יותר - תמורה טובה יותר לכסף';
+      default:
+        return spec.label;
+    }
+  };
+
   specs.forEach(spec => {
       if (spec.key === 'product_img') return;
       const result = compareSpecs(spec.key, laptops[0], laptops[1]);
       // Only process if result exists and has a winner
       if (result && result.winner === 'laptop1') {
-          advantages.laptop1.push(spec.label);
+          advantages.laptop1.push(getAdvantageDescription(spec, laptops[0][spec.key], laptops[1][spec.key]));
       } else if (result && result.winner === 'laptop2') {
-          advantages.laptop2.push(spec.label);
+          advantages.laptop2.push(getAdvantageDescription(spec, laptops[1][spec.key], laptops[0][spec.key]));
       }
   });
 
   return (
-      <div className=" p-3 bg-gray-50 rounded-lg">
+      <div className="p-3 bg-gray-50 rounded-lg">
           <h3 className="text-lg font-bold mb-4 text-center">סיכום השוואה</h3>
           <div className="grid grid-cols-2 gap-4">
               <div>
@@ -363,68 +779,100 @@ const generateSummary = () => {
   );
 };
 
-  return (
-    <Modal 
-    isOpen={isOpen} 
-    onClose={onClose}
-    size="2xl"
-    scrollBehavior="inside"
-    className="rtl h-[90vh] sm:h-auto mx-auto w-full max-w-full sm:max-w-4xl"
-    hideCloseButton
-    isDismissable={true}
-    onClickOutside={onClose}
-  >
-    <ModalContent className="h-full" dir="rtl">
-      <ModalHeader className="flex flex-col gap-1 border-b text-center">
-        השוואת מחשבים ניידים
-      </ModalHeader>
-      <ModalBody className="overflow-x-hidden">
-        <div className="grid grid-cols-2 gap-1">
-          {/* Column Headers */}
-          <div className="text-lg font-bold text-center ">
-            {laptops[0].manufacturer} {laptops[0].laptopSeries}
-          </div>
-          <div className="text-lg font-bold text-center ">
-            {laptops[1].manufacturer} {laptops[1].laptopSeries}
-          </div>
+return (
+  <Modal 
+  isOpen={isOpen} 
+  onClose={onClose}
+  size="2xl"
+  scrollBehavior="inside"
+  className="rtl h-[90vh] sm:h-auto mx-auto w-full max-w-full sm:max-w-4xl"
+  hideCloseButton
+  isDismissable={true}
+  onClickOutside={onClose}
+>
+  <ModalContent className="h-full" dir="rtl">
+    <ModalHeader className="flex flex-col gap-1 border-b text-center">
+      השוואת מחשבים ניידים
+    </ModalHeader>
+    <ModalBody className="overflow-x-hidden">
+      {/* Column Headers */}
+      <div className="grid grid-cols-2 mb-4">
+        <div className="text-lg font-bold text-center">
+          {laptops[0].manufacturer} {laptops[0].laptopSeries}
+        </div>
+        <div className="text-lg font-bold text-center">
+          {laptops[1].manufacturer} {laptops[1].laptopSeries}
+        </div>
+      </div>
 
-          {/* Specs Grid */}
-          <div className="space-y-0 border-l">
-            {specs.map((spec, index) => (
-              <div
-                key={`${spec.key}-0`}
-                className={`border-b ${getBackgroundColor(spec, 0)}`}
-              >
-                {renderSpec(spec, 0)}
+      {/* Specs Grid with Middle Labels */}
+      {specs.map((spec, index) => (
+        <div key={spec.key} className="relative">
+          {/* Label in the middle */}
+          {spec.key !== 'product_img' && (
+            <div 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-white px-2 font-medium text-sm"
+              style={{ width: 'fit-content' }}
+            >
+              {spec.label}
+            </div>
+          )}
+          
+          {/* Values grid */}
+          <div className="grid grid-cols-2 border-b relative">
+            <div className={`p-2 border-l ${getBackgroundColor(spec, 0)}`}>
+              <div className="flex justify-center items-center text-sm">
+                {spec.key === 'product_img' ? (
+                    <div className="h-48 md:h-36 lg:h-18 flex items-center justify-center">
+
+                    <img 
+                      src={laptops[0].product_img}
+                      alt={laptops[0].name}
+                      className="max-h-full w-auto object-contain rounded-lg"
+                    />
+                  </div>
+                ) : (
+                  <span style={getValueStyle(spec, 0)}>
+                    {laptops[0][spec.key] || 'לא זמין'}
+                  </span>
+                )}
               </div>
-            ))}
-          </div>
-          <div className="space-y-0">
-            {specs.map((spec, index) => (
-              <div
-                key={`${spec.key}-1`}
-                className={`border-b ${getBackgroundColor(spec, 1)}`}
-              >
-                {renderSpec(spec, 1)}
+            </div>
+            <div className={`p-2 ${getBackgroundColor(spec, 1)}`}>
+              <div className="flex justify-center items-center text-sm">
+                {spec.key === 'product_img' ? (
+                  <div className="h-48 flex items-center justify-center">
+                    <img 
+                      src={laptops[1].product_img}
+                      alt={laptops[1].name}
+                      className="max-h-full w-auto object-contain rounded-lg"
+                    />
+                  </div>
+                ) : (
+                  <span style={getValueStyle(spec, 1)}>
+                    {laptops[1][spec.key] || 'לא זמין'}
+                  </span>
+                )}
               </div>
-            ))}
+            </div>
           </div>
         </div>
+      ))}
 
-        {generateSummary()}
-      </ModalBody>
-      <ModalFooter className="border-t">
-        <Button 
-          color="danger" 
-          variant="light" 
-          onPress={onClose}
-          className="mx-auto"
-        >
-          סגור
-        </Button>
-      </ModalFooter>
-    </ModalContent>
-  </Modal>
+      {generateSummary()}
+    </ModalBody>
+    <ModalFooter className="border-t">
+      <Button 
+        color="danger" 
+        variant="light" 
+        onPress={onClose}
+        className="mx-auto"
+      >
+        סגור
+      </Button>
+    </ModalFooter>
+  </ModalContent>
+</Modal>
 );
 };
 // Rest of the FloatingCompareButton component remains the same
