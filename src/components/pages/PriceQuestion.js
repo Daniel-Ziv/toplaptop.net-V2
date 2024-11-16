@@ -6,20 +6,55 @@ import Header from "../Header";
 import CustomRadio from "../CustomRadiobox";
 import { motion, AnimatePresence } from "framer-motion";
 
-function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget = { price: 3000, priceImportance: 0 } }) {
-  const [sliderValue, setSliderValue] = useState(savedBudget?.price || 3000);
+function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget = { price: 3000, priceImportance: 0, tasks: [] } }) {
+  const [sliderValue, setSliderValue] = useState(savedBudget?.price || 1000);
   const [localImportance, setImportance] = useState(savedBudget?.priceImportance || 0);
+  const [recommendedBudget, setRecommendedBudget] = useState(3000);
+  const [feedbackMessage, setFeedbackMessage] = useState(""); // Feedback message for budget
+  const [showRecommendation, setShowRecommendation] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
+console.log('tasks:', savedBudget.tasks);
+
+
+  // First useEffect: Initialize recommended budget, slider value, and importance
   useEffect(() => {
-    if (savedBudget?.price) {
-      setSliderValue(savedBudget.price);
+    const maxBudget = calculateMaxRecommendedBudget(savedBudget.tasks || []);
+    setRecommendedBudget(maxBudget);
+   }, [savedBudget.tasks]);
+   
+   useEffect(() => {
+    if (savedBudget.price) setSliderValue(savedBudget.price);
+    if (savedBudget.priceImportance !== undefined) setImportance(savedBudget.priceImportance);
+   }, [savedBudget.price, savedBudget.priceImportance]);
+   useEffect(() => {
+    if (hasInteracted || showRecommendation) {
+      setShowFeedback(true);  // Set this to true when we want to show feedback
+      if (showRecommendation && sliderValue === recommendedBudget) {
+        setFeedbackMessage(`אחרי שהבנו מה בדיוק חשוב לך, אנחנו חושבים שתקציב של ${recommendedBudget} ₪ ייתן לך את התוצאה הכי טובה`);
+      } else if (sliderValue < recommendedBudget) {
+        setFeedbackMessage(<span style={{ color: '#ff0000' }}>שימו לב! לפי ההעדפות שלכם, מומלץ לשקול להעלות את התקציב  לתוצאות טובות יותר.</span>);
+      } else {
+        setFeedbackMessage(<span style={{ color: '#16a34a' }}>תקציב נהדר! הוא תואם או עולה על התקציב המומלץ.</span>);
+      }
+    } else {
+      setShowFeedback(false);  // Set this to false when we don't want feedback
+      setFeedbackMessage("");
     }
-    if (savedBudget?.priceImportance !== undefined) {
-      setImportance(savedBudget.priceImportance);
-    }
-  }, [savedBudget]);
+  }, [sliderValue, recommendedBudget, showRecommendation, hasInteracted]);
+
+  
+  const handleRecommendedBudget = () => {
+    setSliderValue(recommendedBudget);
+    setShowRecommendation(true);
+    setHasInteracted(true);
+    setShowFeedback(true);  // Add this line
+    setFeedbackMessage(`אחרי שהבנו מה בדיוק חשוב לך, אנחנו חושבים שתקציב של ${recommendedBudget} ₪ ייתן לך את התוצאה הכי טובה`);
+  };
 
   const handleBudgetChange = (value) => {
+    setHasInteracted(true);
     setSliderValue(value);
     updateAnswer(value, localImportance);
   };
@@ -49,28 +84,79 @@ function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget = { price: 30
     {
       value: 0,
       sizeName: {
-        name: "לא חשוב",
-        description: "המחיר לא משפיע על הבחירה שלי",
-        isRecommended: ""
+        name: "אין לי תקציב",
+        description: "אני מחפש את המחשב הכי טוב שיש, ללא הגבלת תקציב",
+
       }
     },
     {
       value: 0.125,
       sizeName: {
         name: "קצת חשוב",
-        description: "אני מוכן להתגמש במחיר, אבל יש לי העדפה",
-        isRecommended: ""
+        description: "יש לי תקציב, ואם יש מחשב שמתאים לי יותר אבל יחרוג ממנו קצת, אני יכול לשקול את זה",
+        isRecommended: true
+
       }
     },
     {
       value: 0.25,
       sizeName: {
         name: "חשוב",
-        description: "המחיר הוא גורם משמעותי בהחלטה שלי",
-        isRecommended: ""
+        description: "אני לא מוכן שיחרוג בכלל מהתקציב",
+
       }
     }
   ];
+
+ 
+
+  // handle the budget for each task for the recommendation
+  const taskBudgets = {
+    "programming": {
+      "light": 3500,
+      "heavy": 7000
+    },
+    "modeling/animation": 8000,
+    "photo-editing": 5000,
+    "music-editing": 4000,
+    "video-editing": 8000,
+    "basic-use": 2500,
+    "ai": 9000,
+    "gaming": {
+      "light": 5500,
+      "heavy": 8500
+    }
+  };
+  const calculateMaxRecommendedBudget = (tasks) => {
+    let maxBudget = 0;
+    tasks.forEach((taskObj) => {
+      const taskName = taskObj.task;
+      const taskLevel = taskObj.level;
+      
+      // Get the budget based on whether the task has levels or not
+      let taskBudget;
+      if (typeof taskBudgets[taskName] === 'object') {
+        // Task has levels (like programming or gaming)
+        taskBudget = taskBudgets[taskName][taskLevel] || 0;
+      } else {
+        // Task doesn't have levels (like photo-editing)
+        taskBudget = taskBudgets[taskName] || 0;
+      }
+      
+      if (taskBudget > maxBudget) {
+        maxBudget = taskBudget;
+      }
+    });
+    
+    const additionalTasks = tasks.length - 1; // Subtract 1 to not count the highest budget task
+    const additionalBudget = additionalTasks * 500;
+    
+    const finalBudget = Math.min(maxBudget + additionalBudget, 20000); // Changed to 20000 to match your slider max
+    console.log('Final calculated budget:', finalBudget);
+    return finalBudget;
+  };
+  
+
 
   return (
     <Container>
@@ -80,16 +166,12 @@ function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget = { price: 30
         className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
       
-      <div className="flex flex-col items-center">
-        <Button color="primary" variant="flat" dir="rtl">
-          תמליצו לי
-        </Button>
-      </div>
+      
 
       <div className="flex flex-col items-center space-y-4 mt-6">
         <div className="w-full max-w-lg mx-auto mb-6">
           <p className="text-lg text-center mb-4" dir="rtl">
-            במידה ויש לכם תקציב, כמה חשוב לכם שהמחשב יהיה בתקציב
+            במידה ויש לכם תקציב, בחרו כמה חשוב לכם שלא יחרוג ממנו
           </p>
           <RadioGroup
             value={localImportance.toString()}
@@ -116,46 +198,60 @@ function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget = { price: 30
               transition={{ duration: 0.5, ease: "easeInOut" }}
               className="overflow-hidden w-full max-w-lg"
             >
+              
               <motion.div
                 initial={{ y: -20 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
+                <div className="flex flex-col items-center mb-2">
+                <Button color="primary" variant="flat" dir="rtl" onClick={handleRecommendedBudget}>
+                    כמה מומלץ?
+                  </Button>
+                </div>
                 <Slider
                   aria-label="Set your budget"
                   label=" "
                   size="lg"
-                  color="success"
+                  color="foreground"
                   showTooltip={true}
-                  formatOptions={{ style: 'currency', currency: 'ILS' }}
-                  tooltipValueFormatOptions={{ style: 'currency', currency: 'ILS' }}
-                  minValue={1000}
-                  maxValue={10000}
-                  marks={[
-                    {
-                      value: 3000,
-                      label: (
-                        <div dir="rtl" className="text-sm text-gray-700 dark:text-gray-600">
-                          תקציב מומלץ!
-                        </div>
-                      ),
-                    },
-                  ]}
+                  tooltipValueFormatOptions={{ 
+                    style: 'currency', 
+                    currency: 'ILS',
+                    minimumFractionDigits: 0,  // Add this
+                    maximumFractionDigits: 0   // Add this
+                  }}                  minValue={1000}
+                  maxValue={20000}
+                  hideValue={true}  // Add this
+
+                 
                   step={100}
                   dir="ltr"
                   value={sliderValue}
                   onChange={handleBudgetChange}
                   className="max-w-md"
                 />
+                <p className="text-lg text-center mt-4" dir="rtl">התקציב שנבחר: {sliderValue} ₪</p>
+                <AnimatePresence>
+                  {showFeedback && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="text-lg text-center mt-2"
+                      dir="rtl"
+                    >
+                      {feedbackMessage}
+                    </motion.p>
+                  )}
+    </AnimatePresence>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      <p dir="rtl" className="text-lg font-normal text-gray-800 dark:text-gray-700 text-center mt-6">
-        על סמך הבחירות שלך, כדי לקבל מחשב שהוא בול למה שאתה מחפש אנחנו ממליצים על
-      </p>
+     
 
       <NavigationButtons
         onNext={handleNext}

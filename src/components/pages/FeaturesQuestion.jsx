@@ -24,12 +24,12 @@ function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) 
     <Container>
       <Header
         dir="rtl"
-        text="לפני שנתחיל..."
+        text="משהו ספציפי?"
         className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
       <p dir="rtl" className="text-lg font-normal text-gray-800 dark:text-gray-700 text-center">
         האם יש רכיב מסוים שאתם כבר יודעים שאתם צריכים?
-        בתוך כל מעבד, למיין חזק חלש וכו גם ראם סטנדרטי ונחשב הרבה
+        אם כן, בחרו אותו כאן וננסה למצוא לכם מחשב עם הרכיבים שאתם מחפשים.
       </p>
       <FeatureSelector
         selectedFeatures={selectedFeatures}

@@ -141,13 +141,18 @@ function AppContent() {
           selectedScreenSizes={answers.screenSize.selectedScreenSizes} 
           touchscreen={answers.features.touchscreen}
           screenSizeImportance={answers.screenSize.sizeImportance}
+          tasks={answers.tasks}
+
         />;
       case 5:
         return <PriceQuestion 
           onAnswer={(answer) => handleAnswer('budget', answer)} 
           prevStep={prevStep} 
           nextStep={nextStep} 
-          savedBudget={answers.budget}
+          savedBudget={{
+            ...answers.budget,
+            tasks: answers.tasks  
+          }}
         />;
       case 6:
         return <FeaturesQuestion 

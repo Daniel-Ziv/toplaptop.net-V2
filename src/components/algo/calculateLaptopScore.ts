@@ -370,18 +370,18 @@ const storageSpaceScores: Record<number, number> = {
   256: 5,
   320: 6,
   500: 6,
-  508: 6,          // 500+8
-  524: 6,          // 500+24
+  508: 6,         
+  524: 6,          
   640: 6,
   750: 7,
-  774: 7,          // 750+24
+  774: 7,          
   1000: 7,
-  1008: 7,         // 1000+8
-  1024: 7,         // 1000+24
-  1032: 7,         // 1000+32
-  1128: 8,         // 1000+128
-  1256: 8,         // 1000+256
-  1512: 8,         // 1000+512
+  1008: 7,       
+  1024: 7,        
+  1032: 7,        
+  1128: 8,         
+  1256: 8,        
+  1512: 8,        
   2000: 8,
   3000: 9,
   4000: 10,
@@ -441,7 +441,7 @@ const taskRequirements: Record<string, TaskRequirements> = {
   },
   "ai": {
     cpu: { min: 8, max: 10, weight: 0.3 },           // High CPU power is crucial for AI processing.
-    ram: { min: 16, max: 10, weight: 0.25 },         // Large RAM is essential for handling AI models.
+    ram: { min: 8, max: 10, weight: 0.25 },         // Large RAM is essential for handling AI models.
     ramType: { min: 5, max: 10, weight: 0.1 },       // Fast RAM type improves performance.
     gpu: { min: 8, max: 10, weight: 0.25 },          // GPU is vital for processing models and data.
     storageSpace: { min: 6, max: 10, weight: 0.05 }, // Storage space is less important but needed for datasets.

@@ -14,11 +14,132 @@ function ScreensizeQuestion({
   onAnswer,
   selectedScreenSizes = [],
   screenSizeImportance = 0,
-  touchscreen = false
+  touchscreen = false,
+  tasks = []
 }) {
   const [localScreenSizes, setLocalScreenSizes] = useState(selectedScreenSizes);
   const [localTouchscreen, setLocalTouchscreen] = useState(touchscreen);
   const [sizeImportance, setSizeImportance] = useState(screenSizeImportance);
+  const [recommendedSizes, setRecommendedSizes] = useState([]);
+  const [showRecommendation, setShowRecommendation] = useState(true);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [reasonMessage, setReasonMessage] = useState("");
+
+  const taskPriority = {
+    "basic-use": 1,
+    "music-editing": 2,
+    "gaming": {
+      "light": 2,
+      "heavy": 4
+    },
+    "programming": 3,
+    "photo-editing": 3,
+    "video-editing": 4,
+    "modeling/animation": 5,
+    "ai": 4
+  };
+
+  const taskScreenSizes = {
+    "programming": ["large", "huge"],
+    "modeling/animation": ["huge"],
+    "photo-editing": ["large", "huge"],
+    "music-editing": ["medium", "large"],
+    "video-editing": ["large", "huge"],
+    "basic-use": ["medium"],
+    "ai": ["large", "huge"],
+    "gaming": {
+      "light": ["medium", "large"],
+      "heavy": ["large", "huge"]
+    }
+  };
+  
+  const taskTranslations = {
+    "programming": "תכנות",
+    "modeling/animation": "מידול ואנימציה",
+    "photo-editing": "עריכת תמונה",
+    "music-editing": "עריכת מוזיקה",
+    "video-editing": "עריכת וידאו",
+    "basic-use": "שימוש בסיסי",
+    "ai": "בינה מלאכותית",
+    "gaming": "משחקים"
+  };
+
+  const taskReasons = {
+    "programming": {
+      "large": "נוח לפיתוח ועבודה עם מספר חלונות",
+      "huge": "אידיאלי לעבודה עם מספר רב של חלונות וקוד"
+    },
+    "modeling/animation": {
+      "huge": "חיוני לעבודה מדויקת עם פרטים ותצוגה מלאה של הפרויקט"
+    },
+    "photo-editing": {
+      "large": "מאפשר דיוק בעריכה ותצוגה טובה של התמונה",
+      "huge": "אידיאלי לעבודה מקצועית עם תמונות גדולות"
+    },
+    "music-editing": {
+      "medium": "מספיק למעקב אחר מספר ערוצי שמע",
+      "large": "נוח לעבודה עם מספר רב של ערוצים וכלים"
+    },
+    "video-editing": {
+      "large": "מאפשר תצוגה טובה של הווידאו והטיימליין",
+      "huge": "אידיאלי לעריכה מקצועית ותצוגת פרטים"
+    },
+    "basic-use": {
+      "medium": "מתאים לשימוש יומיומי ונוח לניידות"
+    },
+    "ai": {
+      "large": "נוח לעבודה עם מודלים ונתונים",
+      "huge": "אידיאלי לפיתוח ואימון מודלים מורכבים"
+    },
+    "gaming": {
+      "light": {
+        "medium": "מתאים למשחקים קלים ונוח לניידות",
+        "large": "חוויית משחק טובה עם נוחות גבוהה"
+      },
+      "heavy": {
+        "large": "מספק חוויית משחק מעולה",
+        "huge": "חוויית משחק אולטימטיבית עם תצוגה מלאה"
+      }
+    }
+  };
+
+
+  const calculateRecommendedSizes = (tasks) => {
+    // Find the most demanding task
+    let highestPriority = 0;
+    let primaryTask = null;
+  
+    tasks.forEach((taskObj) => {
+      const taskName = taskObj.task;
+      let priority;
+      
+      if (taskName === "gaming") {
+        priority = taskPriority[taskName][taskObj.level];
+      } else {
+        priority = taskPriority[taskName];
+      }
+      
+      if (priority > highestPriority) {
+        highestPriority = priority;
+        primaryTask = taskObj;
+      }
+    });
+  
+    // Get recommended sizes only for the most demanding task
+    if (primaryTask) {
+      const taskName = primaryTask.task;
+      if (taskName === "gaming") {
+        return taskScreenSizes[taskName][primaryTask.level];
+      } else {
+        return taskScreenSizes[taskName];
+      }
+    }
+    
+    return [];
+  };
+
+  
 
   const handleScreenSizeChange = (values) => {
     setLocalScreenSizes(values);
@@ -56,17 +177,74 @@ function ScreensizeQuestion({
     setSizeImportance(screenSizeImportance);
   }, [selectedScreenSizes, touchscreen, screenSizeImportance]);
 
-  const handleSelectAll = () => {
-    const allSizes = ["small", "medium", "large", "huge"];
-    setLocalScreenSizes(allSizes);
-    updateAnswer(allSizes, localTouchscreen, sizeImportance);
-  };
+  useEffect(() => {
+    if (tasks.length > 0) {
+      const recommended = calculateRecommendedSizes(tasks);
+      setRecommendedSizes(recommended);
+      setShowRecommendation(true);
+      
+      // Find primary task (most demanding)
+      let highestPriority = 0;
+      let primaryTask = null;
+      
+      tasks.forEach((taskObj) => {
+        const taskName = taskObj.task;
+        let priority;
+        
+        if (taskName === "gaming") {
+          priority = taskPriority[taskName][taskObj.level];
+        } else {
+          priority = taskPriority[taskName];
+        }
+        
+        if (priority > highestPriority) {
+          highestPriority = priority;
+          primaryTask = taskObj;
+        }
+      });
+  
+      if (primaryTask) {
+        const taskName = taskTranslations[primaryTask.task];
+        const sizeDesc = taskScreenSizes[primaryTask.task]?.[primaryTask.level] || taskScreenSizes[primaryTask.task];
+        
+       
+        const sizeRecommendations = sizeDesc.map(size => {
+          const sizeText = size === "huge" ? "גדול מאוד" :
+                          size === "large" ? "גדול" :
+                          size === "medium" ? "בינוני" : "קטן";
+                          
+          return `מסך ${sizeText}`;
+        }).join(" או ");
+
+        const reasons = sizeDesc.map(size => {
+          let reason;
+          if (primaryTask.task === "gaming") {
+            reason = taskReasons[primaryTask.task][primaryTask.level][size];
+          } else {
+            reason = taskReasons[primaryTask.task]?.[size];
+          }
+          
+          const sizeText = size === "huge" ? "מסך גדול מאוד" :
+                          size === "large" ? "מסך גדול" :
+                          size === "medium" ? "מסך בינוני" : "מסך קטן";
+                          
+          return `${sizeText} - ${reason}`;
+        }).join("\n");
+
+        setFeedbackMessage(`עבור המשימות שבחרת מומלץ ${sizeRecommendations}`);
+        setReasonMessage(reasons);  
+        setShowFeedback(true); 
+
+              }
+            }
+  }, [tasks]);
+ 
 
   const importanceOptions = [
     {
       value: 0,
       sizeName: {
-        name: "כל גודל מסך",
+        name: "לא חשוב בכלל",
         description: "לא משנה לי גודל המסך",
         isRecommended: ""
       }
@@ -92,15 +270,13 @@ function ScreensizeQuestion({
   return (
     <Container>
       <Header
-        text="בחר גודל מסך"
-        className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
+        text="לגביי המסך.."
+        className="mb-3 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
       <div className="flex flex-col items-center space-y-6 mt-6">
         <div className="text-center mb-4">
           <h3 className="text-xl font-semibold mb-2">כמה חשוב לך גודל המסך?</h3>
-          <p className="text-gray-600">
-            גודל המסך משפיע על הניידות ועל חווית השימוש. בחר את האפשרות המתאימה לך ביותר.
-          </p>
+          
         </div>
 
         <RadioGroup
@@ -125,21 +301,31 @@ function ScreensizeQuestion({
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="overflow-hidden w-full max-w-lg"
+              className="overflow-hidden w-full max-w-lg "
             >
               <motion.div
                 initial={{ y: -20 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
-                <Button
-                  color="primary"
-                  variant="flat"
-                  onClick={handleSelectAll}
-                  className="mb-4 w-full"
-                >
-                  אין לי מושג מה לבחור
-                </Button>
+                <div className="flex flex-col items-center mb-2">
+                   
+                    <AnimatePresence>
+                    {showFeedback && (
+  <motion.div
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0 }}
+    className="text-center mt-2 mb-4"
+    dir="rtl"
+  >
+    <p className="text-lg font-medium">{feedbackMessage}</p>
+    <p className="text-sm text-gray-500 mt-1" style={{ whiteSpace: 'pre-line' }}>
+  {reasonMessage}
+</p>  </motion.div>
+)}
+</AnimatePresence>
+                  </div>
 
                 <CheckboxGroup
                   value={localScreenSizes}
@@ -151,7 +337,7 @@ function ScreensizeQuestion({
                     sizeName={{
                       name: "קטן",
                       description: "פחות מ13 אינצ׳",
-                      isRecommended: "מומלץ!"
+                      isRecommended: recommendedSizes.includes("small") ? "מומלץ!" : ""
                     }}
                     statusColor="success"
                   />
@@ -160,7 +346,7 @@ function ScreensizeQuestion({
                     sizeName={{
                       name: "בינוני",
                       description: "בין 13 ל14 אינצ׳",
-                      isRecommended: "מומלץ!"
+                      isRecommended: recommendedSizes.includes("medium") ? "מומלץ!" : ""
                     }}
                     statusColor="success"
                   />
@@ -169,7 +355,7 @@ function ScreensizeQuestion({
                     sizeName={{
                       name: "גדול",
                       description: "בין 14 ל16 אינצ׳",
-                      isRecommended: "מומלץ!"
+                      isRecommended:  recommendedSizes.includes("large") ? "מומלץ!" : ""
                     }}
                     statusColor="success"
                   />
@@ -178,7 +364,7 @@ function ScreensizeQuestion({
                     sizeName={{
                       name: "ענק",
                       description: "מעל 16 אינצ׳",
-                      isRecommended: "מומלץ!"
+                      isRecommended: recommendedSizes.includes("huge") ? "מומלץ!" : ""
                     }}
                     statusColor="success"
                   />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Popover, PopoverTrigger, PopoverContent, Radio, RadioGroup } from "@nextui-org/react";
-import { Info, Brush, Video, Music, Code, Globe, VideoIcon, Cpu, Edit3, Monitor, Bot } from "lucide-react";
+import { Info, Brush, Video, Music, Code, Globe, VideoIcon, Cpu, Edit3, Monitor, Bot, InfoIcon } from "lucide-react";
 import NavigationButtons from "../NavigationButtons";
 import Container from "../Container"
 import Header from "../Header";
@@ -160,53 +160,58 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
         text="באילו משימות תשתמש במחשב?"
         className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display" 
       />
-        <p className="text-gray-600 text-center">
-          בחר את כל המשימות שאתה מתכנן לבצע במחשב
-        </p>
+      <p className="text-gray-600 text-center mb-4">
+        <span className="inline-flex items-center gap-1 whitespace-nowrap">
+          בשביל עוד מידע על כל אפשרות לחצו על כפתור ה
+          <Info className="w-4 h-4" />
+        </span>
+      </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {Object.entries(taskInfo).map(([task, info]) => (
           <div key={task} className="flex flex-col gap-2">
             <Button
-              className={`h-auto min-h-24 p-4 flex flex-col items-start justify-between w-full ${
-                localSelectedTasks.includes(task) ? 'bg-primary-100' : ''
-              }`}
-              variant={localSelectedTasks.includes(task) ? "flat" : "bordered"}
-              onClick={() => handleSelectionChange(task)}
-            >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-2">
-                  {info.icon}
-                  <span className="text-lg font-medium">{info.displayName}</span>
-                  {info.recommended && (
-                    <span className="px-2 py-1 text-xs bg-success-100 text-success-600 rounded-full">
-                      מומלץ
-                    </span>
-                  )}
+                className={`h-auto min-h-24 p-4 flex flex-col items-start justify-between w-full border-2 ${
+                  localSelectedTasks.includes(task) 
+                    ? 'bg-primary-100 border-primary-500' 
+                    : 'border-default hover:border-primary-500'
+                }`}
+                variant="bordered"
+                onClick={() => handleSelectionChange(task)}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    {info.icon}
+                    <span className="text-lg font-medium">{info.displayName}</span>
+                    {info.recommended && (
+                      <span className="px-2 py-1 text-xs bg-success-100 text-success-600 rounded-full">
+                        מומלץ
+                      </span>
+                    )}
+                  </div>
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="p-1"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Info className="w-4 h-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <div className="px-1 py-2 text-right max-w-xs" dir="rtl">
+                        <p className="text-sm text-default-700">
+                          {info.description}
+                        </p>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
-                <Popover>
-                  <PopoverTrigger>
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      variant="light"
-                      className="p-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Info className="w-4 h-4" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <div className="px-1 py-2 text-right max-w-xs" dir="rtl">
-                      <p className="text-sm text-default-700">
-                        {info.description}
-                      </p>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </Button>
+              </Button>
             
             {localSelectedTasks.includes(task) && info.levels && (
               <div className="mr-8 p-4 border rounded-lg bg-gray-50">
