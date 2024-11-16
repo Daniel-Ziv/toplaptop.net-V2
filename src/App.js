@@ -132,6 +132,7 @@ function AppContent() {
           prevStep={prevStep} 
           nextStep={nextStep} 
           savedPortabilityChoices={answers.weightImportance} 
+          tasks={answers.tasks}
         />;
       case 4:
         return <ScreensizeQuestion 

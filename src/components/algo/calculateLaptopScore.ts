@@ -492,6 +492,7 @@ function calculateComponentScore(
   }
 }
 
+
 function calculatePriceScore(laptopPrice: number, userBudget: number): number {
   if (laptopPrice <= userBudget) {
     return 100; // Perfect score within budget
@@ -582,7 +583,7 @@ function calculateScreenSizeScore(
 export function calculateLaptopScore(laptop: any, answers: any): { finalScore: number; componentScores: { name: string; score: number; }[] } {
   const { tasks, features } = answers;
 
-  for (const [feature, selectedValue] of Object.entries(features)) {
+for (const [feature, selectedValue] of Object.entries(features)) {
     // Skip if the selected value is empty (e.g., no CPUs were selected)
     if (Array.isArray(selectedValue) && selectedValue.length === 0) {
         continue; // No selection for this feature, so proceed without filtering
@@ -692,22 +693,22 @@ export function calculateLaptopScore(laptop: any, answers: any): { finalScore: n
   console.log("Combined Task Requirements:", combinedTaskRequirements);
   
 
-  
-  // Objective component scores (out of 10)
-  const cpuScore = cpuModelScores[laptop.cpu] || 0;
-  const ramScore = ramSizeScores[laptop.ram_size] || 0;
+
+// Objective component scores (out of 10)
+const cpuScore = cpuModelScores[laptop.cpu] || 0;
+const ramScore = ramSizeScores[laptop.ram_size] || 0;
   const ramTypeScore = ramTypeScores[laptop.ram_type] || 0;
-  const gpuScore = gpuModelScores[laptop.gpu] || 0;
-  const storageSpaceScore = storageSpaceScores[laptop.storage_space] || 0;
-  const storageTypeScore = storageTypeScores[laptop.storage_type] || 0;
+const gpuScore = gpuModelScores[laptop.gpu] || 0;
+const storageSpaceScore = storageSpaceScores[laptop.storage_space] || 0;
+const storageTypeScore = storageTypeScores[laptop.storage_type] || 0;
 
   // Normalize component scores to out of 100
-  const normalizedCpuScore = (cpuScore / 10) * 100;
-  const normalizedRamScore = (ramScore / 10) * 100;
-  const normalizedRamTypeScore = (ramTypeScore / 10) * 100;
-  const normalizedGpuScore = (gpuScore / 10) * 100;
-  const normalizedStorageSpaceScore = (storageSpaceScore / 10) * 100;
-  const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
+const normalizedCpuScore = (cpuScore / 10) * 100;
+const normalizedRamScore = (ramScore / 10) * 100;
+const normalizedRamTypeScore = (ramTypeScore / 10) * 100;
+const normalizedGpuScore = (gpuScore / 10) * 100;
+const normalizedStorageSpaceScore = (storageSpaceScore / 10) * 100;
+const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
 
   console.log("Component Scores:", {
     normalizedCpuScore,

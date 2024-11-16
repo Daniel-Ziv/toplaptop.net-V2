@@ -88,10 +88,10 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
   useEffect(() => {
     const calculateScores = async () => {
       setIsLoading(true);
-      
+  
       const encodedParams = searchParams.get('q');
       const answersToUse = encodedParams ? decodeParameters(encodedParams) : answers;
-
+  
       if (answersToUse) {
         // Calculate match percentage for each laptop
         const scoredLaptops: Laptop[] = laptops.map((laptop) => {
@@ -102,29 +102,30 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
             componentScores: componentScores
           };
         });
-
+  
         // Filter out laptops with a matchPercentage of 0
         const filteredLaptops = scoredLaptops.filter((laptop) => 
           laptop.matchPercentage && laptop.matchPercentage > 0
         );
-
+  
         // Sort laptops by match percentage
         filteredLaptops.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
-
+  
         setSortedLaptops(filteredLaptops);
-        
+  
         // If this is a new search (not from URL), update the URL
         if (!encodedParams && answers) {
           const encoded = encodeParameters(answers);
           setSearchParams({ q: encoded });
         }
       }
-      
+  
       setIsLoading(false);
     };
-
+  
     calculateScores();
   }, [answers, searchParams]);
+  
   
   const showMore = () => {
     setDisplayCount((prev) => Math.min(prev + 5, sortedLaptops.length));

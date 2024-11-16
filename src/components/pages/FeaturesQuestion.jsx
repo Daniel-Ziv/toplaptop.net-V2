@@ -3,9 +3,11 @@ import NavigationButtons from "../NavigationButtons.js";
 import FeatureSelector from "../FeatureSelector.jsx";
 import Container from "../Container.js";
 import Header from "../Header.js";
+import { Spinner } from "@nextui-org/react";
 
 function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) {
   const [selectedFeatures, setSelectedFeatures] = useState(savedFeatures);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setSelectedFeatures(savedFeatures || {});
@@ -16,9 +18,25 @@ function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) 
     onAnswer(features);
   };
 
-  const hasSelectedFeatures = Object.values(selectedFeatures).some(value => 
-    value === true || (Array.isArray(value) && value.length > 0)
-  );
+  const handleNext = () => {
+    setIsLoading(true);
+    requestAnimationFrame(() => {
+      nextStep();
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-50">
+        <Spinner 
+          size="lg"
+          color="primary"
+          className="w-20 h-20"
+          label="מעבד את הבחירות שלך..."
+        />
+      </div>
+    );
+  }
 
   return (
     <Container>
@@ -36,8 +54,9 @@ function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) 
         onSelectionChange={handleFeatureSelection}
       />
       <NavigationButtons
-        onNext={nextStep}
+        onNext={handleNext}
         onBack={prevStep}
+        nextDisabled={isLoading}
       />
     </Container>
   );
