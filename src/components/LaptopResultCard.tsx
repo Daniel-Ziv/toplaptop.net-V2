@@ -119,6 +119,31 @@ export default function LaptopResultCard({
       
     });
   };
+
+  const getFilteredSpecs = (specs: { value: any; label: string }[]) => {
+    return specs
+      .filter(spec => {
+        const specValue = String(spec.value).toLowerCase();
+        return spec.value && 
+               specValue !== 'לא זמין' && 
+               specValue !== 'ללא' &&
+               specValue !== 'undefined' &&
+               spec.value !== null;
+      })
+      .map(spec => `${spec.value}${spec.label}`)
+      .join(' ');
+  };
+  
+  // Inside your component, add this array of specs
+  const titleSpecs = [
+    { value: ram_size, label: 'GB RAM' },
+    { value: ram_type, label: '' },
+    { value: cpu, label: '' },
+    { value: screenType, label: '' },
+    { value: screenhz, label: 'hz' }
+  ];
+
+
   return (
     <div 
     className={`bg-white rounded-lg border-2 w-full max-w-4xl mx-auto mb-4 relative
@@ -166,7 +191,7 @@ export default function LaptopResultCard({
           />
           {/* Product Details */}
           <div className="flex-1 space-y-4 text-right">
-            <h3 className={`text-m rtl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries} - {ram_size}GB RAM {ram_type} {cpu} {screenType} {screenhz}hz</h3>
+            <h3 className={`text-m rtl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries} - {getFilteredSpecs(titleSpecs)}</h3>
             <div className="flex justify-center text-sm" dir="rtl">
               <div className="flex items-center gap-2 p-2 w-full">
                 <span className={`text-center ${styles.laptopCardSpecs}`} style={{ fontSize: '18px' }}>
