@@ -413,8 +413,15 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
               winner: cpuScore1 > cpuScore2 ? 'laptop1' : 'laptop2',
           };
         case 'cpuModel':
-          
-        case 'cpuGeneration':
+          if (!value1 || !value2 || value1 === 'לא זמין' || value2 === 'לא זמין') return null;
+          if (value1 === value2) return { comparison: 'זהה', winner: 'tie' };
+          return { comparison: 'שונה', winner: null };
+      
+        case 'cpuGen':
+            if (!value1 || !value2 || value1 === 'לא זמין' || value2 === 'לא זמין') return null;
+            if (value1 === value2) return { comparison: 'זהה', winner: 'tie' };
+            return { comparison: 'שונה', winner: null };
+        
          
         case 'ram_type':
                 if (
@@ -532,12 +539,106 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
             }
             return null;
 
-        case 'screenResolution':
+        case 'for_gaming':
+          
+        case 'touchscreen':
+        case 'flippingScreen':
+            if (value1 === true && value2 === true) {
+                return { comparison: 'שניהם כוללים', winner: 'tie' };
+            } else if (value1 === true && value2 !== true) {
+                return { comparison: 'כולל אפשרות', winner: 'laptop1' };
+            } else if (value2 === true && value1 !== true) {
+                return { comparison: 'כולל אפשרות', winner: 'laptop2' };
+            } else {
+                return { comparison: 'לא זמין בשניהם', winner: null };
+            }
+
+        case 'screenRes':
             if (!value1 || !value2 || value1 === 'לא זמין' || value2 === 'לא זמין') return null;
             return {
                 comparison: value1 === value2 ? 'רזולוציה זהה' : 'רזולוציה שונה',
                 winner: null
             };
+        case 'connections':
+          if (Array.isArray(value1) && Array.isArray(value2)) {
+              const uniqueIn1 = value1.filter(item => !value2.includes(item));
+              const uniqueIn2 = value2.filter(item => !value1.includes(item));
+              
+              if (uniqueIn1.length === 0 && uniqueIn2.length === 0) {
+                  return { comparison: 'חיבורים זהים', winner: 'tie' };
+              }
+              
+              // If laptop1 has more unique connections, it wins
+              if (uniqueIn1.length > uniqueIn2.length) {
+                  return {
+                      comparison: `${uniqueIn1.length} חיבורים נוספים`,
+                      winner: 'laptop1',
+                      uniqueIn1,
+                      uniqueIn2
+                  };
+              }
+              
+              // If laptop2 has more unique connections, it wins
+              if (uniqueIn2.length > uniqueIn1.length) {
+                  return {
+                      comparison: `${uniqueIn2.length} חיבורים נוספים`,
+                      winner: 'laptop2',
+                      uniqueIn1,
+                      uniqueIn2
+                  };
+              }
+              
+              // If both have the same number of unique connections
+              if (uniqueIn1.length === uniqueIn2.length) {
+                  return {
+                      comparison: 'מספר חיבורים שונה זהה',
+                      winner: 'tie',
+                      uniqueIn1,
+                      uniqueIn2
+                  };
+              }
+          }
+          return null;
+        case 'security':
+          if (Array.isArray(value1) && Array.isArray(value2)) {
+              const uniqueIn1 = value1.filter(item => !value2.includes(item));
+              const uniqueIn2 = value2.filter(item => !value1.includes(item));
+              
+              if (uniqueIn1.length === 0 && uniqueIn2.length === 0) {
+                  return { comparison: 'אבטחה זהה', winner: 'tie' };
+              }
+              
+              // If laptop1 has more unique security features, it wins
+              if (uniqueIn1.length > uniqueIn2.length) {
+                  return {
+                      comparison: `${uniqueIn1.length} אפשרויות אבטחה נוספות`,
+                      winner: 'laptop1',
+                      uniqueIn1,
+                      uniqueIn2
+                  };
+              }
+              
+              // If laptop2 has more unique security features, it wins
+              if (uniqueIn2.length > uniqueIn1.length) {
+                  return {
+                      comparison: `${uniqueIn2.length} אפשרויות אבטחה נוספות`,
+                      winner: 'laptop2',
+                      uniqueIn1,
+                      uniqueIn2
+                  };
+              }
+              
+              // If both have the same number of unique security features
+              if (uniqueIn1.length === uniqueIn2.length) {
+                  return {
+                      comparison: 'מספר אפשרויות אבטחה שונות זהה',
+                      winner: 'tie',
+                      uniqueIn1,
+                      uniqueIn2
+                  };
+              }
+          }
+          return null;
 
         default:
 
@@ -556,7 +657,7 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
     { key: 'product_img', label: '' },  // changed from 'image'
     { key: 'cpu', label: 'מעבד' },           // changed from 'processor'
     { key: 'cpuModel', label: 'דגם מעבד' },  // added
-    { key: 'cpuGeneration', label: 'דור מעבד' }, // added
+    { key: 'cpuGen', label: 'דור מעבד' }, // added
     { key: 'cpu_ghz', label: 'מהירות מעבד' }, // added
     { key: 'ram_size', label: 'זיכרון RAM' },
     { key: 'ram_type', label: 'סוג זיכרון' }, // added
@@ -564,7 +665,7 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
     { key: 'storage_type', label: 'סוג אחסון' }, // added
     { key: 'screen_size', label: 'גודל מסך' }, // changed from 'display'
     { key: 'screenhz', label: 'קצב רענון מסך' }, // added
-    { key: 'screenResolution', label: 'רזולוציה' }, // added
+    { key: 'screenRes', label: 'רזולוציה' }, // added
     { key: 'screenType', label: 'סוג מסך' }, // added
     { key: 'for_gaming', label: 'לגיימינג' }, // added
     { key: 'touchscreen', label: 'מסך מגע' }, // added
@@ -576,93 +677,7 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
     { key: 'gpu' , label: 'כרטיס מסך' }, // added
 ];
 
-const renderSpec = (spec, laptopIndex) => {
-  const value1 = laptops[0][spec.key];
-  const value2 = laptops[1][spec.key];
-  
 
-
- 
-
-  // Skip only if both values are unavailable
-  if ((value1 === 'לא זמין' || !value1) && (value2 === 'לא זמין' || !value2)) {
-    return null;
-  }
-  // For image, always render without highlighting
-  if (spec.key === 'product_img') {
-    return (
-      <div className="flex items-center justify-center p-2">
-        <div className="w-[250px] h-[250px] relative flex items-center justify-center">
-          <img 
-            src={laptops[laptopIndex].product_img}
-            alt={laptops[laptopIndex].name}
-            className="max-w-full max-h-full object-contain"
-            style={{
-              width: '250px',
-              height: '250px'
-            }}
-          />
-        </div>
-      </div>
-    );
-  }
-  const value = laptops[laptopIndex][spec.key];
-  const valueStyle = getValueStyle(spec, laptopIndex);
-
-  //fixing connections looks in the comparison
-  if (spec.key === 'connections') {
-    const thisLaptopConnections = laptops[laptopIndex].connections || [];
-    const otherLaptopConnections = laptops[1 - laptopIndex].connections || [];
-    
-    // Get missing connections that the other laptop has
-    const missingConnections = otherLaptopConnections.filter(conn => !thisLaptopConnections.includes(conn));
-    
-    return (
-      <div className="grid grid-cols-1 gap-1 p-2">
-        <div className="font-medium text-sm">{spec.label}</div>
-        <div className="text-sm break-words flex flex-wrap gap-1">
-          {/* Current laptop connections */}
-          {thisLaptopConnections.map((conn, i) => (
-            <span key={i} style={{
-              padding: '2px 8px',
-              borderRadius: '4px',
-              backgroundColor: !otherLaptopConnections.includes(conn) ? '#dcfce7' : 'transparent'
-            }}>
-              {conn} • 
-            </span>
-          ))}
-          {/* Missing connections in white */}
-          {missingConnections.map((conn, i) => (
-            <span key={`missing-${i}`} style={{
-              padding: '2px 8px',
-              borderRadius: '4px',
-              color: 'white'
-            }}>
-              {conn} • 
-            </span>
-          ))}
-        </div>
-      </div>
-    );
-  }
-  
-  return (
-      <div key={spec.key} style={{ padding: '8px' }}>
-          <div style={{ fontWeight: 500, marginBottom: '4px' }}>{spec.label}</div>
-
-          {/* For boolean values */}
-          {['for_gaming', 'touchscreen', 'flippingScreen'].includes(spec.key) ? (
-              <span style={valueStyle}>
-                  {value === true ? 'כן' : value === false ? 'לא' : 'לא זמין'}
-              </span>
-          ) : (
-              <span style={valueStyle}>
-                  {value || 'לא זמין'}
-              </span>
-          )}
-      </div>
-  );
-};
 const getBackgroundColor = (spec, laptopIndex) => {
   const result = compareSpecs(spec.key, laptops[0], laptops[1]);
 
@@ -709,73 +724,85 @@ const generateSummary = () => {
   const getAdvantageDescription = (spec, laptop1Value, laptop2Value) => {
     switch(spec.key) {
       case 'cpu':
-        return 'מעבד חזק יותר - ביצועים טובים יותר למשימות מורכבות ועבודה מהירה יותר';
+        return 'מעבד חזק יותר';
       case 'cpu_ghz':
-        return `מהירות מעבד גבוהה יותר - תגובה מהירה יותר של המחשב`;
+        return `מהירות מעבד גבוה יותר`;
+      case 'for_gaming':
+        return 'מתאים לגיימינג';
+      case 'touchscreen':
+        return 'מסך מגע';
+      case 'flippingScreen':
+        return 'מסך מתהפך(מחשב שהופך לטאבלט)';
       case 'ram_size':
-        return 'זיכרון RAM גדול יותר - יכולת לפתוח יותר תוכניות במקביל וביצועים טובים יותר';
+        return 'יותר זכרון ראם';
       case 'ram_type':
-        return 'סוג זיכרון RAM מתקדם יותר - מהירות העברת נתונים גבוהה יותר';
+        return 'מהירות ראם גבוהה יותר'
       case 'storage_space':
-        return 'נפח אחסון גדול יותר - יותר מקום לקבצים, תוכנות ומשחקים';
+        return 'נפח אחסון גדול יותר';
       case 'storage_type':
-        return 'סוג אחסון מהיר יותר - זמני טעינה קצרים יותר של תוכנות וקבצים';
-      case 'screen_size':
-        return 'מסך גדול יותר - חווית צפייה טובה יותר ונוחות עבודה משופרת';
+        return 'סוג אחסון מהיר יותר';
       case 'screenhz':
-        return 'קצב רענון מסך גבוה יותר - תצוגה חלקה יותר, מתאים במיוחד למשחקים';
+        return 'קצב רענון מסך גבוה יותר';
       case 'gpu':
-        return 'כרטיס מסך חזק יותר - ביצועים טובים יותר בעריכת וידאו, עיצוב ומשחקים';
+        return 'כרטיס מסך חזק יותר';
       case 'weight':
-        return 'משקל קל יותר - ניידות משופרת ונוחות נשיאה';
+        return 'משקל קל יותר';
       case 'price':
-        return 'מחיר נמוך יותר - תמורה טובה יותר לכסף';
+        return 'מחיר נמוך יותר';
+      case 'connections':
+        const connectionsResult = compareSpecs(spec.key, laptops[0], laptops[1]);
+        if (connectionsResult && connectionsResult.winner === 'laptop1') {
+          return `חיבורים נוספים: ${connectionsResult.uniqueIn1.join(', ')}`;
+        } else if (connectionsResult && connectionsResult.winner === 'laptop2') {
+          return `חיבורים נוספים: ${connectionsResult.uniqueIn2.join(', ')}`;
+        }
+        return null;
+      case 'security':
+        const securityResult = compareSpecs(spec.key, laptops[0], laptops[1]);
+        if (securityResult && securityResult.winner === 'laptop1') {
+          return `אבטחה נוספת: ${securityResult.uniqueIn1.join(', ')}`;
+        } else if (securityResult && securityResult.winner === 'laptop2') {
+          return `אבטחה נוספת: ${securityResult.uniqueIn2.join(', ')}`;
+        }
+        return null;
       default:
         return spec.label;
     }
   };
 
   specs.forEach(spec => {
-      if (spec.key === 'product_img') return;
-      const result = compareSpecs(spec.key, laptops[0], laptops[1]);
-      // Only process if result exists and has a winner
-      if (result && result.winner === 'laptop1') {
-          advantages.laptop1.push(getAdvantageDescription(spec, laptops[0][spec.key], laptops[1][spec.key]));
-      } else if (result && result.winner === 'laptop2') {
-          advantages.laptop2.push(getAdvantageDescription(spec, laptops[1][spec.key], laptops[0][spec.key]));
-      }
+    if (spec.key === 'product_img') return;
+    const result = compareSpecs(spec.key, laptops[0], laptops[1]);
+    if (result && result.winner === 'laptop1') {
+      advantages.laptop1.push(getAdvantageDescription(spec, laptops[0][spec.key], laptops[1][spec.key]));
+    } else if (result && result.winner === 'laptop2') {
+      advantages.laptop2.push(getAdvantageDescription(spec, laptops[1][spec.key], laptops[0][spec.key]));
+    }
   });
 
+
   return (
-      <div className="p-3 bg-gray-50 rounded-lg">
-          <h3 className="text-lg font-bold mb-4 text-center">סיכום השוואה</h3>
-          <div className="grid grid-cols-2 gap-4">
-              <div>
-                  <h4 className="font-bold text-sm text-center mb-2">{laptops[0].manufacturer} {laptops[0].laptopSeries} - יתרונות:</h4>
-                  {advantages.laptop1.length > 0 ? (
-                      <ul className="list-disc list-inside">
-                          {advantages.laptop1.map(adv => (
-                              <li key={adv} className="text-sm">{adv}</li>
-                          ))}
-                      </ul>
-                  ) : (
-                      <p className="text-sm text-gray-500">אין יתרונות בולטים</p>
-                  )}
-              </div>
-              <div>
-                  <h4 className="font-bold text-sm text-center mb-2">{laptops[1].manufacturer} {laptops[1].laptopSeries} - יתרונות:</h4>
-                  {advantages.laptop2.length > 0 ? (
-                      <ul className="list-disc list-inside">
-                          {advantages.laptop2.map(adv => (
-                              <li key={adv} className="text-sm">{adv}</li>
-                          ))}
-                      </ul>
-                  ) : (
-                      <p className="text-sm text-gray-500">אין יתרונות בולטים</p>
-                  )}
-              </div>
-          </div>
+    <div className="p-3 bg-gray-50 rounded-lg">
+      <h3 className="text-lg font-bold mb-4 text-center" dir="rtl">לסיכום:</h3>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <h4 className="font-bold text-sm text-center mb-2">יתרונות:</h4>
+          {advantages.laptop1.length > 0 ? (
+            <p className="text-sm text-center">{advantages.laptop1.join(", ")}</p>
+          ) : (
+            <p className="text-sm text-gray-500 text-center">אין יתרונות בולטים</p>
+          )}
+        </div>
+        <div>
+          <h4 className="font-bold text-sm text-center mb-2">יתרונות:</h4>
+          {advantages.laptop2.length > 0 ? (
+            <p className="text-sm text-center">{advantages.laptop2.join(", ")}</p>
+          ) : (
+            <p className="text-sm text-gray-500 text-center">אין יתרונות בולטים</p>
+          )}
+        </div>
       </div>
+    </div>
   );
 };
 
@@ -796,7 +823,7 @@ return (
     </ModalHeader>
     <ModalBody className="overflow-x-hidden">
       {/* Column Headers */}
-      <div className="grid grid-cols-2 mb-4">
+      <div className="grid grid-cols-2 ">
         <div className="text-lg font-bold text-center">
           {laptops[0].manufacturer} {laptops[0].laptopSeries}
         </div>
@@ -807,57 +834,130 @@ return (
 
       {/* Specs Grid with Middle Labels */}
       {specs.map((spec, index) => (
-        <div key={spec.key} className="relative">
-          {/* Label in the middle */}
-          {spec.key !== 'product_img' && (
-            <div 
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-white px-2 font-medium text-sm"
-              style={{ width: 'fit-content' }}
+  <div key={spec.key} className="relative">
+    {/* Label in the middle - moved higher */}
+    {spec.key !== 'product_img' && (
+      <div 
+        className="absolute left-1/2 top-[20%] -translate-x-1/2 z-10 bg-white px-2 font-bold text-sm"
+        style={{ width: 'fit-content' }}
+      >
+        {spec.label}
+      </div>
+    )}
+    
+    {/* Values grid */}
+    <div className="grid grid-cols-2 border-b relative">
+      <div className={`p-2 border-l ${getBackgroundColor(spec, 0)}`}>
+        <div className="flex justify-center items-center text-sm">
+          {spec.key === 'product_img' ? (
+            <div className="w-[250px] h-[250px] flex items-center justify-center">
+              <img 
+                src={laptops[0].product_img}
+                alt={laptops[0].name}
+                className="max-w-full max-h-full object-contain rounded-lg"
+              />
+            </div>
+          ) : spec.key === 'connections' || spec.key === 'security' ? (
+            <span 
+          style={{
+            display: 'block',
+            wordBreak: 'break-word',
+            whiteSpace: 'pre-wrap',
+            overflow: 'hidden',
+            textAlign: 'center',
+            marginTop: '1rem'
+          }}
+        >
+          {Array.isArray(laptops[0][spec.key]) 
+            ? laptops[0][spec.key].map((connection, idx) => {
+                const isUnique = !laptops[1][spec.key]?.includes(connection);
+                return (
+                  <span key={idx}>
+                    <span style={isUnique ? { backgroundColor: '#dcfce7', padding: '2px 6px', borderRadius: '4px' } : {}}>
+                      {connection}
+                    </span>
+                    {idx < laptops[0][spec.key].length - 1 ? ', ' : ''}
+                  </span>
+                );
+              })
+            : laptops[0][spec.key] || 'לא זמין'}
+        </span>
+          ) : (
+            <span 
+              style={{
+                ...getValueStyle(spec, 0),
+                display: 'block',
+                wordBreak: 'break-word',
+                whiteSpace: 'pre-wrap',
+                overflow: 'hidden',
+                textAlign: 'center',
+                marginTop: '1rem'
+              }}
             >
-              {spec.label}
-            </div>
+              {typeof laptops[0][spec.key] === 'boolean' 
+                ? (laptops[0][spec.key] ? 'כן' : 'לא') 
+                : laptops[0][spec.key] || 'לא זמין'}
+            </span>
           )}
-          
-          {/* Values grid */}
-          <div className="grid grid-cols-2 border-b relative">
-            <div className={`p-2 border-l ${getBackgroundColor(spec, 0)}`}>
-              <div className="flex justify-center items-center text-sm">
-                {spec.key === 'product_img' ? (
-                    <div className="h-48 md:h-36 lg:h-18 flex items-center justify-center">
-
-                    <img 
-                      src={laptops[0].product_img}
-                      alt={laptops[0].name}
-                      className="max-h-full w-auto object-contain rounded-lg"
-                    />
-                  </div>
-                ) : (
-                  <span style={getValueStyle(spec, 0)}>
-                    {laptops[0][spec.key] || 'לא זמין'}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className={`p-2 ${getBackgroundColor(spec, 1)}`}>
-              <div className="flex justify-center items-center text-sm">
-                {spec.key === 'product_img' ? (
-                  <div className="h-48 flex items-center justify-center">
-                    <img 
-                      src={laptops[1].product_img}
-                      alt={laptops[1].name}
-                      className="max-h-full w-auto object-contain rounded-lg"
-                    />
-                  </div>
-                ) : (
-                  <span style={getValueStyle(spec, 1)}>
-                    {laptops[1][spec.key] || 'לא זמין'}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
         </div>
-      ))}
+      </div>
+      <div className={`p-2 ${getBackgroundColor(spec, 1)}`}>
+        <div className="flex justify-center items-center text-sm">
+          {spec.key === 'product_img' ? (
+            <div className="w-[250px] h-[250px] flex items-center justify-center">
+              <img 
+                src={laptops[1].product_img}
+                alt={laptops[1].name}
+                className="max-w-full max-h-full object-contain rounded-lg"
+              />
+            </div>
+          ) : spec.key === 'connections' || spec.key === 'security' ? (
+            <span 
+            style={{
+              display: 'block',
+              wordBreak: 'break-word',
+              whiteSpace: 'pre-wrap',
+              overflow: 'hidden',
+              textAlign: 'center',
+              marginTop: '1rem'
+            }}
+          >
+            {Array.isArray(laptops[0][spec.key]) 
+              ? laptops[1][spec.key].map((connection, idx) => {
+                  const isUnique = !laptops[0][spec.key]?.includes(connection);
+                  return (
+                    <span key={idx}>
+                      <span style={isUnique ? { backgroundColor: '#dcfce7', padding: '2px 6px', borderRadius: '4px' } : {}}>
+                        {connection}
+                      </span>
+                      {idx < laptops[1][spec.key].length - 1 ? ', ' : ''}
+                    </span>
+                  );
+                })
+              : laptops[1][spec.key] || 'לא זמין'}
+          </span>
+          ) : (
+            <span 
+              style={{
+                ...getValueStyle(spec, 1),
+                display: 'block',
+                wordBreak: 'break-word',
+                whiteSpace: 'pre-wrap',
+                overflow: 'hidden',
+                textAlign: 'center',
+                marginTop: '1rem'
+              }}
+            >
+              {typeof laptops[1][spec.key] === 'boolean' 
+                ? (laptops[1][spec.key] ? 'כן' : 'לא') 
+                : laptops[1][spec.key] || 'לא זמין'}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+))}
 
       {generateSummary()}
     </ModalBody>

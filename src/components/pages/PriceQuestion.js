@@ -28,36 +28,65 @@ console.log('tasks:', savedBudget.tasks);
     if (savedBudget.price) setSliderValue(savedBudget.price);
     if (savedBudget.priceImportance !== undefined) setImportance(savedBudget.priceImportance);
    }, [savedBudget.price, savedBudget.priceImportance]);
-   useEffect(() => {
+
+  // Second useEffect: Update feedback message based on slider value and recommended budget
+  useEffect(() => {
     if (hasInteracted || showRecommendation) {
-      setShowFeedback(true);  // Set this to true when we want to show feedback
-      if (showRecommendation && sliderValue === recommendedBudget) {
-        setFeedbackMessage(`אחרי שהבנו מה בדיוק חשוב לך, אנחנו חושבים שתקציב של ${recommendedBudget} ₪ ייתן לך את התוצאה הכי טובה`);
-      } else if (sliderValue < recommendedBudget) {
-        setFeedbackMessage(<span style={{ color: '#ff0000' }}>שימו לב! לפי ההעדפות שלכם, מומלץ לשקול להעלות את התקציב  לתוצאות טובות יותר.</span>);
+      setShowFeedback(true);
+      if (hasInteracted && sliderValue < recommendedBudget) {  // Only check slider position if user has interacted
+        setShowRecommendation(false);
+        setFeedbackMessage(
+          <motion.span 
+            key="red-message"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            style={{ color: '#ff0000' }}
+          >
+            שימו לב! לפי ההעדפות שלכם, מומלץ לשקול להעלות את התקציב  לתוצאות טובות יותר
+          </motion.span>
+        );
+      } else if (showRecommendation) {
+        setFeedbackMessage(
+          <motion.span 
+            key="green-message"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            style={{ color: '#198754' }}
+          >
+            המחיר בשוק עבור המחשב שאתם מחפשים מתחיל בסביבות {recommendedBudget}₪, לכן קחו זאת בחשבון
+          </motion.span>
+        );
       } else {
-        setFeedbackMessage(<span style={{ color: '#16a34a' }}>תקציב נהדר! הוא תואם או עולה על התקציב המומלץ.</span>);
+        setFeedbackMessage("");
       }
-    } else {
-      setShowFeedback(false);  // Set this to false when we don't want feedback
-      setFeedbackMessage("");
     }
   }, [sliderValue, recommendedBudget, showRecommendation, hasInteracted]);
 
-  
-  const handleRecommendedBudget = () => {
-    setSliderValue(recommendedBudget);
-    setShowRecommendation(true);
-    setHasInteracted(true);
-    setShowFeedback(true);  // Add this line
-    setFeedbackMessage(`אחרי שהבנו מה בדיוק חשוב לך, אנחנו חושבים שתקציב של ${recommendedBudget} ₪ ייתן לך את התוצאה הכי טובה`);
-  };
+const handleRecommendedBudget = () => {
+  setShowRecommendation(true);
+  setHasInteracted(false); // Reset interaction state when showing recommendation
+  setShowFeedback(true);
+  setFeedbackMessage(
+    <motion.span 
+      key="green-message"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      style={{ color: '#198754' }}
+    >
+      המחיר בשוק עבור המחשב שאתם מחפשים מתחיל בסביבות {recommendedBudget}₪, לכן קחו זאת בחשבון
+    </motion.span>
+  );
+};
+
 
   const handleBudgetChange = (value) => {
     setHasInteracted(true);
     setSliderValue(value);
     updateAnswer(value, localImportance);
-  };
+};
 
   const handleImportanceChange = (value) => {
     const numValue = Number(value);
@@ -113,18 +142,18 @@ console.log('tasks:', savedBudget.tasks);
   // handle the budget for each task for the recommendation
   const taskBudgets = {
     "programming": {
-      "light": 3500,
-      "heavy": 7000
+      "light": 3000,
+      "heavy": 4000
     },
-    "modeling/animation": 8000,
-    "photo-editing": 5000,
-    "music-editing": 4000,
-    "video-editing": 8000,
+    "modeling/animation": 4000,
+    "photo-editing": 3500,
+    "music-editing": 3500,
+    "video-editing": 3500,
     "basic-use": 2500,
-    "ai": 9000,
+    "ai": 5500,
     "gaming": {
-      "light": 5500,
-      "heavy": 8500
+      "light": 3500,
+      "heavy": 4500
     }
   };
   const calculateMaxRecommendedBudget = (tasks) => {
@@ -206,7 +235,7 @@ console.log('tasks:', savedBudget.tasks);
               >
                 <div className="flex flex-col items-center mb-2">
                 <Button color="primary" variant="flat" dir="rtl" onClick={handleRecommendedBudget}>
-                    כמה מומלץ?
+                    כמה כדאי?
                   </Button>
                 </div>
                 <Slider

@@ -21,26 +21,30 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
   useEffect(() => {
     if (tasks.length > 0) {
       const recommended = calculateRecommendedPortability(tasks);
-      setRecommendedPortability(recommended);
-      setRecommendationMessage(recommendationReasons[recommended]);
-      setShowRecommendation(true);
+      
+      // Only show recommendation if we got a valid value
+      if (recommended !== null) {
+        setRecommendedPortability(recommended);
+        setRecommendationMessage(recommendationReasons[recommended]);
+        setShowRecommendation(true);
   
-      setPortabilityOptions(prevOptions => 
-        prevOptions.map(option => ({
-          ...option,
-          sizeName: {
-            ...option.sizeName,
-            isRecommended: option.value === recommended ? "מומלץ!" : ""
-          }
-        }))
-      );
+        setPortabilityOptions(prevOptions => 
+          prevOptions.map(option => ({
+            ...option,
+            sizeName: {
+              ...option.sizeName,
+              isRecommended: option.value === recommended ? "מומלץ!" : ""
+            }
+          }))
+        );
+      }
     }
   }, [tasks]);
 
   const calculateRecommendedPortability = (tasks) => {
     let highestPriority = 0;
-    let recommendedValue = 0.25;
-  
+    let recommendedValue = null; // Start with null instead of default value
+    
     tasks.forEach((taskObj) => {
       const taskName = taskObj.task;
       let priority;
@@ -54,11 +58,18 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
         portabilityValue = taskPortabilityRecommendations[taskName];
       }
   
+      // Only consider tasks with priority > 0
       if (priority > highestPriority) {
         highestPriority = priority;
         recommendedValue = portabilityValue;
       }
     });
+  
+    // If no task had priority > 0, don't show recommendation
+    if (highestPriority === 0) {
+      setShowRecommendation(false);
+      return null;
+    }
   
     return recommendedValue;
   };
@@ -84,23 +95,23 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
       value: 0,
       sizeName: {
         name: "לא חשוב (כל משקל)",
-        description: "אם אתם מריצים פרויקטים כבדים ומורכבים, ולא יכולים להרשות לעצמכם פחות ממחשב עוצמתי לידכם, זה הפתרון המושלם. גם אם הוא פחות נייד.",
+        description: "אין לי בעיה עם מחשב כבד, רק שיעשה את העבודה",
         isRecommended: ""
       }
     }
   ]);
 
   const taskPriority = {
-    "basic-use": 1,
-    "music-editing": 2,
+    "basic-use": 0,
+    "music-editing": 0,
     "gaming": {
-      "light": 2,
+      "light": 0,
       "heavy": 4
     },
-    "programming": 2,
-    "photo-editing": 3,
-    "video-editing": 4,
-    "modeling/animation": 5,
+    "programming": 0,
+    "photo-editing": 0,
+    "video-editing": 0,
+    "modeling/animation": 0,
     "ai": 4
   };
   
@@ -133,54 +144,47 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
   return (
     <Container>
       <Header
-        text="מחשב נייד?"
+        text="כמה חשוב לכם המשקל?"
         className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
       
       <div className="flex flex-col items-center space-y-6 mt-6">
-        <div className="text-center mb-4">
-          <h3 className="text-xl font-semibold mb-2">כמה חשוב לכם המשקל?</h3>
-          <p className="text-gray-600">
-            המשקל משפיע על הניידות, אבל גם על הביצועים. בחר את האיזון המתאים לך.
-            <br />
-            אל דאגה - נתאים לך את המחשב הכי קרוב להעדפותיך!
-          </p>
-        </div>
+        
         <AnimatePresence>
-  {showRecommendation && (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      className="text-center mt-2 mb-4"
-    >
-      <p className="text-lg font-medium">{recommendationMessage}</p>
-    </motion.div>
-  )}
-</AnimatePresence>
-        <RadioGroup
-          value={selectedPortability}
-          onValueChange={handlePortabilityChange}
-          className="w-full max-w-lg space-y-4 items-center"
-        >
-          {portabilityOptions.map((option) => (
-            <CustomRadio
-              key={option.value}
-              value={option.value}
-              sizeName={option.sizeName}
-              statusColor="success"
-            />
-          ))}
-        </RadioGroup>
-      </div>
+          {showRecommendation && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="text-center mt-2 mb-4"
+            >
+              <p className="text-lg font-medium">{recommendationMessage}</p>
+            </motion.div>
+           )}
+            </AnimatePresence>
+            <RadioGroup
+              value={selectedPortability}
+              onValueChange={handlePortabilityChange}
+              className="w-full max-w-lg space-y-4 items-center"
+            >
+              {portabilityOptions.map((option) => (
+                <CustomRadio
+                  key={option.value}
+                  value={option.value}
+                  sizeName={option.sizeName}
+                  statusColor="success"
+                />
+              ))}
+            </RadioGroup>
+          </div>
 
-      <NavigationButtons
-        onNext={nextStep}
-        onBack={prevStep}
-        disableNext={selectedPortability.length === 0}
-      />
-    </Container>
-  );
-}
+          <NavigationButtons
+            onNext={nextStep}
+            onBack={prevStep}
+            disableNext={selectedPortability.length === 0}
+          />
+        </Container>
+      );
+    }
 
-export default PortabilityQuestion;
+    export default PortabilityQuestion;

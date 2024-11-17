@@ -32,7 +32,7 @@ function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) 
           size="lg"
           color="primary"
           className="w-20 h-20"
-          label="מעבד את הבחירות שלך..."
+          label="טוען תוצאות..."
         />
       </div>
     );
