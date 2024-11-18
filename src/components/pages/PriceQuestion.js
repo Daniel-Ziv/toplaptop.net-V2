@@ -146,9 +146,9 @@ const handleRecommendedBudget = () => {
       "heavy": 4000
     },
     "modeling/animation": 4000,
-    "photo-editing": 3500,
-    "music-editing": 3500,
-    "video-editing": 3500,
+    "photo-editing": 4000,
+    "music-editing": 4000,
+    "video-editing": 4000,
     "basic-use": 2500,
     "ai": 5500,
     "gaming": {

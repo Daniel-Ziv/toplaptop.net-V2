@@ -460,6 +460,29 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
                     winner: storageTypeScore1 > storageTypeScore2 ? 'laptop1' : 'laptop2',
                 };
         case 'screenType':
+
+        case 'withOs':
+          // Skip if both values are unavailable
+          if (!value1 || !value2 || value1 === 'לא זמין' || value2 === 'לא זמין') return null;
+          
+          // If both have 'ללא', no winner
+          if (value1 === 'ללא' && value2 === 'ללא') {
+              return { comparison: 'שניהם ללא מערכת הפעלה', winner: null };
+          }
+          
+          // If one has 'ללא' and the other has an OS
+          if (value1 === 'ללא' && value2 !== 'ללא') {
+              return { comparison: 'כולל מערכת הפעלה', winner: 'laptop2' };
+          }
+          if (value2 === 'ללא' && value1 !== 'ללא') {
+              return { comparison: 'כולל מערכת הפעלה', winner: 'laptop1' };
+          }
+          
+          // If both have OS but different ones, no clear winner
+          if (value1 === value2) {
+              return { comparison: 'מערכת הפעלה זהה', winner: 'tie' };
+          }
+          return { comparison: 'מערכת הפעלה שונה', winner: null };
         case 'gpu':
           if (
             (!value1 && !value2) || 
@@ -654,27 +677,28 @@ const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
 };
 
   const specs = [
-    { key: 'product_img', label: '' },  // changed from 'image'
-    { key: 'cpu', label: 'מעבד' },           // changed from 'processor'
-    { key: 'cpuModel', label: 'דגם מעבד' },  // added
-    { key: 'cpuGen', label: 'דור מעבד' }, // added
-    { key: 'cpu_ghz', label: 'מהירות מעבד' }, // added
+    { key: 'product_img', label: '' },  
+    { key: 'cpu', label: 'מעבד' },        
+    { key: 'cpuModel', label: 'דגם מעבד' }, 
+    { key: 'cpuGen', label: 'דור מעבד' }, 
+    { key: 'cpu_ghz', label: 'מהירות מעבד' }, 
     { key: 'ram_size', label: 'זיכרון RAM' },
-    { key: 'ram_type', label: 'סוג זיכרון' }, // added
-    { key: 'storage_space', label: 'נפח אחסון' }, // changed from 'storage'
-    { key: 'storage_type', label: 'סוג אחסון' }, // added
-    { key: 'screen_size', label: 'גודל מסך' }, // changed from 'display'
-    { key: 'screenhz', label: 'קצב רענון מסך' }, // added
-    { key: 'screenRes', label: 'רזולוציה' }, // added
-    { key: 'screenType', label: 'סוג מסך' }, // added
-    { key: 'for_gaming', label: 'לגיימינג' }, // added
-    { key: 'touchscreen', label: 'מסך מגע' }, // added
-    { key: 'flippingScreen', label: 'מסך מתהפך' }, // added
-    { key: 'connections', label: 'חיבורים' }, // added
-    { key: 'security', label: 'אבטחה' }, // added
-    { key: 'weight', label: 'משקל' }, // added
+    { key: 'ram_type', label: 'סוג זיכרון' }, 
+    { key: 'storage_space', label: 'נפח אחסון' }, 
+    { key: 'storage_type', label: 'סוג אחסון' }, 
+    { key: 'screen_size', label: 'גודל מסך' }, 
+    { key: 'screenhz', label: 'קצב רענון מסך' },
+    { key: 'screenRes', label: 'רזולוציה' }, 
+    { key: 'screenType', label: 'סוג מסך' }, 
+    { key: 'for_gaming', label: 'לגיימינג' },
+    { key: 'touchscreen', label: 'מסך מגע' },
+    { key: 'flippingScreen', label: 'מסך מתהפך' },
+    { key: 'connections', label: 'חיבורים' }, 
+    { key: 'security', label: 'אבטחה' }, 
+    { key: 'weight', label: 'משקל' }, 
     { key: 'price', label: 'מחיר' },
-    { key: 'gpu' , label: 'כרטיס מסך' }, // added
+    { key: 'gpu' , label: 'כרטיס מסך' }, 
+    { key: 'withOs', label: 'מערכת הפעלה' }, 
 ];
 
 
@@ -747,6 +771,8 @@ const generateSummary = () => {
         return 'כרטיס מסך חזק יותר';
       case 'weight':
         return 'משקל קל יותר';
+      case 'withOs':
+        return 'כולל מערכת הפעלה';
       case 'price':
         return 'מחיר נמוך יותר';
       case 'connections':

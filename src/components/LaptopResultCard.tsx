@@ -1,4 +1,4 @@
-import { Check, ChevronDown } from "lucide-react";
+import { Check,X,  ChevronDown } from "lucide-react";
 import React, { useState } from "react";
 import { Image, CircularProgress, Card, CardBody, CardFooter, Button, Modal } from "@nextui-org/react";
 import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
@@ -44,6 +44,7 @@ interface ProductCardProps {
   withOs: string;
   gpu: string;
   componentScores: ComponentScore[];
+  answers: any;
 
 }
 
@@ -75,7 +76,9 @@ export default function LaptopResultCard({
   cpuGen,
   withOs,
   gpu,
-  componentScores
+  componentScores,
+  answers
+  
 }: ProductCardProps) {
   const { selectedLaptops, toggleLaptopSelection, isCompareMode } = useComparison();
   const isSelected = selectedLaptops.some(laptop => laptop.name === name);
@@ -128,6 +131,7 @@ export default function LaptopResultCard({
                specValue !== 'לא זמין' && 
                specValue !== 'ללא' &&
                specValue !== 'undefined' &&
+               specValue !== 'לא רלוונטי' &&
                spec.value !== null;
       })
       .map(spec => `${spec.value}${spec.label}`)
@@ -143,6 +147,37 @@ export default function LaptopResultCard({
     { value: screenhz, label: 'hz' }
   ];
 
+  const isValidPrice = (price: number, answers: any) => {
+    if (!answers.budget.priceImportance) return true;
+    return (price <= answers.budget.price);
+  };
+  
+  const isValidWeight = (weight: number, answers: any) => {
+    if (!answers.weightImportance) return true;
+    else if (answers.weightImportance === 0.125) return weight <= 2;
+    else if (answers.weightImportance === 0.25) return weight <= 1.5;
+  };
+  
+  const isValidScreenSize = (screenSize: number, answers: any) => {
+    // If no sizes are selected or importance is 0, consider it valid
+    if (!answers.screenSize.selectedScreenSizes.length || answers.screenSize.sizeImportance === 0) {
+      return true;
+    }
+  
+    // Define size ranges
+    const sizeRanges = {
+      'small': [10, 13],
+      'medium': [13.1, 15],
+      'large': [15.1, 17],
+      'huge': [17.1, 20]
+    };
+  
+    // Check if screen size falls within any of the selected size categories
+    return answers.screenSize.selectedScreenSizes.some((selectedSize: any) => {
+      const range = sizeRanges[selectedSize as keyof typeof sizeRanges];
+      return screenSize >= range[0] && screenSize <= range[1];
+    });
+  };
 
   return (
     <div 
@@ -186,18 +221,22 @@ export default function LaptopResultCard({
           <LaptopDetailsModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
+            answers={answers}
             matchPercentage={matchPercentage}
             componentScores={componentScores}
           />
+          
           {/* Product Details */}
           <div className="flex-1 space-y-4 text-right">
-            <h3 className={`text-m rtl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries} - {getFilteredSpecs(titleSpecs)}</h3>
-            <div className="flex justify-center text-sm" dir="rtl">
+            <h3 className={`text-m rtl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries !== 'לא זמין' && laptopSeries !== 'לא רלוונטי' ? laptopSeries : ''} - {getFilteredSpecs(titleSpecs)}</h3>
+            <div className="flex justify-center text-sm text-center" dir="rtl">
               <div className="flex items-center gap-2 p-2 w-full">
                 <span className={`text-center ${styles.laptopCardSpecs}`} style={{ fontSize: '18px' }}>
                   {price}₪<br/>
                   <span style={{display: "inline-flex", color:"#888", fontSize:"14px"}}>
-                    <Check className="h-4 w-4 text-success" /> מחיר
+                  {isValidPrice(price, answers) ? 
+                    <Check className="h-4 w-4 text-success" /> : 
+                    <X className="h-4 w-4 text-danger" />} מחיר
                   </span>
                 </span>
               </div>
@@ -205,7 +244,9 @@ export default function LaptopResultCard({
                 <p className="text-center" style={{ fontSize: '18px'}}>
                   {weight} ק"ג <br/>
                   <span style={{display: "inline-flex", color:"#888", fontSize:"14px"}}>
-                    <Check className="h-4 w-4 text-success" /> משקל
+                  {isValidWeight(weight, answers) ? 
+                    <Check className="h-4 w-4 text-success" /> : 
+                    <X className="h-4 w-4 text-danger" />} משקל
                   </span>
                 </p>
               </div>
@@ -213,7 +254,9 @@ export default function LaptopResultCard({
                 <span className="text-center" style={{ fontSize: '18px' }}>
                   <span className="inline">{screen_size} אינטש </span><br/>
                   <span style={{display: "inline-flex", color:"#888", fontSize:"14px"}}>
-                    <Check className="h-4 w-4 text-success" /> מסך
+                  {isValidScreenSize(screen_size, answers) ? 
+                    <Check className="h-4 w-4 text-success" /> : 
+                    <X className="h-4 w-4 text-danger" />} מסך
                   </span>
                 </span>
               </div>

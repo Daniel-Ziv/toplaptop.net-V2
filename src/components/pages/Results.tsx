@@ -186,6 +186,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
               withOs={laptop.withOs}
               gpu={laptop.gpu}
               componentScores={laptop.componentScores || []}
+              answers={answers}
 
               />
             ))
