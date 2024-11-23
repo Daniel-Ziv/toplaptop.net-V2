@@ -61,6 +61,8 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [email, setEmail] = useState('');
 
  
 
@@ -85,15 +87,54 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
       </div>
     </div>
   );
+
+  const handleEmailShare = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+  
+    const encoded = encodeParameters(answers);
+    const shareableUrl = `${window.location.origin}${window.location.pathname}?q=${encoded}`;
+  
+    try {
+      const response = await fetch('https://1pr5h9rvj1.execute-api.us-east-1.amazonaws.com/sendEmail/send-email', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: email,
+          subject: 'ההמלצות שלנו!',
+          link: `${shareableUrl}`,
+        }),
+      });
+
+      if (response.ok) {
+        setShowEmailModal(false);
+        setEmail('');
+        alert('האימייל נשלח בהצלחה!');
+      } else {
+        const errorMessage = await response.text();
+        console.error('Failed to send email:', errorMessage);
+        alert('שליחת האימייל נכשלה. אנא נסה שוב.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('שליחת האימייל נכשלה. אנא נסה שוב.');
+    }
+  };
+  
+
+  
+
   useEffect(() => {
     const calculateScores = async () => {
       setIsLoading(true);
   
+      // Only use encoded parameters if we came from a shared link
       const encodedParams = searchParams.get('q');
       const answersToUse = encodedParams ? decodeParameters(encodedParams) : answers;
   
       if (answersToUse) {
-        // Calculate match percentage for each laptop
         const scoredLaptops: Laptop[] = laptops.map((laptop) => {
           const { finalScore, componentScores } = calculateLaptopScore(laptop, answersToUse);
           return {
@@ -103,28 +144,25 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
           };
         });
   
-        // Filter out laptops with a matchPercentage of 0
         const filteredLaptops = scoredLaptops.filter((laptop) => 
           laptop.matchPercentage && laptop.matchPercentage > 0
         );
   
-        // Sort laptops by match percentage
         filteredLaptops.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
   
         setSortedLaptops(filteredLaptops);
+      }
   
-        // If this is a new search (not from URL), update the URL
-        if (!encodedParams && answers) {
-          const encoded = encodeParameters(answers);
-          setSearchParams({ q: encoded });
-        }
+      // Clear URL parameters if we're not coming from a shared link
+      if (!encodedParams && window.location.search) {
+        window.history.replaceState({}, '', window.location.pathname);
       }
   
       setIsLoading(false);
     };
   
     calculateScores();
-  }, [answers, searchParams]);
+  }, [answers]); // Remove searchParams from dependencies
   
   
   const showMore = () => {
@@ -141,6 +179,46 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
             text="המחשבים המומלצים עבורך"
             className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
           />
+          <div className="text-center mb-6">
+            <button 
+              onClick={() => setShowEmailModal(true)}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              שתף באימייל
+            </button>
+          </div>
+          {showEmailModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg max-w-md w-full" dir="rtl">
+      <h3 className="text-lg font-bold mb-4">שתף תוצאות באימייל</h3>
+      <form onSubmit={handleEmailShare}>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="הכנס כתובת אימייל"
+          className="w-full p-2 border rounded mb-4"
+          required
+        />
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => setShowEmailModal(false)}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            ביטול
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            שלח
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
          <div className="flex flex-col gap-8">
          {isLoading ? (
             // Show skeletons while loading

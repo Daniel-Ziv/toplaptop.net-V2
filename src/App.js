@@ -12,11 +12,15 @@ import PortabilityQuestion from "./components/pages/PortabilityQuestion";
 import Results from "./components/pages/Results";
 import FeaturesQuestion from "./components/pages/FeaturesQuestion";
 import { encodeParameters, decodeParameters } from './assets/utils/urlParams';
+import Footer from './components/Footer';
+import PrivacyPolicy from './components/pages/PrivacyPolicy';
+import TermsOfService from './components/pages/TermsOfService';
 
 function AppContent() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [hideFooter, sethideFooter] = useState(false);
   const [answers, setAnswers] = useState({
     tasks: [],
     weightImportance: 0,
@@ -61,21 +65,17 @@ function AppContent() {
     }
   }, [searchParams]);
 
-  // Update URL whenever answers change and we're on the results page
   useEffect(() => {
     if (step === 7) {
-      const encodedParams = encodeParameters(answers);
-      navigate(`/results?q=${encodedParams}`, { replace: true });
+      sethideFooter(false);
     }
-  }, [answers, step, navigate]);
+  }, [step]);
+    
 
+  
   const nextStep = () => {
     setStep(prevStep => {
       const newStep = prevStep + 1;
-      if (newStep === 7) {
-        const encodedParams = encodeParameters(answers);
-        navigate(`/results?q=${encodedParams}`, { replace: true });
-      }
       return newStep;
     });
   };
@@ -161,6 +161,7 @@ function AppContent() {
           prevStep={prevStep} 
           nextStep={nextStep} 
           savedFeatures={answers.features} 
+          sethideFooter={sethideFooter}
         />;
       case 7:
         return <Results 
@@ -189,8 +190,21 @@ function AppContent() {
           path="/" 
           element={renderStep()} 
         />
+
+        <Route
+        path="/privacy-policy"
+        element={<PrivacyPolicy />}
+        />
+        <Route path="/terms-of-service"
+        element={<TermsOfService />} 
+        />
+
+              
+
       </Routes>
+    {!hideFooter && <Footer />}
     </div>
+    
   );
 }
 

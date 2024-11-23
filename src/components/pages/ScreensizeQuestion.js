@@ -314,19 +314,19 @@ function ScreensizeQuestion({
                    
                     <AnimatePresence>
                     {showFeedback && (
-  <motion.div
-    initial={{ opacity: 0, y: -10 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0 }}
-    className="text-center mt-2 mb-4"
-    dir="rtl"
-  >
-    <p className="text-lg font-medium">{feedbackMessage}</p>
-    <p className="text-sm text-gray-500 mt-1" style={{ whiteSpace: 'pre-line' }}>
-  {reasonMessage}
-</p>  </motion.div>
-)}
-</AnimatePresence>
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="text-center mt-2 mb-4"
+                        dir="rtl"
+                      >
+                        <p className="text-lg font-medium">{feedbackMessage}</p>
+                        <p className="text-sm text-gray-500 mt-1" style={{ whiteSpace: 'pre-line' }}>
+                      {reasonMessage}
+                    </p>  </motion.div>
+                    )}
+                    </AnimatePresence>
                   </div>
 
                 <CheckboxGroup

@@ -5,7 +5,7 @@ import Container from "../Container.js";
 import Header from "../Header.js";
 import { Spinner } from "@nextui-org/react";
 
-function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) {
+function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {}, sethideFooter}) {
   const [selectedFeatures, setSelectedFeatures] = useState(savedFeatures);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,9 +20,12 @@ function FeaturesQuestion({ nextStep, prevStep, onAnswer, savedFeatures = {} }) 
 
   const handleNext = () => {
     setIsLoading(true);
+    sethideFooter(true);
+
     requestAnimationFrame(() => {
       nextStep();
     });
+
   };
 
   if (isLoading) {
