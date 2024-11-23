@@ -21,7 +21,7 @@ function CustomNavbar() {
       <NavbarContent justify="end">
         
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
+          <Button as={Link} color="primary" target="_blank" href="https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.linkedin.com/in/daniel-ziv&ved=2ahUKEwjgkPGK-PKJAxUZSvEDHZXEDY0QFnoECBwQAQ&usg=AOvVaw253MXdEAe5MQ8qwYq4fcfm" variant="flat">
             צור קשר
           </Button>
         </NavbarItem>
