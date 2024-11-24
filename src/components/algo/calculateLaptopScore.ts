@@ -498,16 +498,23 @@ function calculatePriceScore(laptopPrice: number, userBudget: number, priceImpor
   if (laptopPrice <= userBudget) {
     return 100; // Perfect score within budget
   }
-  else if (priceImportance === 0.25) {
-    return 0; // Strict rule: if over budget by even 1, score is 0
   
-  } else {
-    const overBudgetPercentage = (laptopPrice - userBudget) / userBudget;
-    const penalty = Math.min(100, Math.pow(overBudgetPercentage, 1.5) * 100);
-    const score = Math.max(0, 100 - penalty);
-    return score;
+  if (priceImportance === 0.25) {
+    return 0; // Strict rule: if over budget by even 1, score is 0
   }
+
+  // Calculate over-budget percentage
+  const overBudgetPercentage = (laptopPrice - userBudget) / userBudget;
+
+  // Penalize based on importance
+  const penaltyMultiplier = priceImportance === 0.125 ? 5 : 2; // Adjust penalty based on importance
+  const penalty = Math.min(100, Math.pow(overBudgetPercentage * penaltyMultiplier, 2) * 100);
+
+  // Calculate final score
+  const score = Math.max(0, 100 - penalty);
+  return score;
 }
+
 
 function calculateWeightScore(laptopWeight: number | undefined, weightImportance: number): number {
   // Assume laptopWeight is in kg; default weight if undefined

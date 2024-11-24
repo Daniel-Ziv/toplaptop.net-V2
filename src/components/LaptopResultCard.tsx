@@ -289,21 +289,7 @@ export default function LaptopResultCard({
         >
           קישור למוצר
         </button>
-        <button
-  onClick={(e) => {
-    e.stopPropagation();
-    if (!isCompareMode) {
-      // Replace `laptop.name` with the actual variable holding the laptop name
-      const sanitizedLaptopName = name.replace(/[\u0590-\u05FF]/g, ''); // Remove Hebrew characters
-      const searchQuery = encodeURIComponent(sanitizedLaptopName.trim()); // Trim and encode the query
-      const url = `https://ksp.co.il/web/cat/1358?appKey=17919&search=${searchQuery}`; // Construct the URL with appKey
-      window.open(url, '_blank'); // Open the constructed URL in a new tab
-    }
-  }}
-  className="mb-2 product-link bg-white text-black border-2 font-medium py-2 px-5 rounded transition-colors ml-2"
->
-  <span dir="rtl">לחיפוש בKSP</span>
-</button>
+        
         
       </div>
       

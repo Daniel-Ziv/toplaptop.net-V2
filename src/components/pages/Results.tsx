@@ -9,7 +9,7 @@ import NavigationButtons from '../NavigationButtons'
 import { Skeleton } from "@nextui-org/react";
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { encodeParameters, decodeParameters } from '../../assets/utils/urlParams';
-import { Share } from 'lucide-react'
+import { Check, Copy, Share, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 
@@ -64,8 +64,8 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [showEmailModal, setShowEmailModal] = useState(false);
-  const [email, setEmail] = useState('');
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [hasCopied, setHasCopied] = useState(false);
 
  
 
@@ -91,38 +91,15 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
     </div>
   );
 
-  const handleEmailShare = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-  
+  const handleCopy = async () => {
     const encoded = encodeParameters(answers);
     const shareableUrl = `${window.location.origin}${window.location.pathname}?q=${encoded}`;
-  
     try {
-      const response = await fetch('https://1pr5h9rvj1.execute-api.us-east-1.amazonaws.com/sendEmail/send-email', { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          to: email,
-          subject: 'ההמלצות שלנו!',
-          link: `${shareableUrl}`,
-        }),
-      });
-
-      if (response.ok) {
-        setShowEmailModal(false);
-        setEmail('');
-        alert('האימייל נשלח בהצלחה!');
-      } else {
-        const errorMessage = await response.text();
-        console.error('Failed to send email:', errorMessage);
-        alert('שליחת האימייל נכשלה. אנא נסה שוב.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('שליחת האימייל נכשלה. אנא נסה שוב.');
+      await navigator.clipboard.writeText(shareableUrl);
+      setHasCopied(true);
+      setTimeout(() => setHasCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
     }
   };
   
@@ -190,7 +167,8 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
     calculateScores();
   }, [answers]); // Remove searchParams from dependencies
   
-  
+  const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(JSON.stringify(answers))}`
+
   const showMore = () => {
     setDisplayCount((prev) => Math.min(prev + 5, sortedLaptops.length));
   };
@@ -207,70 +185,75 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
           />
           <div className="text-center mb-6">
   <button
-    onClick={() => setShowEmailModal(true)}
-    className="px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors duration-200 flex items-center justify-center gap-2 mx-auto"
+    onClick={() => setShowShareModal(true)}
+    className="px-4 py-2 border-2 border-black text-black rounded-lg hover:bg-black transition-colors duration-200 flex items-center justify-center gap-2 mx-auto"
   >
-    שמרו/שתפו
+   שתפו
     <Share size={20} className="rtl:mr-1 ltr:ml-1" />
   </button>
 </div>
 <AnimatePresence>
-{showEmailModal && (
-   <motion.div 
-   initial={{ opacity: 0 }}
-   animate={{ opacity: 1 }}
-   exit={{ opacity: 0 }}
-   className="fixed inset-0 flex items-center justify-center z-50"
- >
-  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-  <motion.div 
+ {showShareModal && (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="fixed inset-0 flex items-center justify-center z-50"
+  >
+    <div 
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm" // Made overlay darker
+      onClick={() => setShowShareModal(false)} 
+    />
+    <motion.div
       initial={{ scale: 0.95, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.95, opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="bg-white p-6 rounded-lg max-w-md w-full relative z-10" 
+      className="bg-white dark:bg-gray-800 p-3 rounded-xl max-w-md w-full relative z-10 shadow-2xl border-2 border-gray-200 dark:border-gray-700" // Added border and increased shadow
       dir="rtl"
     >
-    <div
-      className="bg-white p-3 rounded-lg max-w-md w-full border border-gray-300 shadow-lg"
-      dir="rtl"
-    >
-      <h3 className="text-lg font-bold mb-4">לאן לשלוח?</h3>
-      <p className="text-sm text-gray-600 mb-4">אנחנו נשלח מייל עם לינק להמלצות שקיבלת.</p>
-      <form onSubmit={handleEmailShare}>
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">לינק לשיתוף ההמלצות:</h3>
+        <button
+          onClick={() => setShowShareModal(false)}
+          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          aria-label="סגור"
+        >
+          <X size={24} className="text-gray-500 dark:text-gray-400" />
+        </button>
+      </div>
+      <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-gray-300 dark:border-gray-600"> {/* Made border thicker */}
         <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="הכנס כתובת אימייל"
-          className="w-full p-2 border rounded mb-4"
-          required
+          type="text"
+          value={shareUrl}
+          readOnly
+          className="flex-1 bg-transparent outline-none text-gray-700 dark:text-gray-300 text-sm"
         />
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={() => setShowEmailModal(false)}
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-          >
-            ביטול
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            שלח
-          </button>
-        </div>
-        
-      </form>
-
-    </div>
+        <button
+          onClick={handleCopy}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors"
+          aria-label={hasCopied ? "הועתק" : "העתק קישור"}
+        >
+          {hasCopied ? (
+            <Check size={20} className="text-green-500" />
+          ) : (
+            <Copy size={20} className="text-grey-500" />
+          )}
+        </button>
+      </div>
+      {hasCopied && (
+        <motion.p
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="text-green-500 text-sm mt-2 text-center"
+        >
+          הקישור הועתק ללוח!
+        </motion.p>
+      )}
     </motion.div>
-
-  </div>
   </motion.div>
-
-)}
+ )}
 </AnimatePresence>
          <div className="flex flex-col gap-8">
          {isLoading ? (
