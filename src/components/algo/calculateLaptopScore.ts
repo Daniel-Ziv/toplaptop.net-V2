@@ -474,6 +474,7 @@ const taskRequirements: Record<string, TaskRequirements> = {
 };
 
 
+
 // Calculate component score based on Euclidean distance
 function calculateComponentScore(
   componentScore: number,
@@ -486,19 +487,23 @@ function calculateComponentScore(
       ? idealRange.min - componentScore
       : componentScore - idealRange.max;
     const maxDistance = 10; // Maximum possible score difference
-    const penalty = (distance / maxDistance) * 100;
+    const penalty = Math.min(100, (distance / maxDistance) * 150);
     const normalizedScore = Math.max(0, 100 - penalty);
     return normalizedScore;
   }
 }
 
 
-function calculatePriceScore(laptopPrice: number, userBudget: number): number {
+function calculatePriceScore(laptopPrice: number, userBudget: number, priceImportance: number): number {
   if (laptopPrice <= userBudget) {
     return 100; // Perfect score within budget
+  }
+  else if (priceImportance === 0.25) {
+    return 0; // Strict rule: if over budget by even 1, score is 0
+  
   } else {
     const overBudgetPercentage = (laptopPrice - userBudget) / userBudget;
-    const penalty = Math.min(100, overBudgetPercentage * 100); // Cap penalty at 100%
+    const penalty = Math.min(100, Math.pow(overBudgetPercentage, 1.5) * 100);
     const score = Math.max(0, 100 - penalty);
     return score;
   }
@@ -526,14 +531,15 @@ function calculateWeightScore(laptopWeight: number | undefined, weightImportance
     return 100; // Full score for weights within the acceptable range
   } else {
     const excessWeight = weight - maxAcceptableWeight;
-    const penalty = (excessWeight / maxAcceptableWeight) * 100;
+    const penalty = Math.min(100, Math.pow(excessWeight / maxAcceptableWeight, 2) * 100);
     return Math.max(0, 100 - penalty); // Ensure score is within 0-100
   }
 }
 
 function calculateScreenSizeScore(
   laptopScreenSize: number,
-  selectedScreenSizes: string[]
+  selectedScreenSizes: string[],
+  screenSizeImportance: number
 ): number {
   // Define screen size ranges for each category
   const screenSizeRanges = {
@@ -563,15 +569,19 @@ function calculateScreenSizeScore(
   // Calculate penalty if not within selected categories
   // Penalty increases the further the screen size is from selected preferences
   let minPenalty = 100; // Start with the max penalty
+  const importanceMultiplier = screenSizeImportance === 0.25 ? 5 : 1; // Stronger penalty for high importance
+
   for (const selectedSize of selectedScreenSizes) {
     const { min, max } = screenSizeRanges[selectedSize as keyof typeof screenSizeRanges];
     const distanceToCategory =
       laptopScreenSize < min ? min - laptopScreenSize : laptopScreenSize - max;
-    const penalty = Math.min(100, (distanceToCategory / 5) * 100); // Assuming max 5" as acceptable difference
+
+    // Amplify penalty: Include the importance multiplier
+    const penalty = Math.min(100, Math.pow(distanceToCategory / 5, 2) * 150 * importanceMultiplier); // Amplified penalty
     minPenalty = Math.min(minPenalty, penalty);
   }
 
-  const score =  Math.max(0, Math.min(100, 100 - minPenalty));
+  const score = Math.max(0, Math.min(100, 100 - minPenalty));
   // Ensure score stays within 0-100
   return score;
 }
@@ -580,7 +590,7 @@ function calculateScreenSizeScore(
 
 
 // Main function to calculate laptop score
-export function calculateLaptopScore(laptop: any, answers: any): { finalScore: number; componentScores: { name: string; score: number; }[] } {
+export function calculateLaptopScore(laptop: any, answers: any): { finalScore: number; componentScores: { name: string; score: number; }[]; cpuScore?: number; } {
   const { tasks, features } = answers;
 
 for (const [feature, selectedValue] of Object.entries(features)) {
@@ -632,9 +642,6 @@ for (const [feature, selectedValue] of Object.entries(features)) {
     }
 }
 
-// Continue with scoring as normal
-
-// Continue with scoring as normal
 
 
 
@@ -696,11 +703,13 @@ for (const [feature, selectedValue] of Object.entries(features)) {
 
 // Objective component scores (out of 10)
 const cpuScore = cpuModelScores[laptop.cpu] || 0;
-const ramScore = ramSizeScores[laptop.ram_size] || 0;
-  const ramTypeScore = ramTypeScores[laptop.ram_type] || 0;
-const gpuScore = gpuModelScores[laptop.gpu] || 0;
+const ramScore = laptop.manufacturer === "Apple" ? Math.min((ramSizeScores[laptop.ram_size] || 0) + 1, 10) : ramSizeScores[laptop.ram_size] || 0;
+const ramTypeScore = laptop.manufacturer === "Apple" ? 10 : ramTypeScores[laptop.ram_type] || 0;
+const gpuScore = laptop.manufacturer === "Apple" ? Math.min((gpuModelScores[laptop.gpu] || 0) + 1, 10) : gpuModelScores[laptop.gpu] || 0;
 const storageSpaceScore = storageSpaceScores[laptop.storage_space] || 0;
 const storageTypeScore = storageTypeScores[laptop.storage_type] || 0;
+
+
 
   // Normalize component scores to out of 100
 const normalizedCpuScore = (cpuScore / 10) * 100;
@@ -755,11 +764,12 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
     Object.values(weightedScores).reduce((sum, score) => sum + score, 0) / taskComponentTotalWeight;
 
    // New price, weight, and screen size scores based on answers format
-   const priceScore = calculatePriceScore(laptop.price, answers.budget.price);
+   const priceScore = calculatePriceScore(laptop.price, answers.budget.price, answers.budget.priceImportance);
    const weightScore = calculateWeightScore(laptop.weight, answers.weightImportance);
    const screenSizeScore = calculateScreenSizeScore(
     laptop.screen_size,
-    answers.screenSize.selectedScreenSizes
+    answers.screenSize.selectedScreenSizes,
+    answers.screenSize.sizeImportance
   );
 
   console.log("screen size importance", answers.screenSize.sizeImportance);
@@ -776,13 +786,17 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
       weightImportance: answers.weightImportance,
       sizeImportance: answers.screenSize.sizeImportance,
     });
- 
+    
+    
+
    // Compute the final score
    const finalScore =
      taskFinalScore * taskImportance +
      priceScore * answers.budget.priceImportance +
      weightScore * answers.weightImportance +
      screenSizeScore * answers.screenSize.sizeImportance;
+
+    
  
    const componentScores = [
      { name: "מעבד", score: Math.round(componentScoresMap.cpu) },
@@ -808,5 +822,6 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
    return {
      finalScore: Math.round(finalScore),
      componentScores: componentScores,
+     cpuScore: cpuModelScores[laptop.cpu]
    };
  }

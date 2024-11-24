@@ -166,10 +166,10 @@ export default function LaptopResultCard({
   
     // Define size ranges
     const sizeRanges = {
-      'small': [10, 13],
-      'medium': [13.1, 15],
-      'large': [15.1, 17],
-      'huge': [17.1, 20]
+      'small': [0, 13],
+      'medium': [13, 14],
+      'large': [14, 16],
+      'huge': [17, Infinity]
     };
   
     // Check if screen size falls within any of the selected size categories

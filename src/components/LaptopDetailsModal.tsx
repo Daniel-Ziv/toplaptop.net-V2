@@ -38,6 +38,7 @@ const getColorForScore = (score: number) => {
 }
 
 export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPercentage, componentScores }: LaptopDetailsModalProps) {
+  console.log(componentScores);
   return (
     <Modal
       isOpen={isOpen}

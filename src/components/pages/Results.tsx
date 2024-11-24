@@ -10,6 +10,7 @@ import { Skeleton } from "@nextui-org/react";
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { encodeParameters, decodeParameters } from '../../assets/utils/urlParams';
 import { Share } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 
 interface ResultsProps {
@@ -51,6 +52,7 @@ interface Laptop {
   withOs: string;
   gpu: string;
   componentScores?: ComponentScore[];
+  cpuScore?: number;
 
 }
 
@@ -124,6 +126,11 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
     }
   };
   
+ 
+  //place for_gaming:true at the top if the user has gaming task
+  const hasGamingTask = (tasks: any[]) => {
+    return tasks.some(task => task.task === "gaming");
+  };
 
   
 
@@ -137,20 +144,38 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
   
       if (answersToUse) {
         const scoredLaptops: Laptop[] = laptops.map((laptop) => {
-          const { finalScore, componentScores } = calculateLaptopScore(laptop, answersToUse);
+          const { finalScore, componentScores, cpuScore } = calculateLaptopScore(laptop, answersToUse);
           return {
             ...laptop,
             matchPercentage: finalScore,
-            componentScores: componentScores
+            componentScores: componentScores,
+            cpuScore: cpuScore,
           };
         });
   
         const filteredLaptops = scoredLaptops.filter((laptop) => 
           laptop.matchPercentage && laptop.matchPercentage > 0
         );
-  
-        filteredLaptops.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
-  
+        
+        
+        filteredLaptops.sort((a, b) => {
+          // First compare by match percentage
+          const percentageDiff = (b.matchPercentage || 0) - (a.matchPercentage || 0);
+          
+          if (percentageDiff === 0) {
+            // If percentages are equal, check gaming priority first
+            if (hasGamingTask(answersToUse.tasks)) {
+              const gamingDiff = (b.for_gaming ? 1 : 0) - (a.for_gaming ? 1 : 0);
+              if (gamingDiff !== 0) return gamingDiff;
+            }
+            
+            // If still equal (or no gaming task), compare by raw CPU scores
+            return (b.cpuScore || 0) - (a.cpuScore || 0);
+          }
+          
+          return percentageDiff;
+        });
+
         setSortedLaptops(filteredLaptops);
       }
   
@@ -185,14 +210,33 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
     onClick={() => setShowEmailModal(true)}
     className="px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors duration-200 flex items-center justify-center gap-2 mx-auto"
   >
-    שיתוף
+    שמרו/שתפו
     <Share size={20} className="rtl:mr-1 ltr:ml-1" />
   </button>
 </div>
-          {showEmailModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg max-w-md w-full" dir="rtl">
+<AnimatePresence>
+{showEmailModal && (
+   <motion.div 
+   initial={{ opacity: 0 }}
+   animate={{ opacity: 1 }}
+   exit={{ opacity: 0 }}
+   className="fixed inset-0 flex items-center justify-center z-50"
+ >
+  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+  <motion.div 
+      initial={{ scale: 0.95, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.95, opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="bg-white p-6 rounded-lg max-w-md w-full relative z-10" 
+      dir="rtl"
+    >
+    <div
+      className="bg-white p-3 rounded-lg max-w-md w-full border border-gray-300 shadow-lg"
+      dir="rtl"
+    >
       <h3 className="text-lg font-bold mb-4">לאן לשלוח?</h3>
+      <p className="text-sm text-gray-600 mb-4">אנו נשלח מייל עם לינק להמלצות שקיבלת.</p>
       <form onSubmit={handleEmailShare}>
         <input
           type="email"
@@ -217,10 +261,17 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
             שלח
           </button>
         </div>
+        
       </form>
+
     </div>
+    </motion.div>
+
   </div>
+  </motion.div>
+
 )}
+</AnimatePresence>
          <div className="flex flex-col gap-8">
          {isLoading ? (
             // Show skeletons while loading
