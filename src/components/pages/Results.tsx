@@ -236,7 +236,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
       dir="rtl"
     >
       <h3 className="text-lg font-bold mb-4">לאן לשלוח?</h3>
-      <p className="text-sm text-gray-600 mb-4">אנו נשלח מייל עם לינק להמלצות שקיבלת.</p>
+      <p className="text-sm text-gray-600 mb-4">אנחנו נשלח מייל עם לינק להמלצות שקיבלת.</p>
       <form onSubmit={handleEmailShare}>
         <input
           type="email"

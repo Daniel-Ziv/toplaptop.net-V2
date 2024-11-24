@@ -449,11 +449,11 @@ const taskRequirements: Record<string, TaskRequirements> = {
   },
   "light-programming": {
     cpu: { min: 5, max: 8, weight: 0.2 },            // CPU is helpful but doesn’t need to be very high.
-    ram: { min: 4, max: 6, weight: 0.25 },           // RAM is valuable for handling larger projects.
+    ram: { min: 4, max: 8, weight: 0.25 },           // RAM is valuable for handling larger projects.
     ramType: { min: 3, max: 10, weight: 0.1 },       // RAM type matters moderately.
-    gpu: { min: 3, max: 5, weight: 0.1 },            // GPU is less critical for light programming.
-    storageSpace: { min: 4, max: 7, weight: 0.2 },   // Storage space is moderately important.
-    storageType: { min: 5, max: 7, weight: 0.15 }    // Storage type has some impact on access speed.
+    gpu: { min: 3, max: 10, weight: 0.1 },            // GPU is less critical for light programming.
+    storageSpace: { min: 4, max: 10, weight: 0.2 },   // Storage space is moderately important.
+    storageType: { min: 5, max: 10, weight: 0.15 }    // Storage type has some impact on access speed.
   },
   "gaming-heavy": {
     cpu: { min: 7, max: 10, weight: 0.25 },          // CPU is essential for gaming performance.
@@ -468,8 +468,8 @@ const taskRequirements: Record<string, TaskRequirements> = {
     ram: { min: 4, max: 8, weight: 0.2 },            // Moderate RAM for light games.
     ramType: { min: 3, max: 10, weight: 0.05 },      // RAM type is less critical.
     gpu: { min: 5, max: 8, weight: 0.25 },           // GPU is still important for smooth graphics.
-    storageSpace: { min: 5, max: 8, weight: 0.15 },  // Moderate storage for game files.
-    storageType: { min: 5, max: 7, weight: 0.15 }    // Storage type affects loading times.
+    storageSpace: { min: 5, max: 10, weight: 0.15 },  // Moderate storage for game files.
+    storageType: { min: 5, max: 10, weight: 0.15 }    // Storage type affects loading times.
   }
 };
 
