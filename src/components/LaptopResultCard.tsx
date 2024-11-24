@@ -169,7 +169,7 @@ export default function LaptopResultCard({
       'small': [0, 13],
       'medium': [13, 14],
       'large': [14, 16],
-      'huge': [17, Infinity]
+      'huge': [16, Infinity]
     };
   
     // Check if screen size falls within any of the selected size categories

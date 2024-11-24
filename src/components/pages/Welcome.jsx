@@ -22,7 +22,6 @@ function Welcome({ onAnswer, nextStep }) {
         <div className="text-2xl  text-black text-center mt-3 font-display" dir="rtl">אז איך זה עובד?</div>
 
         <br></br>
-
         <CountAnimation></CountAnimation>
         {/*<MovingTestimonials></MovingTestimonials>*/}
 

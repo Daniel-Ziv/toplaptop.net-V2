@@ -16,6 +16,9 @@ import Footer from './components/Footer';
 import PrivacyPolicy from './components/pages/PrivacyPolicy';
 import TermsOfService from './components/pages/TermsOfService';
 
+
+
+
 function AppContent() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -113,6 +116,7 @@ function AppContent() {
   };
 
   const renderStep = () => {
+    
     switch(step) {
       case 1:
         return <Welcome 
