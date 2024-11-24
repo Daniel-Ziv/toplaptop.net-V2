@@ -2,7 +2,7 @@ import React from "react";
 import { Checkbox, Chip } from "@nextui-org/react";
 import cn from "classnames";
 
-const CustomCheckbox = ({ sizeName, statusColor, value }) => {
+const CustomCheckbox = ({ sizeName, statusColor, value, recommendationReason }) => {
   return (
     <Checkbox
       aria-label={sizeName.name}
@@ -17,18 +17,25 @@ const CustomCheckbox = ({ sizeName, statusColor, value }) => {
       }}
       value={value}
     >
-      <div className="w-full flex justify-between items-center gap-2">
-        <div>
-          <p className="text-lg font-bold text-default-900 dark:text-default-900">
-            {sizeName.name}
-          </p>
-          <p className="text-sm text-default-500">{sizeName.description}</p>
+      <div className="w-full flex flex-col gap-2">
+        <div className="w-full flex justify-between items-center gap-2">
+          <div>
+            <p className="text-lg font-bold text-default-900 dark:text-default-900">
+              {sizeName.name}
+            </p>
+            <p className="text-sm text-default-500">{sizeName.description}</p>
+            {sizeName.isRecommended && recommendationReason && (
+              <p className="text-sm text-success-600 mt-1">
+                {recommendationReason}
+              </p>
+            )}
+          </div>
+          {sizeName.isRecommended && (
+            <Chip color={statusColor} size="sm" variant="flat">
+              {sizeName.isRecommended}
+            </Chip>
+          )}
         </div>
-        {sizeName.isRecommended && (
-          <Chip color={statusColor} size="sm" variant="flat">
-            {sizeName.isRecommended}
-          </Chip>
-        )}
       </div>
     </Checkbox>
   );

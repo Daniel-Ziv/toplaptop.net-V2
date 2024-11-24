@@ -230,7 +230,7 @@ function ScreensizeQuestion({
                           size === "large" ? "מסך גדול" :
                           size === "medium" ? "מסך בינוני" : "מסך קטן";
                           
-          return `${sizeText} - ${reason}`;
+          return reason;
         }).join("\n");
 
         setFeedbackMessage(`עבור המשימות שבחרת מומלץ ${sizeRecommendations}`);
@@ -312,65 +312,59 @@ function ScreensizeQuestion({
               >
                 <div className="flex flex-col items-center mb-2">
                    
-                    <AnimatePresence>
-                    {showFeedback && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="text-center mt-2 mb-4"
-                        dir="rtl"
-                      >
-                        <p className="text-lg font-medium">{feedbackMessage}</p>
-                        <p className="text-sm text-gray-500 mt-1" style={{ whiteSpace: 'pre-line' }}>
-                      {reasonMessage}
-                    </p>  </motion.div>
-                    )}
-                    </AnimatePresence>
-                  </div>
+                  <h3 className="text-xl font-semibold mb-2">בחרו גדלים</h3>
+                </div>
 
-                <CheckboxGroup
-                  value={localScreenSizes}
-                  onChange={handleScreenSizeChange}
-                  className="space-y-4"
-                >
-                  <CustomCheckbox
-                    value="small"
-                    sizeName={{
-                      name: "קטן",
-                      description: "פחות מ13 אינצ׳",
-                      isRecommended: recommendedSizes.includes("small") ? "מומלץ!" : ""
-                    }}
-                    statusColor="success"
-                  />
-                  <CustomCheckbox
-                    value="medium"
-                    sizeName={{
-                      name: "בינוני",
-                      description: "בין 13 ל14 אינצ׳",
-                      isRecommended: recommendedSizes.includes("medium") ? "מומלץ!" : ""
-                    }}
-                    statusColor="success"
-                  />
-                  <CustomCheckbox
-                    value="large"
-                    sizeName={{
-                      name: "גדול",
-                      description: "בין 14 ל16 אינצ׳",
-                      isRecommended:  recommendedSizes.includes("large") ? "מומלץ!" : ""
-                    }}
-                    statusColor="success"
-                  />
-                  <CustomCheckbox
-                    value="huge"
-                    sizeName={{
-                      name: "ענק",
-                      description: "מעל 16 אינצ׳",
-                      isRecommended: recommendedSizes.includes("huge") ? "מומלץ!" : ""
-                    }}
-                    statusColor="success"
-                  />
-                </CheckboxGroup>
+                  <CheckboxGroup
+  value={localScreenSizes}
+  onChange={handleScreenSizeChange}
+  className="space-y-4"
+>
+  <CustomCheckbox
+    value="small"
+    sizeName={{
+      name: "קטן",
+      description: "פחות מ13 אינצ׳",
+      isRecommended: recommendedSizes.includes("small") ? "מומלץ!" : ""
+    }}
+    statusColor="success"
+    recommendationReason={recommendedSizes.includes("small") ? 
+      reasonMessage.split('\n')[recommendedSizes.indexOf("small")] : null}
+  />
+  <CustomCheckbox
+    value="medium"
+    sizeName={{
+      name: "בינוני",
+      description: "בין 13 ל14 אינצ׳",
+      isRecommended: recommendedSizes.includes("medium") ? "מומלץ!" : ""
+    }}
+    statusColor="success"
+    recommendationReason={recommendedSizes.includes("medium") ? 
+      reasonMessage.split('\n')[recommendedSizes.indexOf("medium")] : null}
+  />
+  <CustomCheckbox
+    value="large"
+    sizeName={{
+      name: "גדול",
+      description: "בין 14 ל16 אינצ׳",
+      isRecommended: recommendedSizes.includes("large") ? "מומלץ!" : ""
+    }}
+    statusColor="success"
+    recommendationReason={recommendedSizes.includes("large") ? 
+      reasonMessage.split('\n')[recommendedSizes.indexOf("large")] : null}
+  />
+  <CustomCheckbox
+    value="huge"
+    sizeName={{
+      name: "ענק",
+      description: "מעל 16 אינצ׳",
+      isRecommended: recommendedSizes.includes("huge") ? "מומלץ!" : ""
+    }}
+    statusColor="success"
+    recommendationReason={recommendedSizes.includes("huge") ? 
+      reasonMessage.split('\n')[recommendedSizes.indexOf("huge")] : null}
+  />
+                  </CheckboxGroup>
               </motion.div>
             </motion.div>
           )}
@@ -386,7 +380,7 @@ function ScreensizeQuestion({
       classNames={{
         base: cn(
           "inline-flex flex-row-reverse w-full max-w-md bg-content1 hover:bg-content2 items-center",
-          "justify-between cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent",
+          "justify-between cursor-pointer rounded-lg gap-2 p-4 border-1 border-transparent",
           "data-[selected=true]:border-primary",
         ),
         wrapper: "p-0 h-4 overflow-visible",

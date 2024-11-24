@@ -9,6 +9,7 @@ import NavigationButtons from '../NavigationButtons'
 import { Skeleton } from "@nextui-org/react";
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { encodeParameters, decodeParameters } from '../../assets/utils/urlParams';
+import { Share } from 'lucide-react'
 
 
 interface ResultsProps {
@@ -176,21 +177,22 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
       <div className="min-h-screen py-8" dir="ltr">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Header
-            text="המחשבים המומלצים עבורך"
+            text="ההמלצות שלנו!"
             className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
           />
           <div className="text-center mb-6">
-            <button 
-              onClick={() => setShowEmailModal(true)}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              שתף באימייל
-            </button>
-          </div>
+  <button
+    onClick={() => setShowEmailModal(true)}
+    className="px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors duration-200 flex items-center justify-center gap-2 mx-auto"
+  >
+    שיתוף
+    <Share size={20} className="rtl:mr-1 ltr:ml-1" />
+  </button>
+</div>
           {showEmailModal && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-lg max-w-md w-full" dir="rtl">
-      <h3 className="text-lg font-bold mb-4">שתף תוצאות באימייל</h3>
+      <h3 className="text-lg font-bold mb-4">לאן לשלוח?</h3>
       <form onSubmit={handleEmailShare}>
         <input
           type="email"
