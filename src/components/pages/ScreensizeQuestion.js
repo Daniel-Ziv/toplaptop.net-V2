@@ -171,6 +171,7 @@ function ScreensizeQuestion({
     const numValue = Number(value);
     setSizeImportance(numValue);
     updateAnswer(localScreenSizes, localTouchscreen, numValue);
+
   };
 
   useEffect(() => {
@@ -297,7 +298,7 @@ function ScreensizeQuestion({
         </RadioGroup>
 
         <AnimatePresence>
-          {sizeImportance !== 0 && (
+          {sizeImportance > 0 && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}

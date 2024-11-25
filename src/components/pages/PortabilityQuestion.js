@@ -181,7 +181,7 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
           <NavigationButtons
             onNext={nextStep}
             onBack={prevStep}
-            disableNext={selectedPortability.length === 0}
+            disableNext={selectedPortability < 0 || selectedPortability.length === 0}
           />
         </Container>
       );

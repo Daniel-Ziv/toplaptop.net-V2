@@ -26,7 +26,7 @@ function AppContent() {
   const [hideFooter, sethideFooter] = useState(false);
   const [answers, setAnswers] = useState({
     tasks: [],
-    weightImportance: 0,
+    weightImportance: -1,
     features: {
       cpu: [],
       ram_size: [],
@@ -44,11 +44,11 @@ function AppContent() {
     },
     budget: {
       price: 0,
-      priceImportance: 0
+      priceImportance: -1,
     },
     screenSize: {
       selectedScreenSizes: [],
-      sizeImportance: 0
+      sizeImportance: -1
     }
   });
 

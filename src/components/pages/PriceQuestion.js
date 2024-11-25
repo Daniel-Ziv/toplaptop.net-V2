@@ -219,7 +219,7 @@ const handleRecommendedBudget = () => {
         </div>
 
         <AnimatePresence>
-          {localImportance !== 0 && (
+          {localImportance > 0 && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
