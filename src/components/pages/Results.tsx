@@ -154,6 +154,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
         });
 
         setSortedLaptops(filteredLaptops);
+        
       }
   
       // Clear URL parameters if we're not coming from a shared link
