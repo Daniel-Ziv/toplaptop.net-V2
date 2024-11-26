@@ -213,7 +213,7 @@ export default function LaptopResultCard({
               })}
             >
               <div className="text-2xl  text-gray-600">{matchPercentage}%</div>
-              <div className="font-semibold" style={{ fontSize: '14px', color: "grey" } }>לחצו לפירוט</div>
+              <div className="font-bold" style={{ fontSize: '14px', color: "grey" } }>לחצו לפירוט</div>
             </CircularProgressbarWithChildren>
           </div>
           

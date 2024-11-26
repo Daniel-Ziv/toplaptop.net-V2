@@ -598,6 +598,61 @@ function calculateScreenSizeScore(
 
 // Main function to calculate laptop score
 export function calculateLaptopScore(laptop: any, answers: any): { finalScore: number; componentScores: { name: string; score: number; }[]; cpuScore?: number; } {
+
+  //we dont want any laptops that are over the budget when its important to him
+  
+  if (answers.budget.priceImportance === 0.25 && laptop.price > answers.budget.price) {
+    console.log("YES!")
+    return {
+      finalScore: 0,
+      componentScores: [
+        { name: "מעבד", score: 0 },
+        { name: "כרטיס מסך", score: 0 },
+        { name: "זיכרון RAM", score: 0 },
+        { name: "סוג זיכרון", score: 0 },
+        { name: "נפח אחסון", score: 0 },
+        { name: "סוג אחסון", score: 0 },
+        { name: "מחיר", score: 0 },
+        { name: "משקל", score: 0 },
+        { name: "גודל מסך", score: 0 },
+      ],
+      cpuScore: 0,
+    };
+  }
+
+  // Check screen size constraint - return 0 if size doesn't match with high importance
+  if (answers.screenSize.sizeImportance === 0.25) {
+    let laptopCategory = "";
+    if (laptop.screen_size < 13) {
+      laptopCategory = "small";
+    } else if (laptop.screen_size >= 13 && laptop.screen_size < 14) {
+      laptopCategory = "medium";
+    } else if (laptop.screen_size >= 14 && laptop.screen_size <= 16) {
+      laptopCategory = "large";
+    } else if (laptop.screen_size > 16) {
+      laptopCategory = "huge";
+    }
+
+    if (!answers.screenSize.selectedScreenSizes.includes(laptopCategory)) {
+      return {
+        finalScore: 0,
+        componentScores: [
+          { name: "מעבד", score: 0 },
+          { name: "כרטיס מסך", score: 0 },
+          { name: "זיכרון RAM", score: 0 },
+          { name: "סוג זיכרון", score: 0 },
+          { name: "נפח אחסון", score: 0 },
+          { name: "סוג אחסון", score: 0 },
+          { name: "מחיר", score: 0 },
+          { name: "משקל", score: 0 },
+          { name: "גודל מסך", score: 0 },
+        ],
+        cpuScore: 0,
+      };
+    }
+  }
+
+  
   const { tasks, features } = answers;
 
 for (const [feature, selectedValue] of Object.entries(features)) {
@@ -670,19 +725,29 @@ for (const [feature, selectedValue] of Object.entries(features)) {
     // Map task names to match taskRequirements keys
     switch(taskKey) {
       case "programming":
-        taskKey = taskObj.level === "heavy" ? "Heavy Programming" : "light-programming";
+        taskKey = taskObj.level === "heavy" ? "heavy-programming" : "light-programming";
         break;
       case "gaming":
         taskKey = taskObj.level === "heavy" ? "gaming-heavy" : "gaming-light";
         break;
       case "modeling/animation":
+        taskKey = "modeling-animation";  // Assuming this is the key in taskRequirements
+        break;
       case "photo-editing":
+        taskKey = "photo-editing";
+        break;
       case "music-editing":
+        taskKey = "music-editing";
+        break;
       case "video-editing":
+        taskKey = "video-editing";
+        break;
       case "basic-use":
+        taskKey = "basic-use";
+        break;
       case "ai":
-
-      break;
+        taskKey = "ai";
+        break;
       default:
         console.warn(`Unknown task: ${taskKey}`);
         return;

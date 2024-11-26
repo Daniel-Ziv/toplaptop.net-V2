@@ -352,7 +352,7 @@ const storageTypeScores = {
 };
 
 
-const ComparisonPopup = ({ isOpen, onClose, laptops }) => {
+const ComparisonPopup = ({ isOpen, onClose, laptops, handleSelectLaptop }) => {
   if (!laptops || laptops.length !== 2) {
     return null;
   }
@@ -828,8 +828,25 @@ const generateSummary = () => {
           )}
         </div>
       </div>
+      {/* Add buttons below the summary */}
+    <div className="flex justify-center mt-4 gap-4">
+      <Button
+        onPress={() => handleSelectLaptop(laptops[0])}
+        color="primary"
+        className="w-full max-w-xs"
+      >
+        בחר מחשב 1
+      </Button>
+      <Button
+        onPress={() => handleSelectLaptop(laptops[1])}
+        color="primary"
+        className="w-full max-w-xs"
+      >
+        בחר מחשב 2
+      </Button>
     </div>
-  );
+  </div>
+);
 };
 
 return (
@@ -982,6 +999,7 @@ return (
         </div>
       </div>
     </div>
+    
   </div>
 ))}
 
@@ -1007,7 +1025,7 @@ const FloatingCompareButton = () => {
   const [isAtBottom, setIsAtBottom] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const lastScrollY = useRef(0);
-  const { selectedLaptops, isCompareMode, setIsCompareMode } = useComparison();
+  const { selectedLaptops, isCompareMode, setIsCompareMode, clearComparison, toggleLaptopSelection } = useComparison();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -1040,6 +1058,13 @@ const FloatingCompareButton = () => {
     };
   }, [isAtBottom, isCompareMode]);
 
+  const handleSelectLaptop = (laptop) => {
+    clearComparison(); // Clear existing selections
+    setIsCompareMode(true); // Enable compare mode
+    toggleLaptopSelection(laptop); // Select the laptop
+    setIsPopupOpen(false);     
+  };
+
   const handleClick = () => {
     if (isCompareMode && selectedLaptops.length === 0) {
       setIsCompareMode(false);
@@ -1057,8 +1082,11 @@ const FloatingCompareButton = () => {
   };
 
   const handleClosePopup = () => {
-    setIsPopupOpen(false);
+    setIsPopupOpen(false);     
+    clearComparison();
+
   };
+  
 
   const getButtonText = () => {
     if (!isCompareMode) {
@@ -1091,7 +1119,7 @@ const FloatingCompareButton = () => {
       };
     }
     return {
-      base: '#6c757d',
+      base: '#bf0020', //#6c757d nice grey for backup
       hover: '#5c636a'
     };
   };
@@ -1144,7 +1172,7 @@ const FloatingCompareButton = () => {
           }}
         >
           <span>{buttonText}</span>
-          <Diff size={20} />
+         
         </button>
       </div>
 
@@ -1152,6 +1180,7 @@ const FloatingCompareButton = () => {
         isOpen={isPopupOpen}
         onClose={handleClosePopup}
         laptops={selectedLaptops}
+        handleSelectLaptop={handleSelectLaptop}
       />
     </>
   );

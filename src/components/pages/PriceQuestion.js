@@ -285,7 +285,7 @@ const handleRecommendedBudget = () => {
       <NavigationButtons
         onNext={handleNext}
         onBack={prevStep}
-        disableNext={!sliderValue}
+        disableNext={savedBudget.priceImportance < 0 || !sliderValue}
       />
     </Container>
   );

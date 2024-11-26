@@ -185,13 +185,49 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
             className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
           />
           <div className="text-center mb-6">
-  <button
+            
+  
+  <div className="flex justify-center mt-5">
+  <div style={{
+    backgroundColor: '#f0f9f0',
+    border: '1px solid #c3e6cb',
+    borderRadius: '8px',
+    padding: '20px',
+    textAlign: 'center',
+    maxWidth: '42rem',
+    width: '100%'
+  }}>
+    <div className="flex items-center justify-center gap-2" dir='rtl'>
+      <span style={{ 
+        fontSize: '1.25rem', 
+        fontWeight: 'bold',
+        color: '#155724'
+      }}>
+       שימו לב:
+      </span>
+    </div>
+    <div style={{ color: '#155724' }} dir="rtl">
+    <ul style={{
+    listStyleType: 'disc',
+    display: 'inline-block',
+    textAlign: 'right',
+    marginTop: '4px'
+  }}>
+    <li>בחרו שני מחשבים להשוואה בכפתור ״השוואת מחשבים״</li>
+    <li>לחצו על אחוז ההתאמה למידע נוסף</li>
+    <li>שתפו את הדף עם חברים!</li>
+</ul>
+
+</div>
+    <button
     onClick={() => setShowShareModal(true)}
     className="px-4 py-2 border-2 border-black text-black rounded-lg hover:bg-black transition-colors duration-200 flex items-center justify-center gap-2 mx-auto"
   >
    שתפו
     <Share size={20} className="rtl:mr-1 ltr:ml-1" />
   </button>
+  </div>
+</div>
 </div>
 <AnimatePresence>
  {showShareModal && (

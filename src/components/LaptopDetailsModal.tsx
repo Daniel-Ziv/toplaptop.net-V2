@@ -56,6 +56,7 @@ export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPerc
                 <h3 className="text-3xl font-bold mb-6">
                   התאמה כללית: {matchPercentage}% {getEmojiForScore(matchPercentage)}
                 </h3>
+                <p>add pie chart here.</p>
                 {componentScores
                   .sort((a, b) => b.score - a.score) // Sort from highest to lowest
                   .map((component, index) => {
