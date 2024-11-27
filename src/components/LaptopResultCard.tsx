@@ -83,6 +83,8 @@ export default function LaptopResultCard({
   const { selectedLaptops, toggleLaptopSelection, isCompareMode } = useComparison();
   const isSelected = selectedLaptops.some(laptop => laptop.name === name);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const priceDiff = price - answers.budget.price;
+
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't trigger selection if clicking the product link button
@@ -171,7 +173,8 @@ export default function LaptopResultCard({
       'large': [14, 16],
       'huge': [16, Infinity]
     };
-  
+
+
     // Check if screen size falls within any of the selected size categories
     return answers.screenSize.selectedScreenSizes.some((selectedSize: any) => {
       const range = sizeRanges[selectedSize as keyof typeof sizeRanges];
@@ -228,6 +231,10 @@ export default function LaptopResultCard({
             answers={answers}
             matchPercentage={matchPercentage}
             componentScores={componentScores}
+            priceDiff = {priceDiff}
+            laptopWeight={weight}
+            ram={ram_size}
+            screen_size={screen_size}
           />
           
           {/* Product Details */}

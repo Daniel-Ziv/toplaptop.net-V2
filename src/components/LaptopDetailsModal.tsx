@@ -16,6 +16,10 @@ interface LaptopDetailsModalProps {
   answers: any
   matchPercentage: number
   componentScores: ComponentScore[]
+  priceDiff: number
+  laptopWeight: number
+  screen_size: number
+  ram: number
 }
 
 const getEmojiForScore = (score: number) => {
@@ -25,11 +29,57 @@ const getEmojiForScore = (score: number) => {
   return "😕"
 }
 
-const getDescriptionForScore = (score: number) => {
-  if (score >= 90) return "מצוין"
-  if (score >= 70) return "טוב מאוד"
-  if (score >= 50) return "סביר"
-  return "יש מקום לשיפור"
+const getDescriptionForScore = (score: number, name: string, answers: any, priceDiff:number, getUserWeight:Function, ram:number, screen_size:number, laptopWeight:number) => {
+  if (name === "מחיר" && priceDiff > 0) return `חריגה של ${priceDiff} ש״ח מהתקציב (${answers.budget.price}₪)`
+  if (name === "משקל" && score < 100) return `משקל של ${laptopWeight} ק״ג לעומת ${getUserWeight(answers.weightImportance)} ק״ג שבחרתם`
+  if (name === "גודל מסך"){
+    if(score<100 && score >= 90)  return "גודל מהמסך קצת חורג מההעדפה"
+    if(score<90 && score >= 70)  return "גודל מהמסך חורג מההעדפה"
+    if(score<70 && score >= 50)  return "גודל מהמסך מאוד חורג מההעדפה"
+  }
+  if (name === "זיכרון RAM" && score < 100) {
+    if (score >= 90) return "כמעט מושלם לצרכים שלך"
+    if (score >= 70) return "מספיק זכרון ראם לרוב המשימות" 
+    if (score >= 50) return "עלול להיות איטי בריבוי משימות"
+    return "זיכרון RAM נמוך מהנדרש"
+   }
+   
+   if (name === "מעבד" && score < 100) {
+    if (score >= 90) return "ביצועים מעולים למשימות שלך"
+    if (score >= 70) return "מעבד טוב למרבית השימושים"
+    if (score >= 50) return "יתקשה במשימות מורכבות"
+    return "מעבד חלש מהנדרש"
+   }
+   
+   if (name === "כרטיס מסך" && score < 100) {
+    if (score >= 90) return "ביצועים גרפיים מעולים"
+    if (score >= 70) return "מתאים לרוב המשימות הגרפיות"
+    if (score >= 50) return "עלול להתקשות בגרפיקה כבדה"
+    return "כרטיס מסך חלש מהנדרש"
+   }
+   
+   if (name === "נפח אחסון" && score < 100) {
+    if (score >= 90) return "נפח כמעט מושלם לצרכים"
+    if (score >= 70) return "נפח טוב למרבית השימושים"
+    if (score >= 50) return "נפח מוגבל, יש לנהל קבצים"
+    return "נפח אחסון קטן מהנדרש"
+   }
+
+   if (name === "סוג זיכרון" && score < 100) {
+    if (score >= 90) return "זיכרון מהיר, ביצועים מעולים"
+    if (score >= 70) return "מהירות זיכרון טובה"
+    if (score >= 50) return "מהירות זיכרון סבירה"
+    return "זיכרון איטי מהנדרש"
+   }
+   
+   if (name === "סוג אחסון" && score < 100) {
+    if (score >= 90) return "אחסון מהיר מאוד, זמן תגובה מדהים"
+    if (score >= 70) return "אחסון מהיר, זמן תגובה טוב"
+    if (score >= 50) return "מהירות אחסון בסיסית" 
+    return "אחסון איטי, זמני תגובה ארוכים"
+  }
+
+  return "מצוין"
 }
 
 const getColorForScore = (score: number) => {
@@ -39,9 +89,15 @@ const getColorForScore = (score: number) => {
   return "danger"
 }
 
-export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPercentage, componentScores }: LaptopDetailsModalProps) {
+const getUserWeight = (weight: number) => {
+  if (weight === 0.125) return 2;
+  if (weight === 0.25) return 1.5;
+  return weight;
+};
+
+export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPercentage, componentScores, priceDiff, laptopWeight, ram, screen_size }: LaptopDetailsModalProps) {
   const priorityComponents = ["מחיר", "משקל", "גודל מסך"];
-  const sortedScores = [...componentScores].sort((a, b) => b.score - a.score);
+  const sortedScores = [...componentScores].sort((a, b) => a.score - b.score);
 
   const renderScoreCard = (component: ComponentScore, index: number) => (
     <motion.div
@@ -54,8 +110,9 @@ export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPerc
       <Card className="w-full">
         <CardBody>
           <div className="flex justify-between items-center mb-2">
-            <span>{getEmojiForScore(component.score)}</span>
             <span className="font-semibold text-lg">{component.name}</span>
+            <span>{getEmojiForScore(component.score)}</span>
+              
           </div>
           <Progress 
             value={component.score} 
@@ -64,7 +121,8 @@ export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPerc
           />
           <div className="flex justify-between text-sm">
             <span>{component.score}%</span>
-            <span>{getDescriptionForScore(component.score)}</span>
+            <span>{getDescriptionForScore(component.score, component.name, answers, priceDiff, getUserWeight, ram, screen_size, laptopWeight)}</span>
+            
           </div>
         </CardBody>
       </Card>
@@ -148,20 +206,27 @@ export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPerc
                 </div>
 
                
-                <h3 className="text-3xl font-semibold mb-2">
-                 העדפות פיזיות:
-                </h3>
-                {sortedScores
-                  .filter(component => 
-                    priorityComponents.includes(component.name) &&
-                    ((component.name === "מחיר" && answers.budget.priceImportance > 0) ||
-                     (component.name === "גודל מסך" && answers.screenSize.sizeImportance > 0) ||
-                     (component.name === "משקל" && answers.weightImportance > 0))
-                  )
-                  .map((component, index) => renderScoreCard(component, index))}
+                {sortedScores.filter(component =>
+                  priorityComponents.includes(component.name) &&
+                  ((component.name === "מחיר" && answers.budget.priceImportance > 0) ||
+                  (component.name === "גודל מסך" && answers.screenSize.sizeImportance > 0) ||
+                  (component.name === "משקל" && answers.weightImportance > 0))
+                ).length > 0 && (
+                  <>
+                    <h3 className="text-3xl font-semibold mb-2">העדפות טכניות:</h3>
+                    {sortedScores
+                      .filter(component =>
+                        priorityComponents.includes(component.name) &&
+                        ((component.name === "מחיר" && answers.budget.priceImportance > 0) ||
+                        (component.name === "גודל מסך" && answers.screenSize.sizeImportance > 0) ||
+                        (component.name === "משקל" && answers.weightImportance > 0))
+                      )
+                      .map((component, index) => renderScoreCard(component, index))}
+                  </>
+                )}
 
                 {/* Render task components */}
-                <h3 className="text-3xl font-semibold mb-2">התאמת רכיבים למשימות</h3>
+                <h3 className="text-3xl font-semibold mb-2">התאמת רכיבים למשימות:</h3>
                 {sortedScores
                   .filter(component => !priorityComponents.includes(component.name))
                   .map((component, index) => renderScoreCard(component, index))}
