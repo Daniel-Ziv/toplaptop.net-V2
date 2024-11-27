@@ -2,7 +2,8 @@ import './styles/output.css';
 import React, { useState, useEffect } from "react";
 import Progress from "./components/Progress";
 import CustomNavbar from './components/CustomNavbar';
-import { NextUIProvider } from "@nextui-org/system";
+import { NextUIProvider} from "@nextui-org/system";
+import { Spinner } from "@nextui-org/react";
 import { BrowserRouter as Router, Routes, Route, useSearchParams, useNavigate } from 'react-router-dom';
 import Welcome from "./components/pages/Welcome";
 import TasksQuestion from "./components/pages/TasksQuestion";
@@ -24,6 +25,7 @@ function AppContent() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [hideFooter, sethideFooter] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [answers, setAnswers] = useState({
     tasks: [],
     weightImportance: -1,
@@ -56,6 +58,7 @@ function AppContent() {
   useEffect(() => {
     const encodedParams = searchParams.get('q');
     if (encodedParams) {
+      setIsLoading(true); 
       try {
         const decodedAnswers = decodeParameters(encodedParams);
         if (decodedAnswers) {
@@ -68,19 +71,20 @@ function AppContent() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    if (step === 7) {
-      sethideFooter(false);
-    }
-  }, [step]);
+ 
     
 
   
   const nextStep = () => {
-    setStep(prevStep => {
-      const newStep = prevStep + 1;
-      return newStep;
-    });
+    if (step === 6) {
+      setIsLoading(true);
+      // Small delay to ensure loading state is set before navigation
+      setTimeout(() => {
+        setStep(prevStep => prevStep + 1);
+      }, 100);
+    } else {
+      setStep(prevStep => prevStep + 1);
+    }
   };
 
   const prevStep = () => {
@@ -165,13 +169,16 @@ function AppContent() {
           prevStep={prevStep} 
           nextStep={nextStep} 
           savedFeatures={answers.features} 
-          sethideFooter={sethideFooter}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}          
         />;
       case 7:
+        
         return <Results 
           answers={answers} 
           prevStep={prevStep}
-          onAnswerUpdate={handleAnswer}  // Add this prop if Results can update answers
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />;
       default:
         return <Welcome onNext={nextStep} />;
@@ -187,14 +194,15 @@ function AppContent() {
           element={<Results 
             answers={answers} 
             prevStep={prevStep}
-            onAnswerUpdate={handleAnswer}  // Add this prop if Results can update answers
+            sethideFooter={sethideFooter} 
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
           />} 
         />
         <Route 
           path="/" 
           element={renderStep()} 
         />
-
         <Route
         path="/privacy-policy"
         element={<PrivacyPolicy />}
@@ -206,7 +214,9 @@ function AppContent() {
               
 
       </Routes>
-    {!hideFooter && <Footer />}
+      
+    {!isLoading && <Footer />}
+    
     </div>
     
   );

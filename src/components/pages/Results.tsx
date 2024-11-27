@@ -6,7 +6,7 @@ import FloatingCompareButton from '../FloatingCompareButton'
 import { ComparisonProvider } from '../ComparisonContext';
 import {calculateLaptopScore} from '../algo/calculateLaptopScore';
 import NavigationButtons from '../NavigationButtons'
-import { Skeleton } from "@nextui-org/react";
+import { Skeleton, Spinner } from "@nextui-org/react";
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { encodeParameters, decodeParameters } from '../../assets/utils/urlParams';
 import { Check, Copy, Share, X } from 'lucide-react'
@@ -16,6 +16,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 interface ResultsProps {
   prevStep: () => void;
   answers: any;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
 }
 
 interface ComponentScore {
@@ -58,15 +60,16 @@ interface Laptop {
 
 
 
-const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
+const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLoading }) => {
   const [displayCount, setDisplayCount] = useState(5)
   const [sortedLaptops, setSortedLaptops] = useState<Laptop[]>([]); // Use sortedLaptops to render results
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [showShareModal, setShowShareModal] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
 
+
+  
  
 
   const LaptopSkeleton = () => (
@@ -109,12 +112,14 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
     return tasks.some(task => task.task === "gaming");
   };
 
-  
 
   useEffect(() => {
     const calculateScores = async () => {
+      console.log("Before setting isLoading to true:", isLoading); // Logs the current state
       setIsLoading(true);
-  
+      console.log("After setting isLoading to true:", isLoading); // Logs the current state (won't reflect change immediately)
+      
+    
       // Only use encoded parameters if we came from a shared link
       const encodedParams = searchParams.get('q');
       const answersToUse = encodedParams ? decodeParameters(encodedParams) : answers;
@@ -161,8 +166,9 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
       if (!encodedParams && window.location.search) {
         window.history.replaceState({}, '', window.location.pathname);
       }
-  
+      console.log("Is Loading:", isLoading);
       setIsLoading(false);
+      console.log("Is Loading:", isLoading);
     };
   
     calculateScores();
@@ -175,6 +181,23 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers }) => {
   };
 
   const hasMoreLaptops = displayCount < sortedLaptops.length;
+
+ 
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-50">
+        <Spinner 
+          size="lg"
+          color="primary"
+          className="w-20 h-20"
+          label="טוען תוצאות..."
+        />
+      </div>
+    );
+  }
+
+
 
   return (
     <ComparisonProvider>
