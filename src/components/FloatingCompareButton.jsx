@@ -584,45 +584,31 @@ const ComparisonPopup = ({ isOpen, onClose, laptops, handleSelectLaptop }) => {
             };
         case 'connections':
           if (Array.isArray(value1) && Array.isArray(value2)) {
-              const uniqueIn1 = value1.filter(item => !value2.includes(item));
-              const uniqueIn2 = value2.filter(item => !value1.includes(item));
-              
-              if (uniqueIn1.length === 0 && uniqueIn2.length === 0) {
-                  return { comparison: 'חיבורים זהים', winner: 'tie' };
-              }
-              
-              // If laptop1 has more unique connections, it wins
-              if (uniqueIn1.length > uniqueIn2.length) {
-                  return {
-                      comparison: `${uniqueIn1.length} חיבורים נוספים`,
-                      winner: 'laptop1',
-                      uniqueIn1,
-                      uniqueIn2
-                  };
-              }
-              
-              // If laptop2 has more unique connections, it wins
-              if (uniqueIn2.length > uniqueIn1.length) {
-                  return {
-                      comparison: `${uniqueIn2.length} חיבורים נוספים`,
-                      winner: 'laptop2',
-                      uniqueIn1,
-                      uniqueIn2
-                  };
-              }
-              
-              // If both have the same number of unique connections
-              if (uniqueIn1.length === uniqueIn2.length) {
-                  return {
-                      comparison: 'מספר חיבורים שונה זהה',
-                      winner: 'tie',
-                      uniqueIn1,
-                      uniqueIn2
-                  };
-              }
+            // Filter out any common connections
+            const uniqueIn1 = value1.filter(item => !value2.includes(item));
+            const uniqueIn2 = value2.filter(item => !value1.includes(item));
+            
+            // Both laptops might have unique connections
+            let hasAdvantages = false;
+            if (uniqueIn1.length > 0 || uniqueIn2.length > 0) {
+              hasAdvantages = true;
+            }
+            
+            if (!hasAdvantages) {
+              return { comparison: 'חיבורים זהים', winner: 'tie' };
+            }
+            
+            // Return both sets of unique connections, letting each laptop show its advantages
+            return {
+              comparison: 'חיבורים ייחודיים',
+              winner: uniqueIn1.length > 0 && uniqueIn2.length === 0 ? 'laptop1' : 
+                    uniqueIn2.length > 0 && uniqueIn1.length === 0 ? 'laptop2' : 'both',
+              uniqueIn1,
+              uniqueIn2
+            };
           }
           return null;
-          case 'security':
+        case 'security':
             if (Array.isArray(value1) && Array.isArray(value2)) {
                 // Filter out "לא כולל" before comparing
                 const filteredValue1 = value1.filter(item => !item.includes("לא כולל"));
@@ -652,56 +638,17 @@ const ComparisonPopup = ({ isOpen, onClose, laptops, handleSelectLaptop }) => {
                         uniqueIn2
                     };
                 }
+                
             }
             return null;
-            if (Array.isArray(value1) && Array.isArray(value2)) {
-                // Filter out "ללא אבטחה" before comparing
-                const filteredValue1 = value1.filter(item => item !== "ללא כולל");
-                const filteredValue2 = value2.filter(item => item !== "ללא כולל");
-                
-                const uniqueIn1 = filteredValue1.filter(item => !filteredValue2.includes(item));
-                const uniqueIn2 = filteredValue2.filter(item => !filteredValue1.includes(item));
-                
-                if (uniqueIn1.length === 0 && uniqueIn2.length === 0) {
-                    return { comparison: 'אבטחה זהה', winner: 'tie' };
-                }
-                
-                if (uniqueIn1.length > uniqueIn2.length) {
-                    return {
-                        comparison: `${uniqueIn1.length} אפשרויות אבטחה נוספות`,
-                        winner: 'laptop1',
-                        uniqueIn1,
-                        uniqueIn2
-                    };
-                }
-                
-                if (uniqueIn2.length > uniqueIn1.length) {
-                    return {
-                        comparison: `${uniqueIn2.length} אפשרויות אבטחה נוספות`,
-                        winner: 'laptop2',
-                        uniqueIn1,
-                        uniqueIn2
-                    };
-                }
-                
-                if (uniqueIn1.length === uniqueIn2.length) {
-                    return {
-                        comparison: 'מספר אפשרויות אבטחה שונות זהה',
-                        winner: 'tie',
-                        uniqueIn1,
-                        uniqueIn2
-                    };
-                }
-            }
-            return null;
-        default:
-
-          if (!value1 || !value2 || value1 === 'לא זמין' || value2 === 'לא זמין') return null;
-            if (value1 === value2) return { comparison: 'זהה', winner: 'tie' };
-            return { 
-                comparison: 'שונה',
-                winner: null
-            };
+           
+            default:
+              if (!value1 || !value2 || value1 === 'לא זמין' || value2 === 'לא זמין' || value1 === 'לא רלוונטי' || value2 === 'לא רלוונטי') return null;
+              if (value1 === value2) return { comparison: 'זהה', winner: 'tie' };
+              return { 
+                  comparison: 'שונה',
+                  winner: null
+              };
     }
 
     
@@ -808,34 +755,51 @@ const generateSummary = () => {
       case 'price':
         return 'מחיר נמוך יותר';
       case 'connections':
-        const connectionsResult = compareSpecs(spec.key, laptops[0], laptops[1]);
-        if (connectionsResult) {
-          if (connectionsResult.uniqueIn1?.length) {
-            advantages.laptop1.push(`חיבורים ייחודיים: ${connectionsResult.uniqueIn1.join(', ')}`);
+      
+          const connectionsResult = compareSpecs(spec.key, laptops[0], laptops[1]);
+          // For laptop1
+          if (connectionsResult?.uniqueIn1?.length > 0 && spec === laptops[0]) {
+            return `חיבורים נוספים: ${connectionsResult.uniqueIn1.join(', ')}`;
           }
-          if (connectionsResult.uniqueIn2?.length) {
-            advantages.laptop2.push(`חיבורים ייחודיים: ${connectionsResult.uniqueIn2.join(', ')}`);
+          // For laptop2
+          if (connectionsResult?.uniqueIn2?.length > 0 && spec === laptops[1]) {
+            return `חיבורים נוספים: ${connectionsResult.uniqueIn2.join(', ')}`;
           }
-        }
-        break;
+          return null;
       case 'security':
         const securityResult = compareSpecs(spec.key, laptops[0], laptops[1]);
-        if (securityResult) {
-          if (securityResult.uniqueIn1?.length) {
-            advantages.laptop1.push(`אבטחה ייחודית: ${securityResult.uniqueIn1.join(', ')}`);
-          }
-          if (securityResult.uniqueIn2?.length) {
-            advantages.laptop2.push(`אבטחה ייחודית: ${securityResult.uniqueIn2.join(', ')}`);
-          }
+        if (securityResult?.uniqueIn1?.length > 0 && spec === laptops[0]) {
+          return `אבטחה נוספת: ${securityResult.uniqueIn1.join(', ')}`;
         }
-        break;
-    }
-  };
+        if (securityResult?.uniqueIn2?.length > 0 && spec === laptops[1]) {
+          return `אבטחה נוספת: ${securityResult.uniqueIn2.join(', ')}`;
+        }
+        return null;
+        }
+      };
 
   specs.forEach(spec => {
     if (spec.key === 'product_img') return;
     const result = compareSpecs(spec.key, laptops[0], laptops[1]);
-    if (result && result.winner === 'laptop1') {
+    
+    if (spec.key === 'security') {
+      if (result?.uniqueIn1?.length > 0) {
+        advantages.laptop1.push(`אבטחה נוספת: ${result.uniqueIn1.join(', ')}`);
+      }
+      if (result?.uniqueIn2?.length > 0) {
+        advantages.laptop2.push(`אבטחה נוספת: ${result.uniqueIn2.join(', ')}`);
+      }
+    }
+
+    if (spec.key === 'connections') {
+      // Add unique connections to respective advantages
+      if (result?.uniqueIn1?.length > 0) {
+        advantages.laptop1.push(`חיבורים נוספים: ${result.uniqueIn1.join(', ')}`);
+      }
+      if (result?.uniqueIn2?.length > 0) {
+        advantages.laptop2.push(`חיבורים נוספים: ${result.uniqueIn2.join(', ')}`);
+      }
+    } else if (result && result.winner === 'laptop1') {
       advantages.laptop1.push(getAdvantageDescription(spec, laptops[0][spec.key], laptops[1][spec.key]));
     } else if (result && result.winner === 'laptop2') {
       advantages.laptop2.push(getAdvantageDescription(spec, laptops[1][spec.key], laptops[0][spec.key]));
@@ -845,64 +809,150 @@ const generateSummary = () => {
 
   return (
     <div className="p-3 bg-gray-50 rounded-lg">
-      <h3 className="text-lg font-bold mb-4 text-center" dir="rtl">לסיכום:</h3>
+      <h3 className="text-xl font-bold mb-4 text-center" dir="rtl">סיכום יתרונות:</h3>
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <h4 className="font-bold text-sm text-center mb-2">יתרונות:</h4>
-          {advantages.laptop1.length > 0 ? (
-            <p className="text-sm text-center">{advantages.laptop1.join(", ")}</p>
-          ) : (
-            <p className="text-sm text-gray-500 text-center">אין יתרונות בולטים</p>
-          )}
-          <div className="flex justify-center gap-4">
-           <Button
-            onPress={() => handleSelectLaptop(laptops[0])}
-            color="primary"
-            className="w-full max-w-xs"
-          >
-            בחר מחשב 1
-          </Button>
-          </div>
-          <div className="flex justify-center gap-4">
-          <Button
-            onPress={() => window.open(laptops[0].url, '_blank')}
-            color="secondary"
-            className="w-full max-w-xs"
-          >
-            פתח קישור למחשב 1
-          </Button>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {advantages.laptop1.length > 0 ? (
+          <div style={{ flex: 1 }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(1, 1fr)',
+            gap: '0.5rem',
+            maxWidth: '400px',
+            margin: '0 auto'
+          }}>
+            {advantages.laptop1.filter(Boolean).map((advantage, index) => (
+              <div key={index} style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '8px',
+                textAlign: 'right'
+              }}>
+                <span style={{ color: '#006400' }}>+</span>
+                <span style={{ wordBreak: 'break-word' }}>{advantage}</span>
+              </div>
+            ))}
           </div>
         </div>
-        <div>
-          <h4 className="font-bold text-sm text-center mb-2">יתרונות:</h4>
-          {advantages.laptop2.length > 0 ? (
-            <p className="text-sm text-center">{advantages.laptop2.join(", ")}</p>
-          ) : (
-            <p className="text-sm text-gray-500 text-center">אין יתרונות בולטים</p>
-          )}
-           <div className="flex justify-center gap-4">
-            <Button
-              onPress={() => handleSelectLaptop(laptops[1])}
-              color="primary"
-              className="w-full max-w-xs"
-            >
-              בחר מחשב 2
-            </Button>
-          </div>
-          <div className="flex justify-center gap-4">
-            
-            <Button
-              onPress={() => window.open(laptops[1].url, '_blank')}
-              color="secondary"
-              className="w-full max-w-xs"
-            >
-              פתח קישור למחשב 2
-            </Button>
-          </div>
+        ) : (
+        <div style={{ flex: 1 }}>
+          <p className="text-sm text-gray-500 text-center">אין יתרונות בולטים</p>
         </div>
+      )}
+     <div className="gap-1" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Button
+          onPress={() => handleSelectLaptop(laptops[0])}
+          color="primary"
+          className="w-full max-w-sm"
+          size="lg"
+          style={{
+            backgroundColor: '#198754',
+            padding: '12px 24px',
+            fontSize: '0.95rem',
+            fontWeight: 500,
+            border: 'none',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 4px rgba(37, 99, 235, 0.1)'
+          }}
+        >
+          השווא מול אחר
+        </Button>
       </div>
-      {/* Add buttons below the summary */}
-    {/* Add buttons below the summary */}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Button
+          onPress={() => window.open(laptops[0].url, '_blank')}
+          color="secondary"
+          className="w-full max-w-sm"
+          size="lg"
+          style={{
+            backgroundColor: 'white',
+            color: '#198754',
+            border: '2px solid #198754',
+            padding: '10px 24px',
+            fontSize: '0.95rem',
+            fontWeight: 500,
+            transition: 'all 0.2s ease'
+          }}
+        >
+          קישור למוצר
+        </Button>
+      </div>
+  </div>
+</div>
+
+<div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+  {advantages.laptop2.length > 0 ? (
+   <div style={{ flex: 1 }}>
+   <div style={{
+     display: 'grid',
+     gridTemplateColumns: 'repeat(1, 1fr)',
+     gap: '0.5rem',
+     maxWidth: '400px',
+     margin: '0 auto'
+   }}>
+     {advantages.laptop2.filter(Boolean).map((advantage, index) => (
+       <div key={index} style={{
+         display: 'flex',
+         alignItems: 'flex-start',
+         gap: '8px',
+         textAlign: 'right'
+       }}>
+         <span style={{ color: '#006400' }}>+</span>
+         <span style={{ wordBreak: 'break-word' }}>{advantage}</span>
+       </div>
+     ))}
+   </div>
+ </div>
+  ) : (
+        <div style={{ flex: 1 }}>
+          <p className="text-sm text-gray-500 text-center">אין יתרונות בולטים</p>
+        </div>
+      )}
+   <div className="gap-1 " style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop:'1vw'}}>
+        <Button
+          onPress={() => handleSelectLaptop(laptops[1])}
+          color="primary"
+          className="w-full max-w-sm"
+          size="lg"
+          style={{
+            backgroundColor: '#198754',
+            padding: '12px 24px',
+            fontSize: '0.95rem',
+            fontWeight: 500,
+            border: 'none',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 4px rgba(37, 99, 235, 0.1)'
+          }}
+        >
+          השווא מול אחר
+        </Button>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Button
+          onPress={() => window.open(laptops[1].url, '_blank')}
+          color="secondary"
+          className="w-full max-w-sm"
+          size="lg"
+          style={{
+            backgroundColor: 'white',
+            color: '#198754',
+            border: '2px solid #198754',
+            padding: '10px 24px',
+            fontSize: '0.95rem',
+            fontWeight: 500,
+            transition: 'all 0.2s ease'
+          }}
+        >
+          קישור למוצר
+        </Button>
+      </div>
+  </div>
+    </div>
+
+      </div>
+
 <div className="flex flex-col items-center mt-4 gap-4">
  
 </div>
@@ -931,10 +981,10 @@ return (
       {/* Column Headers */}
       <div className="grid grid-cols-2 ">
         <div className="text-lg font-bold text-center">
-          {laptops[0].manufacturer} {laptops[0].laptopSeries}
+          {laptops[0].manufacturer.replace(/[\u0590-\u05FF]/g, '')} {laptops[0].laptopSeries.replace(/[\u0590-\u05FF]/g, '')}
         </div>
         <div className="text-lg font-bold text-center">
-          {laptops[1].manufacturer} {laptops[1].laptopSeries}
+          {laptops[1].manufacturer.replace(/[\u0590-\u05FF]/g, '')} {laptops[1].laptopSeries.replace(/[\u0590-\u05FF]/g, '')}
         </div>
       </div>
 
@@ -1080,7 +1130,7 @@ return (
         className="mx-auto"
         
       >
-        סגור
+        סיום השוואה
       </Button>
     </ModalFooter>
   </ModalContent>

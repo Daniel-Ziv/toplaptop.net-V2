@@ -601,12 +601,11 @@ function calculateScreenSizeScore(
 
 
 // Main function to calculate laptop score
-export function calculateLaptopScore(laptop: any, answers: any): { finalScore: number; componentScores: { name: string; score: number; }[]; cpuScore?: number; } {
+export function calculateLaptopScore(laptop: any, answers: any): { finalScore: number; componentScores: { name: string; score: number; }[]; cpuScore?: number; gpuScore?: number; } {
 
   //we dont want any laptops that are over the budget when its important to him
   
   if (answers.budget.priceImportance === 0.25 && laptop.price > answers.budget.price) {
-    console.log("YES!")
     return {
       finalScore: 0,
       componentScores: [
@@ -621,6 +620,7 @@ export function calculateLaptopScore(laptop: any, answers: any): { finalScore: n
         { name: "גודל מסך", score: 0 },
       ],
       cpuScore: 0,
+      gpuScore: 0
     };
   }
 
@@ -898,6 +898,7 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
    return {
      finalScore: Math.round(finalScore),
      componentScores: componentScores,
-     cpuScore: cpuModelScores[laptop.cpu]
+     cpuScore: cpuModelScores[laptop.cpu],
+     gpuScore: gpuModelScores[laptop.gpu]
    };
  }

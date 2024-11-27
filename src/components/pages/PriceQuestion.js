@@ -122,7 +122,7 @@ const handleRecommendedBudget = () => {
       value: 0.125,
       sizeName: {
         name: "קצת חשוב",
-        description: "יש לי תקציב, ואם יש מחשב שמתאים לי יותר אבל יחרוג ממנו קצת, אני יכול לשקול את זה",
+        description: "יש לי תקציב, ואם יש מחשב שמתאים לי יותר אבל יחרוג ממנו קצת, אוכל  לשקול את זה",
         isRecommended: true
 
       }
@@ -131,7 +131,7 @@ const handleRecommendedBudget = () => {
       value: 0.25,
       sizeName: {
         name: "חשוב",
-        description: "אני לא מוכן שיחרוג בכלל מהתקציב",
+        description: "אני לא רוצה שיחרוג בכלל מהתקציב",
 
       }
     }
@@ -234,7 +234,7 @@ const handleRecommendedBudget = () => {
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
                 <div className="flex flex-col items-center mb-2">
-                <Button color="success"  dir="rtl" onClick={handleRecommendedBudget}>
+                <Button color="default" variant="flat"  dir="rtl" onClick={handleRecommendedBudget}>
                     כמה כדאי?
                   </Button>
                 </div>

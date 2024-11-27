@@ -56,6 +56,7 @@ interface Laptop {
   gpu: string;
   componentScores?: ComponentScore[];
   cpuScore?: number;
+  gpuScore?: number;
 
 }
 
@@ -100,12 +101,13 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
     
       if (answersToUse) {
         const scoredLaptops: Laptop[] = laptops.map((laptop) => {
-          const { finalScore, componentScores, cpuScore } = calculateLaptopScore(laptop, answersToUse);
+          const { finalScore, componentScores, cpuScore, gpuScore } = calculateLaptopScore(laptop, answersToUse);
           return {
             ...laptop,
             matchPercentage: finalScore,
             componentScores: componentScores,
             cpuScore: cpuScore,
+            gpuScore: gpuScore,
           };
         });
     
@@ -140,7 +142,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 flex flex-col  bg-white/90 backdrop-blur-sm z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-white/90 backdrop-blur-sm z-50">
         <Spinner 
           size="lg"
           color="primary"
@@ -158,237 +160,279 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
     <ComparisonProvider>
       <div className="min-h-screen py-8" dir="ltr">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Header
-            text="ההמלצות שלנו!"
-            className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
-          />
-          <div className="text-center mb-4">
-            
-          <div className="flex justify-center mt-1 w-full max-w-4xl mx-auto mb-1 relative gap-2" dir="rtl">
-
-            <div
+          <div className="flex justify-center items-center gap-1 mt-3">
+            <button
+              onClick={() => setShowShareModal(true)}
               style={{
-                width: '100%',
-                maxWidth: '64rem',
-                margin: '2rem auto',
-                backgroundColor: '#f0fdf4',
-                border: '1px solid #bbf7d0',
+                backgroundColor: '#000000',
+                color: '#ffffff',
+                transition: 'background-color 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                padding: '0.5rem 1rem',
                 borderRadius: '0.5rem',
-                overflow: 'hidden',
-                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                flexDirection: 'row-reverse',
+                marginTop: '0.5rem',
               }}
+             
+              aria-label="שתפו את הדף"
             >
+              <Share style={{ height: '1.25rem', width: '1.25rem' }} />
+              
+            </button>
+            <Header
+              text="ההמלצות שלנו!"
+              className="mb-1 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
+            />
+          </div>
+
+           
+                
+          <div className="text-center mb-4">
+            <div className="flex justify-center mt-1 w-full max-w-4xl mx-auto mb-1 relative gap-2" dir="rtl">
               <div
                 style={{
-                  backgroundColor: '#dcfce7',
-                  borderBottom: '1px solid #bbf7d0',
-                  padding: '1rem',
-                }}
-              >
-                <h2
-                  style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 'bold',
-                    color: '#166534',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                  
-                >
-                  <Info style={{ height: '1.5rem', width: '1.5rem' }} />
-                  כדאי שתכירו
-                </h2>
-        
-            </div>
-            <div style={{ backgroundColor: '#ffffff', padding: '1rem' }}>
-              <ul
-                style={{
-                  listStyleType: 'disc',
-                  paddingLeft: '1rem',
-                  textAlign: 'right',
-                  color: '#166534',
-                  margin: 0,
-                  gap: '0.5rem',
-                  direction: 'rtl',
-                }}
-              >
-                <li>יש כפתור השוואת מחשבים</li>
-                <li>לחצו על העיגול הירוק בכל מחשב לראות מידע נוסף!</li>
-                <li>אפשר לשתף את ההמלצות שלנו בכפתור הבא:</li>
-              </ul>
-             <div className='flex justify-center'>
-              <button
-                onClick={() => setShowShareModal(true)}
-                style={{
-                  backgroundColor: '#047857',
-                  color: '#ffffff',
-                  transition: 'background-color 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.5rem',
-                  padding: '0.5rem 1rem',
+                  width: '100%',
+                  maxWidth: '64rem',
+                  margin: '0.5rem auto',
+                  backgroundColor: '#f0fdf4',
+                  border: '1px solid #bbf7d0',
                   borderRadius: '0.5rem',
-                  flexDirection: 'row-reverse',
-                  marginTop: '0.5rem',
+                  overflow: 'hidden',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
                 }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#065f46')
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#047857')
-                }
-                aria-label="שתפו את הדף"
               >
-                <Share style={{ height: '1.25rem', width: '1.25rem' }} />
-                שתפו
-              </button>
+                <div
+                  style={{
+                    backgroundColor: '#dcfce7',
+                    borderBottom: '1px solid #bbf7d0',
+                    padding: '1rem',
+                  }}
+                >
+                  <h2
+                    style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 'bold',
+                      color: '#166534',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                    }}
+                    
+                  >
+                    <Info style={{ height: '1.5rem', width: '1.5rem' }} />
+                    כדאי שתכירו
+                  </h2>
+          
+              </div>
+              <div style={{ backgroundColor: '#ffffff', padding: '1rem' }}>
+                <ul
+                  style={{
+                    listStyleType: 'disc',
+                    paddingLeft: '1rem',
+                    textAlign: 'right',
+                    color: '#166534',
+                    margin: 0,
+                    direction: 'rtl',
+                    fontSize:'18px',
+                    marginRight:'1vw'
+                  }}
+                >
+                  <li>יש כפתור השוואת מחשבים בתחתית המסך</li>
+                  <li>לחצו על העיגול הירוק בכל תוצאה כדי לראות מידע נוסף!</li>
+                </ul>
+            
+              </div>
               </div>
               
             </div>
-          </div>
-          </div>
+          
+          <SortToggleButtons 
+            onSortByPrice={() => {
+              const budget = answers.budget.price; // User-defined maximum budget
+              const maxPercentage = Math.max(...sortedLaptops.map((laptop) => laptop.matchPercentage || 0)); // Top percentage
+              const lambda = 0.5; // Adjust weight for price impact
+          
+              const newLaptops = [...sortedLaptops].sort((a, b) => {
+                const aScore = ((a.matchPercentage ?? 0) / maxPercentage) - lambda * (a.price / budget);
+                const bScore = ((b.matchPercentage ?? 0) / maxPercentage) - lambda * (b.price / budget);
 
-<SortToggleButtons 
-  onSortByPrice={() => {
-    const newLaptops = [...sortedLaptops].sort((a, b) => {
-      const percentageDiff = (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0);
-      if (percentageDiff !== 0) return percentageDiff; // Primary sort: matchPercentage
-      return a.price - b.price; // Tiebreaker: price
-    });
-    setSortedLaptops(newLaptops);
-  }}
-  onSortByPerformance={() => {
-    const newLaptops = [...sortedLaptops].sort((a, b) => {
-      const percentageDiff = (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0);
-      if (percentageDiff !== 0) return percentageDiff; // Primary sort: matchPercentage
-      return (b.cpuScore || 0) - (a.cpuScore || 0); // Tiebreaker: cpuScore
-    });
-    setSortedLaptops(newLaptops);
-  }}
-  onResetSort={() => setSortedLaptops([...originalOrder])}
-/>
-
-
-</div>
-<AnimatePresence>
- {showShareModal && (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    className="fixed inset-0 flex items-center justify-center z-50"
-  >
-    <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm" // Made overlay darker
-      onClick={() => setShowShareModal(false)} 
-    />
+                return bScore - aScore; // Sort descending by score
+              });
+          
+              setSortedLaptops(newLaptops);
+            }}
+            
+            onSortByPerformance={() => {
+              const maxPercentage = Math.max(...sortedLaptops.map((laptop) => laptop.matchPercentage || 0)); // Top match percentage
+              const maxCpuScore = Math.max(...sortedLaptops.map((laptop) => laptop.cpuScore || 0)); // Top CPU score
+              const maxRam = Math.max(...sortedLaptops.map((laptop) => laptop.ram_size || 0)); // Top RAM size
+              const maxGpuScore = Math.max(...sortedLaptops.map((laptop) => laptop.gpuScore || 0)); // Top GPU score
+            
+              const cpuWeight = 0.5; // Weight for CPU performance
+              const ramWeight = 0.3; // Weight for RAM size
+              const gpuWeight = 0.2; // Weight for GPU performance
+              const matchWeight = 0.5; // Weight for match percentage
+              const budget = answers.budget.price; // User-defined budget
+            
+              // Filter out laptops exceeding budget if priceImportance is strict (0.25)
+              const filteredLaptops = sortedLaptops.filter(
+                (laptop) => answers.budget.priceImportance !== 0.25 || laptop.price <= budget
+              );
+            
+              const newLaptops = [...filteredLaptops].sort((a, b) => {
+                const aPenalty = a.price > budget
+                  ? Math.max(0, 100 - ((a.price - budget) / budget) * 100) // Penalize based on over-budget percentage
+                  : 100; // Full score for within budget
+            
+                const bPenalty = b.price > budget
+                  ? Math.max(0, 100 - ((b.price - budget) / budget) * 100)
+                  : 100;
+            
+                const aScore =
+                  matchWeight * ((a.matchPercentage ?? 0) / maxPercentage) +
+                  cpuWeight * ((a.cpuScore ?? 0) / maxCpuScore) +
+                  ramWeight * ((a.ram_size ?? 0) / maxRam) +
+                  gpuWeight * ((a.gpuScore ?? 0) / maxGpuScore) +
+                  aPenalty * 0.2; // Add price penalty with a weight (adjust as needed)
+            
+                const bScore =
+                  matchWeight * ((b.matchPercentage ?? 0) / maxPercentage) +
+                  cpuWeight * ((b.cpuScore ?? 0) / maxCpuScore) +
+                  ramWeight * ((b.ram_size ?? 0) / maxRam) +
+                  gpuWeight * ((b.gpuScore ?? 0) / maxGpuScore) +
+                  bPenalty * 0.2;
+            
+                return bScore - aScore; // Sort descending by total score
+              });
+            
+              setSortedLaptops(newLaptops);
+            }}
+            
+            
+            
+            onResetSort={() => setSortedLaptops([...originalOrder])}
+          />
+        </div>
+  <AnimatePresence>
+  {showShareModal && (
     <motion.div
-      initial={{ scale: 0.95, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.95, opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      className="bg-white dark:bg-gray-800 p-3 rounded-xl max-w-md w-full relative z-10 shadow-2xl border-2 border-gray-200 dark:border-gray-700" // Added border and increased shadow
-      dir="rtl"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 flex items-center justify-center z-50"
     >
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">לינק לשיתוף ההמלצות:</h3>
-        <button
-          onClick={() => setShowShareModal(false)}
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-          aria-label="סגור"
-        >
-          <X size={24} className="text-gray-500 dark:text-gray-400" />
-        </button>
-      </div>
-      <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-gray-300 dark:border-gray-600"> {/* Made border thicker */}
-        <input
-          type="text"
-          value={shareUrl}
-          readOnly
-          className="flex-1 bg-transparent outline-none text-gray-700 dark:text-gray-300 text-sm"
-        />
-        <button
-          onClick={handleCopy}
-          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors"
-          aria-label={hasCopied ? "הועתק" : "העתק קישור"}
-        >
-          {hasCopied ? (
-            <Check size={20} className="text-green-500" />
-          ) : (
-            <Copy size={20} className="text-grey-500" />
-          )}
-        </button>
-      </div>
-      {hasCopied && (
-        <motion.p
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="text-green-500 text-sm mt-2 text-center"
-        >
-          הקישור הועתק ללוח!
-        </motion.p>
-      )}
-    </motion.div>
-  </motion.div>
- )}
-</AnimatePresence>
-         <div className="flex flex-col gap-8">
-         {sortedLaptops.length === 0 ? (
-            // Show message if no laptops match
-            <p className="text-center text-gray-600 text-xl mt-8">
-              אין מחשבים שעומדים בדרישות. ייתכן שהמאפיינים שהגדרת מחמירים מדי.
-              נסה להרפות כמה מהתנאים לקבלת תוצאות נוספות.
-            </p>
+      <div 
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm" // Made overlay darker
+        onClick={() => setShowShareModal(false)} 
+      />
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white dark:bg-gray-800 p-3 rounded-xl max-w-md w-full relative z-10 shadow-2xl border-2 border-gray-200 dark:border-gray-700" // Added border and increased shadow
+        dir="rtl"
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">לינק לשיתוף ההמלצות:</h3>
+          <button
+            onClick={() => setShowShareModal(false)}
+            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+            aria-label="סגור"
+          >
+            <X size={24} className="text-gray-500 dark:text-gray-400" />
+          </button>
+        </div>
+        <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-gray-300 dark:border-gray-600"> {/* Made border thicker */}
+          <input
+            type="text"
+            value={shareUrl}
+            readOnly
+            className="flex-1 bg-transparent outline-none text-gray-700 dark:text-gray-300 text-sm"
+          />
+          <button
+            onClick={handleCopy}
+            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors"
+            aria-label={hasCopied ? "הועתק" : "העתק קישור"}
+          >
+            {hasCopied ? (
+              <Check size={20} className="text-green-500" />
             ) : (
-            sortedLaptops.slice(0, displayCount).map((laptop, index) => ( // Use sortedLaptops here
+              <Copy size={20} className="text-grey-500" />
+            )}
+          </button>
+        </div>
+        {hasCopied && (
+          <motion.p
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="text-green-500 text-sm mt-2 text-center"
+          >
+            הקישור הועתק ללוח!
+          </motion.p>
+        )}
+      </motion.div>
+    </motion.div>
+  )}
+  </AnimatePresence>
+          <div className="flex flex-col gap-8">
+          {sortedLaptops.length === 0 ? (
+              // Show message if no laptops match
+              <p className="text-center text-gray-600 text-xl mt-8">
+                אין מחשבים שעומדים בדרישות. ייתכן שהמאפיינים שהגדרת מחמירים מדי.
+                נסה להרפות כמה מהתנאים לקבלת תוצאות נוספות.
+              </p>
+              ) : (
+              sortedLaptops.slice(0, displayCount).map((laptop, index) => ( // Use sortedLaptops here
 
-              <LaptopResultCard
-              key={index}
-              name={laptop.name}
-              price={laptop.price}
-              weight={laptop.weight}
-              screen_size={laptop.screen_size}
-              product_img={laptop.product_img}     
-              url={laptop.url}                      
-              matchPercentage={laptop.matchPercentage || 0}
-              manufacturer={laptop.manufacturer}
-              laptopSeries={laptop.laptopSeries}
-              ram_size={laptop.ram_size}            
-              ram_type={laptop.ram_type}            
-              storage_space={laptop.storage_space}  
-              storage_type={laptop.storage_type}    
-              for_gaming={laptop.for_gaming}        
-              cpu={laptop.cpu}
-              cpu_ghz={laptop.cpu_ghz}              
-              screenhz={laptop.screenhz}
-              screenRes={laptop.screenRes}
-              screenType={laptop.screenType}
-              connections={laptop.connections}
-              touchscreen={laptop.touchscreen}
-              security={laptop.security}
-              flippingScreen={laptop.flippingScreen}
-              cpuModel={laptop.cpuModel}
-              cpuGen={laptop.cpuGen}        
-              withOs={laptop.withOs}
-              gpu={laptop.gpu}
-              componentScores={laptop.componentScores || []}
-              answers={answers}
+                <LaptopResultCard
+                key={index}
+                name={laptop.name}
+                price={laptop.price}
+                weight={laptop.weight}
+                screen_size={laptop.screen_size}
+                product_img={laptop.product_img}     
+                url={laptop.url}                      
+                matchPercentage={laptop.matchPercentage || 0}
+                manufacturer={laptop.manufacturer}
+                laptopSeries={laptop.laptopSeries}
+                ram_size={laptop.ram_size}            
+                ram_type={laptop.ram_type}            
+                storage_space={laptop.storage_space}  
+                storage_type={laptop.storage_type}    
+                for_gaming={laptop.for_gaming}        
+                cpu={laptop.cpu}
+                cpu_ghz={laptop.cpu_ghz}              
+                screenhz={laptop.screenhz}
+                screenRes={laptop.screenRes}
+                screenType={laptop.screenType}
+                connections={laptop.connections}
+                touchscreen={laptop.touchscreen}
+                security={laptop.security}
+                flippingScreen={laptop.flippingScreen}
+                cpuModel={laptop.cpuModel}
+                cpuGen={laptop.cpuGen}        
+                withOs={laptop.withOs}
+                gpu={laptop.gpu}
+                componentScores={laptop.componentScores || []}
+                answers={answers}
 
-              />
-            ))
-          )}
-            <div className="mb-6">
-            <NavigationButtons onNext={showMore} onBack={prevStep} disableNext={!hasMoreLaptops} nextText="הצג עוד" backText="חזרה לשאלון"/>
+                />
+              ))
+            )}
+              <div className="mb-6">
+              <NavigationButtons onNext={showMore} onBack={prevStep} disableNext={!hasMoreLaptops} nextText="הצג עוד" backText="חזרה לשאלון"/>
+              </div>
             </div>
           </div>
+          <FloatingCompareButton />
         </div>
-        <FloatingCompareButton />
-      </div>
-    </ComparisonProvider>
-  )
-}
+      </ComparisonProvider>
+    )
+  }
 
 export default Results
