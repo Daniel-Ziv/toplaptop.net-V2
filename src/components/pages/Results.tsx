@@ -73,29 +73,6 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
 
   
  
-
-  const LaptopSkeleton = () => (
-    <div className="w-full p-4 rounded-lg border border-gray-200">
-      <div className="flex flex-col md:flex-row gap-4">
-        <Skeleton className="rounded-lg">
-          <div className="h-48 w-48"></div>
-        </Skeleton>
-        <div className="flex-1 space-y-4">
-          <Skeleton className="h-8 w-3/4 rounded-lg" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-1/2 rounded-lg" />
-            <Skeleton className="h-4 w-2/3 rounded-lg" />
-            <Skeleton className="h-4 w-1/3 rounded-lg" />
-          </div>
-        </div>
-        <div className="w-32 flex flex-col items-center justify-center">
-          <Skeleton className="h-16 w-16 rounded-full" />
-          <Skeleton className="h-6 w-24 mt-2 rounded-lg" />
-        </div>
-      </div>
-    </div>
-  );
-
   const handleCopy = async () => {
     const encoded = encodeParameters(answers);
     const shareableUrl = `${window.location.origin}${window.location.pathname}?q=${encoded}`;
@@ -149,7 +126,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
     calculateScores();
   }, [answers]);
 
-  
+
   const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(JSON.stringify(answers))}`
 
   
@@ -189,37 +166,37 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
             
   
   <div className="flex justify-center mt-5">
-  <div style={{
-    backgroundColor: '#f0f9f0',
-    border: '1px solid #c3e6cb',
-    borderRadius: '8px',
-    padding: '20px',
-    textAlign: 'center',
-    maxWidth: '42rem',
-    width: '100%'
-  }}>
-    <div className="flex items-center justify-center gap-2" dir='rtl'>
-      <span style={{ 
-        fontSize: '1.25rem', 
-        fontWeight: 'bold',
-        color: '#155724'
-      }}>
-       שימו לב:
-      </span>
-    </div>
-    <div style={{ color: '#155724' }} dir="rtl">
-    <ul style={{
-    listStyleType: 'disc',
-    display: 'inline-block',
-    textAlign: 'right',
-    marginTop: '4px'
-  }}>
-    <li>בחרו שני מחשבים להשוואה בכפתור ״השוואת מחשבים״</li>
-    <li>לחצו על אחוז ההתאמה למידע נוסף</li>
-    <li>שתפו את הדף עם חברים!</li>
-</ul>
+    <div style={{
+      backgroundColor: '#f0f9f0',
+      border: '1px solid #c3e6cb',
+      borderRadius: '8px',
+      padding: '20px',
+      textAlign: 'center',
+      maxWidth: '42rem',
+      width: '100%'
+    }}>
+      <div className="flex items-center justify-center gap-2" dir='rtl'>
+        <span style={{ 
+          fontSize: '1.25rem', 
+          fontWeight: 'bold',
+          color: '#155724'
+        }}>
+        שימו לב:
+        </span>
+      </div>
+      <div style={{ color: '#155724' }} dir="rtl">
+      <ul style={{
+      listStyleType: 'disc',
+      display: 'inline-block',
+      textAlign: 'right',
+      marginTop: '4px'
+    }}>
+      <li>בחרו שני מחשבים להשוואה בכפתור ״השוואת מחשבים״</li>
+      <li>לחצו על אחוז ההתאמה למידע נוסף</li>
+      <li>שתפו את הדף עם חברים!</li>
+  </ul>
 
-</div>
+  </div>
     <button
     onClick={() => setShowShareModal(true)}
     className="px-4 py-2 border-2 border-black text-black rounded-lg hover:bg-black transition-colors duration-200 flex items-center justify-center gap-2 mx-auto"
@@ -233,21 +210,23 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
 <SortToggleButtons 
   onSortByPrice={() => {
     const newLaptops = [...sortedLaptops].sort((a, b) => {
-      if ((b.matchPercentage ?? 0) === (a.matchPercentage ?? 0)) {
-        return a.price - b.price;
-      }
-      return (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0);
+      const percentageDiff = (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0);
+      if (percentageDiff !== 0) return percentageDiff; // Primary sort: matchPercentage
+      return a.price - b.price; // Tiebreaker: price
     });
     setSortedLaptops(newLaptops);
   }}
   onSortByPerformance={() => {
     const newLaptops = [...sortedLaptops].sort((a, b) => {
-      return (b.cpuScore || 0) - (a.cpuScore || 0);
+      const percentageDiff = (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0);
+      if (percentageDiff !== 0) return percentageDiff; // Primary sort: matchPercentage
+      return (b.cpuScore || 0) - (a.cpuScore || 0); // Tiebreaker: cpuScore
     });
     setSortedLaptops(newLaptops);
   }}
   onResetSort={() => setSortedLaptops([...originalOrder])}
 />
+
 
 </div>
 <AnimatePresence>
@@ -314,12 +293,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
  )}
 </AnimatePresence>
          <div className="flex flex-col gap-8">
-         {isLoading ? (
-            // Show skeletons while loading
-            Array(displayCount).fill(0).map((_, index) => (
-              <LaptopSkeleton key={`skeleton-${index}`} />
-            ))
-          ) : sortedLaptops.length === 0 ? (
+         {sortedLaptops.length === 0 ? (
             // Show message if no laptops match
             <p className="text-center text-gray-600 text-xl mt-8">
               אין מחשבים שעומדים בדרישות. ייתכן שהמאפיינים שהגדרת מחמירים מדי.

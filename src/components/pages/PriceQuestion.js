@@ -7,7 +7,7 @@ import CustomRadio from "../CustomRadiobox";
 import { motion, AnimatePresence } from "framer-motion";
 
 function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget = { price: 3000, priceImportance: 0, tasks: [] } }) {
-  const [sliderValue, setSliderValue] = useState(savedBudget?.price || 1000);
+  const [sliderValue, setSliderValue] = useState(savedBudget?.price || 3000);
   const [localImportance, setImportance] = useState(savedBudget?.priceImportance || 0);
   const [recommendedBudget, setRecommendedBudget] = useState(3000);
   const [feedbackMessage, setFeedbackMessage] = useState(""); // Feedback message for budget
@@ -234,7 +234,7 @@ const handleRecommendedBudget = () => {
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
                 <div className="flex flex-col items-center mb-2">
-                <Button color="primary" variant="flat" dir="rtl" onClick={handleRecommendedBudget}>
+                <Button color="success"  dir="rtl" onClick={handleRecommendedBudget}>
                     כמה כדאי?
                   </Button>
                 </div>

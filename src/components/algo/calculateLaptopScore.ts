@@ -391,7 +391,7 @@ const storageSpaceScores: Record<number, number> = {
 
 // Ideal ranges for each task
 const taskRequirements: Record<string, TaskRequirements> = {
-  "Heavy Programming": {
+  "heavy-programming": {
     cpu: { min: 7, max: 10, weight: 0.3 },           // Heavy programming benefits from a strong CPU.
     ram: { min: 8, max: 10, weight: 0.25 },          // RAM is also crucial for compiling large projects.
     ramType: { min: 2, max: 10, weight: 0.1 },       // RAM type matters but less than RAM size and CPU.
@@ -530,7 +530,7 @@ function calculateWeightScore(laptopWeight: number | undefined, weightImportance
   } else if (weightImportance === 0.25) {
     maxAcceptableWeight = 1.5; // Accept up to 1.5 kg
   } else {
-    maxAcceptableWeight = 2.5 - weightImportance * 4; // Adjust dynamically for other values
+    maxAcceptableWeight = 100; // Adjust dynamically for other values
   }
 
   // Calculate penalty for weights above maxAcceptableWeight
@@ -538,8 +538,12 @@ function calculateWeightScore(laptopWeight: number | undefined, weightImportance
     return 100; // Full score for weights within the acceptable range
   } else {
     const excessWeight = weight - maxAcceptableWeight;
-    const penalty = Math.min(100, Math.pow(excessWeight / maxAcceptableWeight, 2) * 100);
-    return Math.max(0, 100 - penalty); // Ensure score is within 0-100
+
+    // Apply stronger penalty for weights exceeding acceptable range
+    const penaltyMultiplier = 5; // Adjust this multiplier as needed
+    const adjustedPenaltyFactor = Math.pow((0.7 + excessWeight / maxAcceptableWeight), penaltyMultiplier); // Amplifies penalty
+    const penalty = Math.min(100, adjustedPenaltyFactor * 10); // Scale appropriately to avoid overshoot
+  return Math.max(0, 100 - penalty); // Ensure score is within 0-100
   }
 }
 
@@ -731,7 +735,7 @@ for (const [feature, selectedValue] of Object.entries(features)) {
         taskKey = taskObj.level === "heavy" ? "gaming-heavy" : "gaming-light";
         break;
       case "modeling/animation":
-        taskKey = "modeling-animation";  // Assuming this is the key in taskRequirements
+        taskKey = "modeling/animation";  // Assuming this is the key in taskRequirements
         break;
       case "photo-editing":
         taskKey = "photo-editing";

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ArrowUpDown, Zap } from 'lucide-react';
 
 export default function SortToggleButtons({ onSortByPrice, onSortByPerformance, onResetSort }) {
   const [activeButton, setActiveButton] = useState(null);
@@ -24,26 +25,29 @@ export default function SortToggleButtons({ onSortByPrice, onSortByPerformance, 
   };
 
   return (
-    <div className="flex justify-center gap-4" dir="rtl">
+    <div className="flex justify-center gap-1 mt-2" dir="rtl">
       <button 
-        className={`px-4 py-2 border-2 border-black rounded-lg transition-all duration-200
+        className={`px-4 py-2 border border-gray-300 rounded-md text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center
           ${activeButton === 'price' 
-            ? 'bg-black text-white shadow-inner' 
-            : 'text-black hover:bg-black hover:text-white'}`}
+            ? 'bg-gray-300 text-gray-700' 
+            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'}`}
         onClick={handlePriceSort}
       >
-        מיון לפי מחיר
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+        מיון לפי מחיר והתאמה
       </button>
 
       <button 
-        className={`px-4 py-2 border-2 border-black rounded-lg transition-all duration-200
+        className={`px-4 py-2 border border-gray-300 rounded-md text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center
           ${activeButton === 'performance' 
-            ? 'bg-black text-white shadow-inner' 
-            : 'text-black hover:bg-black hover:text-white'}`}
+            ? 'bg-gray-300 text-gray-700' 
+            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'}`}
         onClick={handlePerformanceSort}
       >
-        מיין לפי עוצמה
+        <Zap className="ml-2 h-4 w-4" />
+        מיון לפי עוצמה והתאמה
       </button>
     </div>
   );
 }
+

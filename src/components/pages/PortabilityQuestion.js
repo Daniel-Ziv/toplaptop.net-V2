@@ -76,10 +76,10 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
 
   const [portabilityOptions, setPortabilityOptions] = useState([
     {
-      value: 0.25,
+      value: 0,
       sizeName: {
-        name: " מאוד חשוב (עד 1.5 קילו)",
-        description: "מתאים למי שהלפטופ איתו תמיד ומשתמש בו לדברים פשוטים כמו גלישה באינטרנט, זום, מסמכים",
+        name: "לא חשוב (כל משקל)",
+        description: "אין לי בעיה עם מחשב כבד, רק שיעשה את העבודה",
         isRecommended: ""
       }
     },
@@ -91,16 +91,18 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
         isRecommended: ""
       }
     },
+    
     {
-      value: 0,
+      value: 0.25,
       sizeName: {
-        name: "לא חשוב (כל משקל)",
-        description: "אין לי בעיה עם מחשב כבד, רק שיעשה את העבודה",
+        name: " מאוד חשוב (עד 1.5 קילו)",
+        description: "מתאים למי שהלפטופ איתו תמיד ומשתמש בו לדברים פשוטים כמו גלישה באינטרנט, זום, מסמכים",
         isRecommended: ""
       }
     }
   ]);
 
+  //did it for the recommendations
   const taskPriority = {
     "basic-use": 0,
     "music-editing": 0,
