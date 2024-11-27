@@ -713,10 +713,9 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
 
   const toggleSubSelection = (item) => {
     const englishName = featureNameMapping[currentFeature];
-    const cleanedItem = ["ram_size", "storage_space", "screenhz"].includes(englishName)
-      ? parseInt(item.replace(/[^\d]/g, ""), 10)
-      : item;
-
+    const cleanedItem = englishName === 'storage_space' ? parseInt(item) : 
+      ["ram_size", "screenhz"].includes(englishName) ? parseInt(item) : item;
+  
     setTempSelections(prev => {
       const current = prev[englishName] || [];
       const newSelections = current.includes(cleanedItem)
@@ -763,18 +762,11 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
 
   const isItemSelected = (item) => {
     const englishName = featureNameMapping[currentFeature];
-    
-    // Special case for storage space - keep the full string
-    if (englishName === 'storage_space') {
-      return tempSelections[englishName]?.includes(item);
-    }
-    
-    // For other numeric fields, parse as before
-    const cleanedItem = ["ram_size", "screenhz"].includes(englishName)
-      ? parseInt(item.replace(/[^\d]/g, ""), 10)
-      : item;
+    const cleanedItem = englishName === 'storage_space' ? parseInt(item) : 
+      ["ram_size", "screenhz"].includes(englishName) ? parseInt(item) : item;
     return tempSelections[englishName]?.includes(cleanedItem);
   };
+
   const selectAll = () => {
     const englishName = featureNameMapping[currentFeature];
     const currentSelections = tempSelections[englishName] || [];
@@ -900,15 +892,15 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
               <ModalBody className="overflow-y-auto ">
                 {currentFeature === 'מעבד' || currentFeature === 'כרטיס מסך' ? (
                   <>
-                    {renderCategorySection("חזק", categorizedOptions.strong, "strong")}
-                    {renderCategorySection("בינוני", categorizedOptions.medium, "medium")}
-                    {renderCategorySection("חלש", categorizedOptions.weak, "weak")}
+                    {renderCategorySection("חזק (לחיץ)", categorizedOptions.strong, "strong")}
+                    {renderCategorySection("בינוני (לחיץ)", categorizedOptions.medium, "medium")}
+                    {renderCategorySection("חלש (לחיץ)", categorizedOptions.weak, "weak")}
                     {renderCategorySection("אחר", categorizedOptions.uncategorized, "uncategorized")}
                   </>
                 ) : currentFeature === 'סוג זכרון' ? (
                   <>
-                    {renderCategorySection("מהיר", categorizedOptions.fast, "fast")}
-                    {renderCategorySection("סטנדרטי", categorizedOptions.standard, "standard")}
+                    {renderCategorySection("מהיר (לחיץ)", categorizedOptions.fast, "fast")}
+                    {renderCategorySection("סטנדרטי (לחיץ)", categorizedOptions.standard, "standard")}
                   </>
                 ) : (
                   renderUncategorizedItems(categorizedOptions.items)

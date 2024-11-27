@@ -1188,7 +1188,7 @@ const FloatingCompareButton = () => {
     }
     return {
       base: '#bf0020', //#6c757d nice grey for backup
-      hover: '#5c636a'
+     
     };
   };
 

@@ -40,7 +40,38 @@ const getColorForScore = (score: number) => {
 }
 
 export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPercentage, componentScores }: LaptopDetailsModalProps) {
-  console.log(componentScores);
+  const priorityComponents = ["מחיר", "משקל", "גודל מסך"];
+  const sortedScores = [...componentScores].sort((a, b) => b.score - a.score);
+
+  const renderScoreCard = (component: ComponentScore, index: number) => (
+    <motion.div
+      key={component.name}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.1 }}
+      className="mb-4"
+    >
+      <Card className="w-full">
+        <CardBody>
+          <div className="flex justify-between items-center mb-2">
+            <span>{getEmojiForScore(component.score)}</span>
+            <span className="font-semibold text-lg">{component.name}</span>
+          </div>
+          <Progress 
+            value={component.score} 
+            color={getColorForScore(component.score)}
+            className="mb-2"
+          />
+          <div className="flex justify-between text-sm">
+            <span>{component.score}%</span>
+            <span>{getDescriptionForScore(component.score)}</span>
+          </div>
+        </CardBody>
+      </Card>
+    </motion.div>
+  );
+
+
   return (
     <Modal
       isOpen={isOpen}
@@ -59,8 +90,12 @@ export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPerc
                   התאמה כללית: {matchPercentage}% {getEmojiForScore(matchPercentage)}
                 </h3>
                 
+                <h3 className="text-3xl font-semibold mb-2">
+                  התפלגות הציון:
+                </h3>
                 <div className="flex flex-row items-center justify-center gap-4 mb-32">
                   <div style={{ width: '150px', height: '150px', marginBottom:'12px'}} className="sm:w-[200px] sm:h-[200px]">
+                    
                     <PieChart
                       data={[
                         { 
@@ -112,49 +147,28 @@ export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPerc
                   </div>
                 </div>
 
-                {componentScores
-                  .sort((a, b) => a.score - b.score) // Sort from highest to lowest
-                  .map((component, index) => {
-                  // Determine if this component needs to be skipped based on importance
-                  const shouldShow =
-                    (component.name === "מחיר" && answers.budget.priceImportance > 0) ||
-                    (component.name === "גודל מסך" && answers.screenSize.sizeImportance > 0) ||
-                    (component.name === "משקל" && answers.weightImportance > 0) ||
-                    (!["מחיר", "גודל מסך", "משקל"].includes(component.name)); // Always show others
+               
+                <h3 className="text-3xl font-semibold mb-2">
+                 העדפות פיזיות:
+                </h3>
+                {sortedScores
+                  .filter(component => 
+                    priorityComponents.includes(component.name) &&
+                    ((component.name === "מחיר" && answers.budget.priceImportance > 0) ||
+                     (component.name === "גודל מסך" && answers.screenSize.sizeImportance > 0) ||
+                     (component.name === "משקל" && answers.weightImportance > 0))
+                  )
+                  .map((component, index) => renderScoreCard(component, index))}
 
-                  // Render only if the component should show
-                  return shouldShow ? (
-                    <motion.div
-                      key={component.name}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="mb-4"
-                    >
-                      <Card className="w-full">
-                        <CardBody>
-                          <div className="flex justify-between items-center mb-2">
-                            <span>{getEmojiForScore(component.score)}</span>
-                            <span className="font-semibold text-lg">{component.name}</span>
-                          </div>
-                          <Progress 
-                            value={component.score} 
-                            color={getColorForScore(component.score)}
-                            className="mb-2"
-                          />
-                          <div className="flex justify-between text-sm">
-                            <span>{component.score}%</span>
-                            <span>{getDescriptionForScore(component.score)}</span>
-                          </div>
-                        </CardBody>
-                      </Card>
-                    </motion.div>
-                  ) : null;
-                })}
+                {/* Render task components */}
+                <h3 className="text-3xl font-semibold mb-2">התאמת רכיבים למשימות</h3>
+                {sortedScores
+                  .filter(component => !priorityComponents.includes(component.name))
+                  .map((component, index) => renderScoreCard(component, index))}
               </div>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={onClose} className="items-center">
                 סגור
               </Button>
             </ModalFooter>
