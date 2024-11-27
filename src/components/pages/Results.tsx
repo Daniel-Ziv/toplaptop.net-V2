@@ -164,11 +164,10 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
             <button
               onClick={() => setShowShareModal(true)}
               style={{
-                backgroundColor: '#000000',
-                color: '#ffffff',
-                transition: 'background-color 0.2s',
+                backgroundColor: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
+                border: '0.5px solid #000000',
                 justifyContent: 'center',
                 gap: '0.5rem',
                 padding: '0.5rem 1rem',
@@ -179,7 +178,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
              
               aria-label="שתפו את הדף"
             >
-              <Share style={{ height: '1.25rem', width: '1.25rem' }} />
+              <Share color="#000000" style={{ height: '1.25rem', width: '1.25rem' }} />
               
             </button>
             <Header
@@ -199,7 +198,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
                   margin: '0.5rem auto',
                   backgroundColor: '#f0fdf4',
                   border: '1px solid #bbf7d0',
-                  borderRadius: '0.5rem',
+                  borderRadius: '1rem',
                   overflow: 'hidden',
                   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
                 }}
