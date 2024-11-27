@@ -201,7 +201,11 @@ export default function LaptopResultCard({
           {/* Match Percentage */}
           <div style={{ width: 125, height: 125 }} 
            onClick={(e) => {
-            e.stopPropagation(); // Prevent card selection
+            if (isCompareMode) {
+              e.preventDefault();
+              e.stopPropagation();
+              return;
+            }
             setIsModalOpen(true);
           }}
           >
@@ -285,6 +289,7 @@ export default function LaptopResultCard({
               window.open(url, '_blank');
             }
           }}
+          
           className={`mb-2 product-link bg-black text-white font-medium py-2 px-5 rounded transition-colors`}
         >
           קישור למוצר
