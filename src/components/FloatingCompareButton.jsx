@@ -622,47 +622,78 @@ const ComparisonPopup = ({ isOpen, onClose, laptops, handleSelectLaptop }) => {
               }
           }
           return null;
-        case 'security':
-          if (Array.isArray(value1) && Array.isArray(value2)) {
-              const uniqueIn1 = value1.filter(item => !value2.includes(item));
-              const uniqueIn2 = value2.filter(item => !value1.includes(item));
-              
-              if (uniqueIn1.length === 0 && uniqueIn2.length === 0) {
-                  return { comparison: 'אבטחה זהה', winner: 'tie' };
-              }
-              
-              // If laptop1 has more unique security features, it wins
-              if (uniqueIn1.length > uniqueIn2.length) {
-                  return {
-                      comparison: `${uniqueIn1.length} אפשרויות אבטחה נוספות`,
-                      winner: 'laptop1',
-                      uniqueIn1,
-                      uniqueIn2
-                  };
-              }
-              
-              // If laptop2 has more unique security features, it wins
-              if (uniqueIn2.length > uniqueIn1.length) {
-                  return {
-                      comparison: `${uniqueIn2.length} אפשרויות אבטחה נוספות`,
-                      winner: 'laptop2',
-                      uniqueIn1,
-                      uniqueIn2
-                  };
-              }
-              
-              // If both have the same number of unique security features
-              if (uniqueIn1.length === uniqueIn2.length) {
-                  return {
-                      comparison: 'מספר אפשרויות אבטחה שונות זהה',
-                      winner: 'tie',
-                      uniqueIn1,
-                      uniqueIn2
-                  };
-              }
-          }
-          return null;
-
+          case 'security':
+            if (Array.isArray(value1) && Array.isArray(value2)) {
+                // Filter out "לא כולל" before comparing
+                const filteredValue1 = value1.filter(item => !item.includes("לא כולל"));
+                const filteredValue2 = value2.filter(item => !item.includes("לא כולל"));
+                
+                const uniqueIn1 = filteredValue1.filter(item => !filteredValue2.includes(item));
+                const uniqueIn2 = filteredValue2.filter(item => !filteredValue1.includes(item));
+                
+                if (uniqueIn1.length === 0 && uniqueIn2.length === 0) {
+                    return { comparison: 'אבטחה זהה', winner: 'tie' };
+                }
+                
+                if (uniqueIn1.length > uniqueIn2.length && uniqueIn1.length > 0) {
+                    return {
+                        comparison: `${uniqueIn1.length} אפשרויות אבטחה נוספות`,
+                        winner: 'laptop1',
+                        uniqueIn1,
+                        uniqueIn2
+                    };
+                }
+                
+                if (uniqueIn2.length > uniqueIn1.length && uniqueIn2.length > 0) {
+                    return {
+                        comparison: `${uniqueIn2.length} אפשרויות אבטחה נוספות`,
+                        winner: 'laptop2',
+                        uniqueIn1,
+                        uniqueIn2
+                    };
+                }
+            }
+            return null;
+            if (Array.isArray(value1) && Array.isArray(value2)) {
+                // Filter out "ללא אבטחה" before comparing
+                const filteredValue1 = value1.filter(item => item !== "ללא כולל");
+                const filteredValue2 = value2.filter(item => item !== "ללא כולל");
+                
+                const uniqueIn1 = filteredValue1.filter(item => !filteredValue2.includes(item));
+                const uniqueIn2 = filteredValue2.filter(item => !filteredValue1.includes(item));
+                
+                if (uniqueIn1.length === 0 && uniqueIn2.length === 0) {
+                    return { comparison: 'אבטחה זהה', winner: 'tie' };
+                }
+                
+                if (uniqueIn1.length > uniqueIn2.length) {
+                    return {
+                        comparison: `${uniqueIn1.length} אפשרויות אבטחה נוספות`,
+                        winner: 'laptop1',
+                        uniqueIn1,
+                        uniqueIn2
+                    };
+                }
+                
+                if (uniqueIn2.length > uniqueIn1.length) {
+                    return {
+                        comparison: `${uniqueIn2.length} אפשרויות אבטחה נוספות`,
+                        winner: 'laptop2',
+                        uniqueIn1,
+                        uniqueIn2
+                    };
+                }
+                
+                if (uniqueIn1.length === uniqueIn2.length) {
+                    return {
+                        comparison: 'מספר אפשרויות אבטחה שונות זהה',
+                        winner: 'tie',
+                        uniqueIn1,
+                        uniqueIn2
+                    };
+                }
+            }
+            return null;
         default:
 
           if (!value1 || !value2 || value1 === 'לא זמין' || value2 === 'לא זמין') return null;
@@ -722,6 +753,7 @@ const getValueStyle = (spec, laptopIndex) => {
       borderRadius: '4px',
   };
   
+  
 
   if ((laptopIndex === 0 && result.winner === 'laptop1') || 
       (laptopIndex === 1 && result.winner === 'laptop2')) {
@@ -777,22 +809,26 @@ const generateSummary = () => {
         return 'מחיר נמוך יותר';
       case 'connections':
         const connectionsResult = compareSpecs(spec.key, laptops[0], laptops[1]);
-        if (connectionsResult && connectionsResult.winner === 'laptop1') {
-          return `חיבורים נוספים: ${connectionsResult.uniqueIn1.join(', ')}`;
-        } else if (connectionsResult && connectionsResult.winner === 'laptop2') {
-          return `חיבורים נוספים: ${connectionsResult.uniqueIn2.join(', ')}`;
+        if (connectionsResult) {
+          if (connectionsResult.uniqueIn1?.length) {
+            advantages.laptop1.push(`חיבורים ייחודיים: ${connectionsResult.uniqueIn1.join(', ')}`);
+          }
+          if (connectionsResult.uniqueIn2?.length) {
+            advantages.laptop2.push(`חיבורים ייחודיים: ${connectionsResult.uniqueIn2.join(', ')}`);
+          }
         }
-        return null;
+        break;
       case 'security':
         const securityResult = compareSpecs(spec.key, laptops[0], laptops[1]);
-        if (securityResult && securityResult.winner === 'laptop1') {
-          return `אבטחה נוספת: ${securityResult.uniqueIn1.join(', ')}`;
-        } else if (securityResult && securityResult.winner === 'laptop2') {
-          return `אבטחה נוספת: ${securityResult.uniqueIn2.join(', ')}`;
+        if (securityResult) {
+          if (securityResult.uniqueIn1?.length) {
+            advantages.laptop1.push(`אבטחה ייחודית: ${securityResult.uniqueIn1.join(', ')}`);
+          }
+          if (securityResult.uniqueIn2?.length) {
+            advantages.laptop2.push(`אבטחה ייחודית: ${securityResult.uniqueIn2.join(', ')}`);
+          }
         }
-        return null;
-      default:
-        return spec.label;
+        break;
     }
   };
 
@@ -885,6 +921,7 @@ return (
   hideCloseButton
   isDismissable={true}
   onClickOutside={onClose}
+  
 >
   <ModalContent className="h-full" dir="rtl">
     <ModalHeader className="flex flex-col gap-1 border-b text-center">
@@ -930,18 +967,18 @@ return (
             </div>
           ) : spec.key === 'connections' || spec.key === 'security' ? (
             <span 
-          style={{
-            display: 'block',
-            wordBreak: 'break-word',
-            whiteSpace: 'pre-wrap',
-            overflow: 'hidden',
-            textAlign: 'center',
-            marginTop: '1rem'
-          }}
+              style={{
+                display: 'block',
+                wordBreak: 'break-word',
+                whiteSpace: 'pre-wrap',
+                overflow: 'hidden',
+                textAlign: 'center',
+                marginTop: '1rem'
+              }}
         >
           {Array.isArray(laptops[0][spec.key]) 
             ? laptops[0][spec.key].map((connection, idx) => {
-                const isUnique = !laptops[1][spec.key]?.includes(connection);
+                const isUnique = !laptops[1][spec.key]?.includes(connection) && !connection.includes('לא כולל');
                 return (
                   <span key={idx}>
                     <span style={isUnique ? { backgroundColor: '#dcfce7', padding: '2px 6px', borderRadius: '4px' } : {}}>
@@ -997,7 +1034,7 @@ return (
           >
             {Array.isArray(laptops[0][spec.key]) 
               ? laptops[1][spec.key].map((connection, idx) => {
-                  const isUnique = !laptops[0][spec.key]?.includes(connection);
+                  const isUnique = !laptops[0][spec.key]?.includes(connection) && !connection.includes('לא כולל');
                   return (
                     <span key={idx}>
                       <span style={isUnique ? { backgroundColor: '#dcfce7', padding: '2px 6px', borderRadius: '4px' } : {}}>
@@ -1041,6 +1078,7 @@ return (
         variant="light" 
         onPress={onClose}
         className="mx-auto"
+        
       >
         סגור
       </Button>
@@ -1112,9 +1150,9 @@ const FloatingCompareButton = () => {
   };
 
   const handleClosePopup = () => {
-    setIsPopupOpen(false);     
     clearComparison();
-
+    setIsPopupOpen(false);
+    setIsCompareMode(false);
   };
   
 
@@ -1170,7 +1208,7 @@ const FloatingCompareButton = () => {
           justifyContent: 'center',
           alignItems: 'center',
           zIndex: 50,
-          transform: `translateY(${isVisible && !isAtBottom ? '0' : '100%'})`,
+          transform: `translateY(${isVisible && !isAtBottom && !isPopupOpen ? '0' : '100%'})`,
           transition: 'transform 0.3s ease-in-out, opacity 0.3s ease-in-out',
           opacity: isVisible && !isAtBottom ? 1 : 0,
           pointerEvents: isVisible && !isAtBottom ? 'auto' : 'none',
@@ -1178,6 +1216,7 @@ const FloatingCompareButton = () => {
       >
         <button
           onClick={handleClick}
+          
           style={{
             width: '256px',
             height: '48px',
@@ -1192,7 +1231,8 @@ const FloatingCompareButton = () => {
             border: 'none',
             cursor: 'pointer',
             transition: 'all 0.2s ease-in-out',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            
           }}
           onMouseOver={(e) => {
             e.currentTarget.style.backgroundColor = colors.hover;

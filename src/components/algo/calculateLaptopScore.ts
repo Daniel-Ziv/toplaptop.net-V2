@@ -764,7 +764,7 @@ for (const [feature, selectedValue] of Object.entries(features)) {
       const combinedRequirement = combinedTaskRequirements[componentKey];
 
       combinedRequirement.min = Math.max(combinedRequirement.min, requirement.min);
-      combinedRequirement.max = Math.min(combinedRequirement.max, requirement.max);
+      combinedRequirement.max = Math.max(combinedRequirement.max, requirement.max);
       combinedRequirement.weight = Math.max(combinedRequirement.weight, requirement.weight);
     }
   });

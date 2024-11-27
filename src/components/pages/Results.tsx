@@ -251,6 +251,36 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
   </button>
   </div>
 </div>
+
+<div className="flex justify-center gap-4" dir="rtl">
+  <button 
+    className="px-4 py-2 border-2 border-black text-black rounded-lg hover:bg-black hover:text-white transition-colors duration-200"
+    onClick={() => {
+      const newLaptops = [...sortedLaptops].sort((a, b) => {
+        if ((b.matchPercentage ?? 0) === (a.matchPercentage ?? 0)) {
+          return a.price - b.price;
+        }
+        return (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0);
+      });
+      setSortedLaptops(newLaptops);
+    }}
+  >
+    מיין לפי התאמה ומחיר
+  </button>
+
+  <button 
+    className="px-4 py-2 border-2 border-black text-black rounded-lg hover:bg-black hover:text-white transition-colors duration-200"
+    onClick={() => {
+      const newLaptops = [...sortedLaptops].sort((a, b) => {
+        return (b.cpuScore || 0) - (a.cpuScore || 0);
+      });
+      setSortedLaptops(newLaptops);
+    }}
+  >
+    מיין לפי מעבד
+  </button>
+</div>
+
 </div>
 <AnimatePresence>
  {showShareModal && (
