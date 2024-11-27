@@ -818,6 +818,24 @@ const generateSummary = () => {
           ) : (
             <p className="text-sm text-gray-500 text-center">אין יתרונות בולטים</p>
           )}
+          <div className="flex justify-center gap-4">
+           <Button
+            onPress={() => handleSelectLaptop(laptops[0])}
+            color="primary"
+            className="w-full max-w-xs"
+          >
+            בחר מחשב 1
+          </Button>
+          </div>
+          <div className="flex justify-center gap-4">
+          <Button
+            onPress={() => window.open(laptops[0].url, '_blank')}
+            color="secondary"
+            className="w-full max-w-xs"
+          >
+            פתח קישור למחשב 1
+          </Button>
+          </div>
         </div>
         <div>
           <h4 className="font-bold text-sm text-center mb-2">יתרונות:</h4>
@@ -826,25 +844,33 @@ const generateSummary = () => {
           ) : (
             <p className="text-sm text-gray-500 text-center">אין יתרונות בולטים</p>
           )}
+           <div className="flex justify-center gap-4">
+            <Button
+              onPress={() => handleSelectLaptop(laptops[1])}
+              color="primary"
+              className="w-full max-w-xs"
+            >
+              בחר מחשב 2
+            </Button>
+          </div>
+          <div className="flex justify-center gap-4">
+            
+            <Button
+              onPress={() => window.open(laptops[1].url, '_blank')}
+              color="secondary"
+              className="w-full max-w-xs"
+            >
+              פתח קישור למחשב 2
+            </Button>
+          </div>
         </div>
       </div>
       {/* Add buttons below the summary */}
-    <div className="flex justify-center mt-4 gap-4">
-      <Button
-        onPress={() => handleSelectLaptop(laptops[0])}
-        color="primary"
-        className="w-full max-w-xs"
-      >
-        בחר מחשב 1
-      </Button>
-      <Button
-        onPress={() => handleSelectLaptop(laptops[1])}
-        color="primary"
-        className="w-full max-w-xs"
-      >
-        בחר מחשב 2
-      </Button>
-    </div>
+    {/* Add buttons below the summary */}
+<div className="flex flex-col items-center mt-4 gap-4">
+ 
+</div>
+
   </div>
 );
 };
@@ -894,11 +920,13 @@ return (
         <div className="flex justify-center items-center text-sm">
           {spec.key === 'product_img' ? (
             <div className="w-[250px] h-[250px] flex items-center justify-center">
-              <img 
-                src={laptops[0].product_img}
-                alt={laptops[0].name}
-                className="max-w-full max-h-full object-contain rounded-lg"
-              />
+               <img 
+                  src={laptops[0].product_img}
+                  alt={laptops[0].name}
+                  className="max-w-full max-h-full object-contain"
+                  width="250"
+                  height="250"
+                />
             </div>
           ) : spec.key === 'connections' || spec.key === 'security' ? (
             <span 
@@ -949,10 +977,12 @@ return (
           {spec.key === 'product_img' ? (
             <div className="w-[250px] h-[250px] flex items-center justify-center">
               <img 
-                src={laptops[1].product_img}
-                alt={laptops[1].name}
-                className="max-w-full max-h-full object-contain rounded-lg"
-              />
+                  src={laptops[1].product_img}
+                  alt={laptops[1].name}
+                  className="max-w-full max-h-full object-contain"
+                  width="250"
+                  height="250"
+                />
             </div>
           ) : spec.key === 'connections' || spec.key === 'security' ? (
             <span 
