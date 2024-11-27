@@ -11,6 +11,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { encodeParameters, decodeParameters } from '../../assets/utils/urlParams';
 import { Check, Copy, Share, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
+import SortToggleButtons from '../SortToggleButtons'
 
 
 interface ResultsProps {
@@ -67,6 +68,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
   const [searchParams, setSearchParams] = useSearchParams();
   const [showShareModal, setShowShareModal] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
+  const [originalOrder, setOriginalOrder] = useState<Laptop[]>([]);
 
 
   
@@ -115,15 +117,10 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
 
   useEffect(() => {
     const calculateScores = async () => {
-      console.log("Before setting isLoading to true:", isLoading); // Logs the current state
       setIsLoading(true);
-      console.log("After setting isLoading to true:", isLoading); // Logs the current state (won't reflect change immediately)
-      
-    
-      // Only use encoded parameters if we came from a shared link
       const encodedParams = searchParams.get('q');
       const answersToUse = encodedParams ? decodeParameters(encodedParams) : answers;
-  
+    
       if (answersToUse) {
         const scoredLaptops: Laptop[] = laptops.map((laptop) => {
           const { finalScore, componentScores, cpuScore } = calculateLaptopScore(laptop, answersToUse);
@@ -134,48 +131,28 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
             cpuScore: cpuScore,
           };
         });
-  
-        const filteredLaptops = scoredLaptops.filter((laptop) => 
+    
+        const filteredLaptops = scoredLaptops.filter(laptop => 
           laptop.matchPercentage && laptop.matchPercentage > 0
-        );
+        ).sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
         
-        
-        filteredLaptops.sort((a, b) => {
-          // First compare by match percentage
-          const percentageDiff = (b.matchPercentage || 0) - (a.matchPercentage || 0);
-          
-          if (percentageDiff === 0) {
-            // If percentages are equal, check gaming priority first
-            if (hasGamingTask(answersToUse.tasks)) {
-              const gamingDiff = (b.for_gaming ? 1 : 0) - (a.for_gaming ? 1 : 0);
-              if (gamingDiff !== 0) return gamingDiff;
-            }
-            
-            // If still equal (or no gaming task), compare by raw CPU scores
-            return (b.cpuScore || 0) - (a.cpuScore || 0);
-          }
-          
-          return percentageDiff;
-        });
-
+        setOriginalOrder([...filteredLaptops]);
         setSortedLaptops(filteredLaptops);
-        
       }
-  
-      // Clear URL parameters if we're not coming from a shared link
+    
       if (!encodedParams && window.location.search) {
         window.history.replaceState({}, '', window.location.pathname);
       }
-      console.log("Is Loading:", isLoading);
       setIsLoading(false);
-      console.log("Is Loading:", isLoading);
     };
   
     calculateScores();
-  }, [answers]); // Remove searchParams from dependencies
+  }, [answers]);
+
   
   const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(JSON.stringify(answers))}`
 
+  
   const showMore = () => {
     setDisplayCount((prev) => Math.min(prev + 5, sortedLaptops.length));
   };
@@ -197,6 +174,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
     );
   }
 
+ 
 
 
   return (
@@ -252,34 +230,24 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
   </div>
 </div>
 
-<div className="flex justify-center gap-4" dir="rtl">
-  <button 
-    className="px-4 py-2 border-2 border-black text-black rounded-lg hover:bg-black hover:text-white transition-colors duration-200"
-    onClick={() => {
-      const newLaptops = [...sortedLaptops].sort((a, b) => {
-        if ((b.matchPercentage ?? 0) === (a.matchPercentage ?? 0)) {
-          return a.price - b.price;
-        }
-        return (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0);
-      });
-      setSortedLaptops(newLaptops);
-    }}
-  >
-    מיין לפי התאמה ומחיר
-  </button>
-
-  <button 
-    className="px-4 py-2 border-2 border-black text-black rounded-lg hover:bg-black hover:text-white transition-colors duration-200"
-    onClick={() => {
-      const newLaptops = [...sortedLaptops].sort((a, b) => {
-        return (b.cpuScore || 0) - (a.cpuScore || 0);
-      });
-      setSortedLaptops(newLaptops);
-    }}
-  >
-    מיין לפי מעבד
-  </button>
-</div>
+<SortToggleButtons 
+  onSortByPrice={() => {
+    const newLaptops = [...sortedLaptops].sort((a, b) => {
+      if ((b.matchPercentage ?? 0) === (a.matchPercentage ?? 0)) {
+        return a.price - b.price;
+      }
+      return (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0);
+    });
+    setSortedLaptops(newLaptops);
+  }}
+  onSortByPerformance={() => {
+    const newLaptops = [...sortedLaptops].sort((a, b) => {
+      return (b.cpuScore || 0) - (a.cpuScore || 0);
+    });
+    setSortedLaptops(newLaptops);
+  }}
+  onResetSort={() => setSortedLaptops([...originalOrder])}
+/>
 
 </div>
 <AnimatePresence>
