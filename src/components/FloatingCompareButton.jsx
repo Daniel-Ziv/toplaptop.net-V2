@@ -782,7 +782,7 @@ const generateSummary = () => {
       case 'cpu':
         return 'מעבד חזק יותר';
       case 'cpu_ghz':
-        return `מהירות מעבד גבוה יותר`;
+        return `מהירות מעבד גבוהה יותר`;
       case 'for_gaming':
         return 'מתאים לגיימינג';
       case 'touchscreen':

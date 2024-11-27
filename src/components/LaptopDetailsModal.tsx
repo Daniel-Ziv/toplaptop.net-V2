@@ -79,7 +79,7 @@ const getDescriptionForScore = (score: number, name: string, answers: any, price
     return "אחסון איטי, זמני תגובה ארוכים"
   }
 
-  return "מצוין"
+  return `${name} מצוין!`
 }
 
 const getColorForScore = (score: number) => {
@@ -177,7 +177,6 @@ export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPerc
                           color: '#9C27B0'
                         }
                       ]}
-                      animate={true}
                       labelStyle={{
                         fontSize: '0.25rem',
                         fill: '#fff',

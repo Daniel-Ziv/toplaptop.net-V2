@@ -9,7 +9,7 @@ import NavigationButtons from '../NavigationButtons'
 import { Skeleton, Spinner } from "@nextui-org/react";
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { encodeParameters, decodeParameters } from '../../assets/utils/urlParams';
-import { Check, Copy, Share, X } from 'lucide-react'
+import { Check, Copy, Share, X, Info } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import SortToggleButtons from '../SortToggleButtons'
 
@@ -140,7 +140,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm z-50">
+      <div className="fixed inset-0 flex flex-col  bg-white/90 backdrop-blur-sm z-50">
         <Spinner 
           size="lg"
           color="primary"
@@ -162,50 +162,93 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
             text="ההמלצות שלנו!"
             className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
           />
-          <div className="text-center mb-6">
+          <div className="text-center mb-4">
             
-  
-  <div className="flex justify-center mt-5">
-    <div style={{
-      backgroundColor: '#f0f9f0',
-      border: '1px solid #c3e6cb',
-      borderRadius: '8px',
-      padding: '20px',
-      textAlign: 'center',
-      maxWidth: '42rem',
-      width: '100%'
-    }}>
-      <div className="flex items-center justify-center gap-2" dir='rtl'>
-        <span style={{ 
-          fontSize: '1.25rem', 
-          fontWeight: 'bold',
-          color: '#155724'
-        }}>
-        שימו לב:
-        </span>
-      </div>
-      <div style={{ color: '#155724' }} dir="rtl">
-      <ul style={{
-      listStyleType: 'disc',
-      display: 'inline-block',
-      textAlign: 'right',
-      marginTop: '4px'
-    }}>
-      <li>בחרו שני מחשבים להשוואה בכפתור ״השוואת מחשבים״</li>
-      <li>לחצו על אחוז ההתאמה למידע נוסף</li>
-      <li>שתפו את הדף עם חברים!</li>
-  </ul>
+          <div className="flex justify-center mt-1 w-full max-w-4xl mx-auto mb-1 relative gap-2" dir="rtl">
 
-  </div>
-    <button
-    onClick={() => setShowShareModal(true)}
-    className="px-4 py-2 border-2 border-black text-black rounded-lg hover:bg-black transition-colors duration-200 flex items-center justify-center gap-2 mx-auto"
-  >
-   שתפו
-    <Share size={20} className="rtl:mr-1 ltr:ml-1" />
-  </button>
-  </div>
-</div>
+            <div
+              style={{
+                width: '100%',
+                maxWidth: '64rem',
+                margin: '2rem auto',
+                backgroundColor: '#f0fdf4',
+                border: '1px solid #bbf7d0',
+                borderRadius: '0.5rem',
+                overflow: 'hidden',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <div
+                style={{
+                  backgroundColor: '#dcfce7',
+                  borderBottom: '1px solid #bbf7d0',
+                  padding: '1rem',
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    color: '#166534',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                  
+                >
+                  <Info style={{ height: '1.5rem', width: '1.5rem' }} />
+                  כדאי שתכירו
+                </h2>
+        
+            </div>
+            <div style={{ backgroundColor: '#ffffff', padding: '1rem' }}>
+              <ul
+                style={{
+                  listStyleType: 'disc',
+                  paddingLeft: '1rem',
+                  textAlign: 'right',
+                  color: '#166534',
+                  margin: 0,
+                  gap: '0.5rem',
+                  direction: 'rtl',
+                }}
+              >
+                <li>יש כפתור השוואת מחשבים</li>
+                <li>לחצו על העיגול הירוק בכל מחשב לראות מידע נוסף!</li>
+                <li>אפשר לשתף את ההמלצות שלנו בכפתור הבא:</li>
+              </ul>
+             <div className='flex justify-center'>
+              <button
+                onClick={() => setShowShareModal(true)}
+                style={{
+                  backgroundColor: '#047857',
+                  color: '#ffffff',
+                  transition: 'background-color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '0.5rem',
+                  flexDirection: 'row-reverse',
+                  marginTop: '0.5rem',
+                }}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.backgroundColor = '#065f46')
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.backgroundColor = '#047857')
+                }
+                aria-label="שתפו את הדף"
+              >
+                <Share style={{ height: '1.25rem', width: '1.25rem' }} />
+                שתפו
+              </button>
+              </div>
+              
+            </div>
+          </div>
+          </div>
 
 <SortToggleButtons 
   onSortByPrice={() => {

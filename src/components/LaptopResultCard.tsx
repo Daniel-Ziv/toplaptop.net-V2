@@ -239,32 +239,32 @@ export default function LaptopResultCard({
           
           {/* Product Details */}
           <div className="flex-1 space-y-4 text-right">
-            <h3 className={`text-m rtl ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries !== 'לא זמין' && laptopSeries !== 'לא רלוונטי' ? laptopSeries : ''} - {getFilteredSpecs(titleSpecs)}</h3>
+            <h3 className={`text-m rtl text-center ${styles.responsiveHeader}`}>{manufacturer} {laptopSeries !== 'לא זמין' && laptopSeries !== 'לא רלוונטי' ? laptopSeries : ''} - {getFilteredSpecs(titleSpecs)}</h3>
             <div className="flex justify-center text-sm text-center" dir="rtl">
-              <div className="flex items-center gap-2 p-2 w-full">
+              <div className="flex items-center gap-2 p-2 w-full justify-center">
                 <span className={`text-center ${styles.laptopCardSpecs}`} style={{ fontSize: '18px' }}>
                   {price}₪<br/>
-                  <span style={{display: "inline-flex", color:"#888", fontSize:"14px"}}>
+                  <span style={{display: "inline-flex", color:"#888", fontSize:"14px",alignItems: "center"}}>
                   {isValidPrice(price, answers) ? 
                     <Check className="h-4 w-4 text-success" /> : 
                     <X className="h-4 w-4 text-danger" />} מחיר
                   </span>
                 </span>
               </div>
-              <div className="flex items-center gap-2 p-2 w-full">
+              <div className="flex items-center gap-2 p-2 w-full justify-center">
                 <p className="text-center" style={{ fontSize: '18px'}}>
                   {weight} ק"ג <br/>
-                  <span style={{display: "inline-flex", color:"#888", fontSize:"14px"}}>
+                  <span style={{display: "inline-flex", color:"#888", fontSize:"14px",alignItems: "center"}}>
                   {isValidWeight(weight, answers) ? 
                     <Check className="h-4 w-4 text-success" /> : 
                     <X className="h-4 w-4 text-danger" />} משקל
                   </span>
                 </p>
               </div>
-              <div className="flex items-center gap-2 p-2 w-full">
+              <div className="flex items-center gap-2 p-2 w-full justify-center">
                 <span className="text-center" style={{ fontSize: '18px' }}>
                   <span className="inline">{screen_size} אינטש </span><br/>
-                  <span style={{display: "inline-flex", color:"#888", fontSize:"14px"}}>
+                  <span style={{display: "inline-flex", color:"#888", fontSize:"14px" ,alignItems: "center"}}>
                   {isValidScreenSize(screen_size, answers) ? 
                     <Check className="h-4 w-4 text-success" /> : 
                     <X className="h-4 w-4 text-danger" />} מסך
