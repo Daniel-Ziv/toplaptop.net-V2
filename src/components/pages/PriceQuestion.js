@@ -192,7 +192,7 @@ const handleRecommendedBudget = () => {
       <Header
         dir="rtl"
         text="כמה חשבתם להשקיע?"
-        className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
+        className="text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
       
       
@@ -205,7 +205,7 @@ const handleRecommendedBudget = () => {
           <RadioGroup
             value={localImportance.toString()}
             onValueChange={handleImportanceChange}
-            className="w-full max-w-lg space-y-4"
+            className="w-full max-w-lg space-y-4 items-center"
           >
             {importanceOptions.map((option) => (
               <CustomRadio

@@ -162,8 +162,8 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
       />
       <p className=" text-center mb-4 text-success-600 lg:text-xl">
         <span className="inline-flex items-center gap-1 whitespace-nowrap mt-1">
-          בשביל עוד מידע על כל אפשרות לחצו על כפתור ה
-          <Info className="w-4 h-4" />
+          בשביל עוד מידע על כל אפשרות  לחצו על כפתור ה
+          <Info className="w-4 h-4 text-black" />
         </span>
       </p>
       </div>
