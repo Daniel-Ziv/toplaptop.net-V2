@@ -182,70 +182,14 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
             </button>
             <Header
               text="ההמלצות שלנו!"
-              className="mb-1 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
+              className="mb-3 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
             />
           </div>
 
            
                 
-          <div className="text-center mb-4">
-            <div className="flex justify-center mt-1 w-full max-w-4xl mx-auto mb-1 relative gap-2" dir="rtl">
-              <div
-                style={{
-                  width: '100%',
-                  maxWidth: '64rem',
-                  margin: '0.5rem auto',
-                  backgroundColor: '#f0fdf4',
-                  border: '1px solid #bbf7d0',
-                  borderRadius: '1rem',
-                  overflow: 'hidden',
-                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                <div
-                  style={{
-                    backgroundColor: '#dcfce7',
-                    borderBottom: '1px solid #bbf7d0',
-                    padding: '1rem',
-                  }}
-                >
-                  <h2
-                    style={{
-                      fontSize: '1.5rem',
-                      fontWeight: 'bold',
-                      color: '#166534',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                    }}
-                    
-                  >
-                    <Info style={{ height: '1.5rem', width: '1.5rem' }} />
-                    כדאי שתכירו
-                  </h2>
+          <div className="text-center mb-4 mt-6">
           
-              </div>
-              <div style={{ backgroundColor: '#ffffff', padding: '1rem' }}>
-                <ul
-                  style={{
-                    listStyleType: 'disc',
-                    paddingLeft: '1rem',
-                    textAlign: 'right',
-                    color: '#166534',
-                    margin: 0,
-                    direction: 'rtl',
-                    fontSize:'18px',
-                    marginRight:'1vw'
-                  }}
-                >
-                  <li>יש כפתור השוואת מחשבים בתחתית המסך</li>
-                  <li>לחצו על העיגול הירוק בכל תוצאה כדי לראות מידע נוסף!</li>
-                </ul>
-            
-              </div>
-              </div>
-              
-            </div>
           
           <SortToggleButtons 
             onSortByPrice={() => {

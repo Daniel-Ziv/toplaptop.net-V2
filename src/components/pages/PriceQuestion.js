@@ -198,7 +198,7 @@ const handleRecommendedBudget = () => {
       
 
       <div className="flex flex-col items-center space-y-4 mt-6">
-        <div className="w-full max-w-lg mx-auto mb-6">
+        <div className="w-full max-w-lg mx-auto mb-3">
           <p className="text-lg text-center mb-4" dir="rtl">
             במידה ויש לכם תקציב, בחרו כמה חשוב לכם שלא יחרוג ממנו
           </p>
@@ -233,7 +233,7 @@ const handleRecommendedBudget = () => {
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
-                <div className="flex flex-col items-center mb-2">
+                <div className="flex flex-col items-center mb-4">
                 <Button color="default" variant="flat"  dir="rtl" onClick={handleRecommendedBudget}>
                     כמה כדאי?
                   </Button>
@@ -258,7 +258,7 @@ const handleRecommendedBudget = () => {
                   dir="ltr"
                   value={sliderValue}
                   onChange={handleBudgetChange}
-                  className="max-w-md"
+                  className="max-w-lg"
                 />
                 <p className="text-lg text-center mt-4" dir="rtl">התקציב שנבחר: {sliderValue} ₪</p>
                 <AnimatePresence>

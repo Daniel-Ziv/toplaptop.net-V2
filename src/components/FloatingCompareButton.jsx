@@ -1221,7 +1221,7 @@ const FloatingCompareButton = () => {
       case 1:
         return "בחרו עוד אחד";
       case 2:
-        return "לחץ להשוואה";
+        return "לחצו להשוואה";
       default:
         return "השוואת מחשבים";
     }
