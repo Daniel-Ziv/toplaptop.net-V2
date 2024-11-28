@@ -824,9 +824,11 @@ const generateSummary = () => {
             {advantages.laptop1.filter(Boolean).map((advantage, index) => (
               <div key={index} style={{
                 display: 'flex',
-                alignItems: 'flex-start',
                 gap: '8px',
-                textAlign: 'right'
+                width: '80%',
+                margin: '0 auto',
+                alignItems: 'flex-start',
+                justifyContent: 'center' 
               }}>
                 <span style={{ color: '#006400' }}>+</span>
                 <span style={{ wordBreak: 'break-word' }}>{advantage}</span>
@@ -846,7 +848,7 @@ const generateSummary = () => {
         
           onPress={() => handleSelectLaptop(laptops[0])}
           color="primary"
-          className="w-full max-w-sm"
+          className="w-full max-w-sm mt-4"
           size="lg"
           style={{
             backgroundColor: '#198754',
@@ -895,10 +897,12 @@ const generateSummary = () => {
    }}>
      {advantages.laptop2.filter(Boolean).map((advantage, index) => (
        <div key={index} style={{
-         display: 'flex',
-         alignItems: 'flex-start',
-         gap: '8px',
-         textAlign: 'right'
+        display: 'flex',
+        gap: '8px',
+        width: '80%',
+        margin: '0 auto',
+        alignItems: 'flex-start',
+        justifyContent: 'center' 
        }}>
          <span style={{ color: '#006400' }}>+</span>
          <span style={{ wordBreak: 'break-word' }}>{advantage}</span>
@@ -916,7 +920,7 @@ const generateSummary = () => {
         <Button
           onPress={() => handleSelectLaptop(laptops[1])}
           color="primary"
-          className="w-full max-w-sm"
+          className="w-full max-w-sm mt-4"
           size="lg"
           style={{
             backgroundColor: '#198754',

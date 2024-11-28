@@ -53,7 +53,7 @@ console.log('tasks:', savedBudget.tasks);
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            style={{ color: '#198754' }}
+            className="text-success-600"
           >
             המחיר בשוק עבור המחשב שאתם מחפשים מתחיל בסביבות {recommendedBudget}₪, לכן קחו זאת בחשבון
           </motion.span>
