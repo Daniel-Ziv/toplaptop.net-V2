@@ -611,8 +611,8 @@ const ComparisonPopup = ({ isOpen, onClose, laptops, handleSelectLaptop }) => {
         case 'security':
             if (Array.isArray(value1) && Array.isArray(value2)) {
                 // Filter out "לא כולל" before comparing
-                const filteredValue1 = value1.filter(item => !item.includes("לא כולל"));
-                const filteredValue2 = value2.filter(item => !item.includes("לא כולל"));
+                const filteredValue1 = value1.filter(item => !item.includes("לא כולל") && !item.includes("לא זמין"));
+                const filteredValue2 = value2.filter(item => !item.includes("לא כולל") && !item.includes("לא זמין"));
                 
                 const uniqueIn1 = filteredValue1.filter(item => !filteredValue2.includes(item));
                 const uniqueIn2 = filteredValue2.filter(item => !filteredValue1.includes(item));
@@ -841,7 +841,9 @@ const generateSummary = () => {
       )}
      <div className="gap-1" style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
+        
         <Button
+        
           onPress={() => handleSelectLaptop(laptops[0])}
           color="primary"
           className="w-full max-w-sm"
@@ -1177,11 +1179,13 @@ const FloatingCompareButton = () => {
   }, [isAtBottom, isCompareMode]);
 
   const handleSelectLaptop = (laptop) => {
-    clearComparison(); // Clear existing selections
-    setIsCompareMode(true); // Enable compare mode
-    toggleLaptopSelection(laptop); // Select the laptop
-    setIsPopupOpen(false);     
-  };
+    setTimeout(() => {
+      clearComparison();
+      toggleLaptopSelection(laptop);
+      setIsCompareMode(true);
+      setIsPopupOpen(false);
+    }, 100);
+};
 
   const handleClick = () => {
     if (isCompareMode && selectedLaptops.length === 0) {

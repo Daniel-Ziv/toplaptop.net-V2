@@ -416,8 +416,8 @@ const taskRequirements: Record<string, TaskRequirements> = {
     storageType: { min: 5, max: 10, weight: 0.1 }     // Storage type moderately impacts file handling.
   },
   "music-editing": {
-    cpu: { min: 4, max: 10, weight: 0.25 },           // CPU is important for processing audio effects.
-    ram: { min: 4, max: 10, weight: 0.2 },            // RAM allows handling multiple tracks.
+    cpu: { min: 6, max: 10, weight: 0.25 },           // CPU is important for processing audio effects.
+    ram: { min: 6, max: 10, weight: 0.2 },            // RAM allows handling multiple tracks.
     ramType: { min: 3, max: 10, weight: 0.1 },       // RAM type matters, but not as much as size.
     gpu: { min: 3, max: 10, weight: 0.1 },            // GPU is less important for audio editing.
     storageSpace: { min: 4, max: 10, weight: 0.15 },  // Storage is important for large audio libraries.
@@ -819,7 +819,7 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
       combinedTaskRequirements.storageType
     ),
   };
-
+  
   // Multiply by weights
   const weightedScores = {
     cpu: componentScoresMap.cpu * combinedTaskRequirements.cpu.weight,
@@ -885,6 +885,7 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
      { name: "משקל", score: Math.round(weightScore) },
      { name: "גודל מסך", score: Math.round(screenSizeScore) },
    ];
+
  
    /*console.log("Scores Breakdown:", {
     taskFinalScore,

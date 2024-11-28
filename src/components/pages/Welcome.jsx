@@ -7,6 +7,7 @@ import ZapStatement from '../ZapStatement.js';
 import {Button, ButtonGroup} from "@nextui-org/button";
 import { MousePointerClick } from 'lucide-react';
 import Stepper from "../StepperWelcomePage.jsx";
+import stackedImgWelcomePage from '../../assets/stackedImgWelcomePage.png';
 
 
 
@@ -17,16 +18,33 @@ function Welcome({ onAnswer, nextStep }) {
   return (
     <Container>
       <div id="welcome" className="section-active">
-        <h1 class="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display">מחשב נייד בהתאמה אישית</h1>
-        <br></br>
-        <p dir="rtl" class="text-lg font-normal text-gray-800 lg:text-xl dark:text-gray-700 text-center">
-          הצטרפו ל-1,400+ משתמשים שכבר מצאו את הלפטופ המושלם באתר המוביל בישראל להשוואת לפטופים.
+<h1 className="mb-4 font-bold text-center leading-none tracking-tight text-gray-900 dark:text-black font-display" 
+   style={{ 
+     fontSize: window.innerWidth >= 1024 ? "4rem" : window.innerWidth >= 768 ? "2.5rem" : "2.5rem" 
+   }}>
+ מחשב נייד בהתאמה אישית
+</h1>        <p style={{
+          direction: "rtl",
+          fontSize: window.innerWidth >= 768 ? "1.5rem" : "1.25rem",
+          fontWeight: 400,
+          color: window.matchMedia('(prefers-color-scheme: dark)').matches ? "#374151" : "#1f2937",
+          textAlign: "center"
+        }}>
+          האתר הראשון בישראל שעוזר לך לבחור את המחשב הנייד המתאים לך – חכם, פשוט, ובחינם.
         </p>
 
 
-
+        {/*<img src={stackedImgWelcomePage} alt="מחשבים ניידים" className="w-full h-auto mt-4" width={50} height={50} />8*/}
         
-        <div className="text-2xl  text-black text-center mt-3 font-display" dir="rtl">אז איך זה עובד?</div>
+        <div style={{
+          fontSize: window.innerWidth >= 768 ? "1.5rem" : "1.25rem",
+          color: "black",
+          textAlign: "center",
+          marginTop: "0.75rem",
+          direction: "rtl"
+          }}>
+            איך זה עובד?
+          </div>
 
         <br></br>
         <Stepper/>
