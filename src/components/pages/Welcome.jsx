@@ -2,7 +2,6 @@ import React from "react";
 import Container from "../Container.js";
 import '../../styles/output.css';
 import CountAnimation from '../CountAnimation.js';
-import MovingTestimonials from '../MovingTestimonials.js'
 import ZapStatement from '../ZapStatement.js';
 import {Button, ButtonGroup} from "@nextui-org/button";
 import { MousePointerClick } from 'lucide-react';
@@ -41,7 +40,8 @@ function Welcome({ onAnswer, nextStep }) {
           color: "black",
           textAlign: "center",
           marginTop: "0.75rem",
-          direction: "rtl"
+          direction: "rtl",
+          fontWeight: 500
           }}>
             איך זה עובד?
           </div>

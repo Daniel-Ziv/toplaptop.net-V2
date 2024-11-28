@@ -20,7 +20,7 @@ export default function ZapStatement() {
         >
           <div className="flex items-center space-x-2 rtl:space-x-reverse" dir="rtl">
           <div className="bg-white  rounded-md px-3 py-1 flex items-center">
-            <span className="text-lg font-normal text-gray-800 lg:text-xl dark:text-gray-700 text-center ml-2">כל המידע מבוסס על</span>
+            <span className="text-lg font-normal text-gray-800 lg:text-xl dark:text-gray-700 text-center ml-2">המחיר הקובע הוא באתר</span>
             
               
                 <img src={zapLogo} width={100} height={100} alt="zap logo"></img>

@@ -3,10 +3,10 @@ import personilizedResults from '../assets/personilizedResults.png';
 import laptopComparison from '../assets/laptopComparison.png';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import zapLinkShow from '../assets/zapLinkShow.png';
+import { ExternalLink } from 'lucide-react';
 
 const Stepper = () => (
-    <div className="max-w-4xl mx-auto px-4 mt-12" dir="rtl">
-      <div className="relative flex justify-between">
+    <div className="max-w-4xl mx-auto px-4 mt-12" dir="rtl" style={window.innerWidth < 768 ? { marginRight: '0.7rem' } : {}}>      <div className="relative flex justify-center">
         <div className="absolute top-[1.6rem] left-16 right-16 h-0.5 bg-gradient-to-r from-blue-200 via-blue-400 to-blue-600" />
         {[
           { 
@@ -31,15 +31,14 @@ const Stepper = () => (
             title: "קבלו המלצות", 
             desc: "מדורגות לפי התאמה אישית",
             progressBar: (
-                <div style={{ width: "100px", margin: "16px auto 0" }}>
-                  <CircularProgressbar
+<               div style={{ width: "100px", margin: "16px auto 0", display: 'flex', justifyContent: 'center' }}> 
+                 <CircularProgressbar
                     value={92}
-                    
                     text={`${92}%`}
                     styles={{
-                      path: { stroke: "#00E699", strokeLinecap: "butt" },
+                      path: { stroke: "#0029a3", strokeLinecap: "butt" },
                       text: { fill: "#4B5563", fontSize: "24px" },
-                      root: { width: "100%", height: "100%" }
+                      root: { width: "70%", height: "70%" }
                     }}
                   />
                 </div>
@@ -62,19 +61,11 @@ const Stepper = () => (
             number: "3", 
             title: "השוו והחליטו", 
             desc: "קבלו לינק ישיר לזאפ להשוואה!",
-            zaplink: 
-            <img 
-                src={zapLinkShow} 
-                alt="השוואת מחירים בזאפ"
-                style={{ 
-                    marginTop: '0.75rem',  // mt-3
-                    width: '8rem',         // w-32
-                    height: 'auto',        // h-auto
-                    marginLeft: 'auto',    // mx-auto
-                    marginRight: 'auto'    // mx-auto
-                  }}                
-              />
-            ,additionalContent: window.innerWidth >= 1024 && (
+            zaplink:
+            <div style={{ width: "100px", margin: "16px auto 0", display: 'flex', justifyContent: 'center' }}> 
+                <ExternalLink size={60} color="#0029a3" strokeWidth={0.5} />
+            </div>,
+            additionalContent: window.innerWidth >= 1024 && (
               <img 
                 src={laptopComparison} 
                 alt="השוואת מחירים בזאפ"
@@ -102,7 +93,11 @@ const Stepper = () => (
               <div style={{ display: window.innerWidth < 768 ? 'block' : 'none' }}>
                 <p style={{ color: "rgb(75, 85, 99)" }} className="text-center text-sm">{step.desc}</p>
                 {step.progressBar}
-                {step.zaplink}
+                {step.zaplink && (
+                    <div className="w-64"> 
+                        {step.zaplink}
+                    </div>
+                    )}
                 {step.tasks && (
                 <div>
                     {step.tasks.map((task, index) => (
