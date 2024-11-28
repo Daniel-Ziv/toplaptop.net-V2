@@ -150,7 +150,7 @@ function PortabilityQuestion({ nextStep, prevStep, onAnswer, savedPortabilityCho
         className="mb-4 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
       
-      <div className="flex flex-col items-center space-y-6 mt-6">
+      <div className="flex flex-col items-center mt-6 ">
         
         <AnimatePresence>
           {showRecommendation && (

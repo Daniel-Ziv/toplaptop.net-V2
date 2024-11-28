@@ -256,7 +256,7 @@ function ScreensizeQuestion({
       value: 0.125,
       sizeName: {
         name: "חשוב טיפה",
-        description: "יש לי העדפה קלה לגודל מסך מסוים",
+        description: "יש לי העדפה קלה לגודל מסך מסוים, אשמח בכל זאת לקבל הצעות גם אם הן חורגות בקצת",
         isRecommended: ""
       }
     },
@@ -276,16 +276,16 @@ function ScreensizeQuestion({
         text="לגביי המסך.."
         className="mb-3 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
       />
-      <div className="flex flex-col items-center space-y-6 mt-6">
+      <div className="flex flex-col items-center mt-6">
         <div className="text-center mb-4">
           <h3 className="text-xl font-semibold mb-2">כמה חשוב לך גודל המסך?</h3>
-          
         </div>
 
+        {/* Center and make full width */}
         <RadioGroup
           value={sizeImportance.toString()}
           onValueChange={handleImportanceChange}
-          className="w-full max-w-lg space-y-4"
+          className="w-full max-w-lg space-y-4 items-center mb-4"
         >
           {importanceOptions.map((option) => (
             <CustomRadio
@@ -304,7 +304,7 @@ function ScreensizeQuestion({
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="overflow-hidden w-full max-w-lg "
+              className="items-center"
             >
               <motion.div
                 initial={{ y: -20 }}
@@ -312,100 +312,96 @@ function ScreensizeQuestion({
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
                 <div className="flex flex-col items-center mb-2">
-                   
                   <h3 className="text-xl font-semibold mb-2">בחרו גדלים</h3>
                 </div>
 
-                  <CheckboxGroup
-  value={localScreenSizes}
-  onChange={handleScreenSizeChange}
-  className="space-y-4"
->
-  <CustomCheckbox
-    value="small"
-    sizeName={{
-      name: "קטן",
-      description: "פחות מ13 אינצ׳",
-      isRecommended: recommendedSizes.includes("small") ? "מומלץ!" : ""
-    }}
-    statusColor="success"
-    recommendationReason={recommendedSizes.includes("small") ? 
-      reasonMessage.split('\n')[recommendedSizes.indexOf("small")] : null}
-  />
-  <CustomCheckbox
-    value="medium"
-    sizeName={{
-      name: "בינוני",
-      description: "בין 13 ל14 אינצ׳",
-      isRecommended: recommendedSizes.includes("medium") ? "מומלץ!" : ""
-    }}
-    statusColor="success"
-    recommendationReason={recommendedSizes.includes("medium") ? 
-      reasonMessage.split('\n')[recommendedSizes.indexOf("medium")] : null}
-  />
-  <CustomCheckbox
-    value="large"
-    sizeName={{
-      name: "גדול",
-      description: "בין 14 ל16 אינצ׳",
-      isRecommended: recommendedSizes.includes("large") ? "מומלץ!" : ""
-    }}
-    statusColor="success"
-    recommendationReason={recommendedSizes.includes("large") ? 
-      reasonMessage.split('\n')[recommendedSizes.indexOf("large")] : null}
-  />
-  <CustomCheckbox
-    value="huge"
-    sizeName={{
-      name: "ענק",
-      description: "מעל 16 אינצ׳",
-      isRecommended: recommendedSizes.includes("huge") ? "מומלץ!" : ""
-    }}
-    statusColor="success"
-    recommendationReason={recommendedSizes.includes("huge") ? 
-      reasonMessage.split('\n')[recommendedSizes.indexOf("huge")] : null}
-  />
+                {/* Center and make full width */}
+                <CheckboxGroup
+                  value={localScreenSizes}
+                  onChange={handleScreenSizeChange}
+                  className="w-full max-w-lg space-y-4 items-center mb-4"
+                >
+                    <CustomCheckbox
+                      value="small"
+                      sizeName={{
+                        name: "קטן",
+                        description: "פחות מ13 אינצ׳",
+                        isRecommended: recommendedSizes.includes("small") ? "מומלץ!" : ""
+                      }}
+                      statusColor="success"
+                      recommendationReason={recommendedSizes.includes("small") ? 
+                        reasonMessage.split('\n')[recommendedSizes.indexOf("small")] : null}
+                    />
+                    <CustomCheckbox
+                      value="medium"
+                      sizeName={{
+                        name: "בינוני",
+                        description: "בין 13 ל14 אינצ׳",
+                        isRecommended: recommendedSizes.includes("medium") ? "מומלץ!" : ""
+                      }}
+                      statusColor="success"
+                      recommendationReason={recommendedSizes.includes("medium") ? 
+                        reasonMessage.split('\n')[recommendedSizes.indexOf("medium")] : null}
+                    />
+                    <CustomCheckbox
+                      value="large"
+                      sizeName={{
+                        name: "גדול",
+                        description: "בין 14 ל16 אינצ׳",
+                        isRecommended: recommendedSizes.includes("large") ? "מומלץ!" : ""
+                      }}
+                      statusColor="success"
+                      recommendationReason={recommendedSizes.includes("large") ? 
+                        reasonMessage.split('\n')[recommendedSizes.indexOf("large")] : null}
+                    />
+                    <CustomCheckbox
+                      value="huge"
+                      sizeName={{
+                        name: "ענק",
+                        description: "מעל 16 אינצ׳",
+                        isRecommended: recommendedSizes.includes("huge") ? "מומלץ!" : ""
+                      }}
+                      statusColor="success"
+                      recommendationReason={recommendedSizes.includes("huge") ? 
+                        reasonMessage.split('\n')[recommendedSizes.indexOf("huge")] : null}
+                    />
                   </CheckboxGroup>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
-
+        
         {/* Touchscreen Toggle */}
-        <div className="flex flex-col items-center gap-2 w-full max-w-lg p-4 bg-gray-50 rounded-lg">
-          <div className="flex justify-between items-center w-full">
-           
+         
             <Switch
             isSelected={localTouchscreen}
             onChange={handleTouchscreenToggle}
-      classNames={{
-        base: cn(
-          "inline-flex flex-row-reverse w-full max-w-md bg-content1 hover:bg-content2 items-center",
-          "justify-between cursor-pointer rounded-lg gap-2 p-4 border-1 border-transparent",
-          "data-[selected=true]:border-primary",
-        ),
-        wrapper: "p-0 h-4 overflow-visible",
-        thumb: cn("w-7 h-6 border-2 shadow-lg",
-          "group-data-[hover=true]:border-primary",
-          //selected
-          "group-data-[selected=true]:ml-6",
-          // pressed
-          "group-data-[pressed=true]:w-7",
-          "group-data-[selected]:group-data-[pressed]:ml-6",
-        ),
-      }}
-    >
-      <div className="flex flex-col gap-1">
-        <p className="text-medium">בא לי מסך מגע</p>
-        <p className="text-tiny text-default-400">
-          לחצו כאן כדי לקבל התאמות עם מסך מגע בלבד
-        </p>
-      </div>
-    </Switch>
+            classNames={{
+              base: cn(
+                "inline-flex flex-row-reverse w-full max-w-md bg-content1 hover:bg-content2 items-center",
+                "justify-between cursor-pointer rounded-lg gap-2 p-4 border-1 border-transparent",
+                "data-[selected=true]:border-primary",
+              ),
+              wrapper: "p-0 h-4 overflow-visible",
+              thumb: cn("w-7 h-6 border-2 shadow-lg",
+                "group-data-[hover=true]:border-primary",
+                //selected
+                "group-data-[selected=true]:ml-6",
+                // pressed
+                "group-data-[pressed=true]:w-7",
+                "group-data-[selected]:group-data-[pressed]:ml-6",
+              ),
+            }}
+          >
+              <div className="flex flex-col gap-1 ">
+                <p className="text-medium">בא לי מסך מגע</p>
+                <p className="text-tiny text-default-400">
+                  לחצו כאן כדי לקבל התאמות עם מסך מגע בלבד
+                </p>
+              </div>
+            </Switch>
           </div>
-        </div>
-      </div>
-
+   
       <NavigationButtons
         onNext={nextStep}
         onBack={prevStep}
