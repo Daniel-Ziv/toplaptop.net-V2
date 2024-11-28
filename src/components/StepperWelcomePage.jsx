@@ -2,7 +2,7 @@ import React from 'react';
 import personilizedResults from '../assets/personilizedResults.png';
 import laptopComparison from '../assets/laptopComparison.png';
 import { CircularProgressbar } from 'react-circular-progressbar';
-
+import zapLinkShow from '../assets/zapLinkShow.png';
 
 const Stepper = () => (
     <div className="max-w-4xl mx-auto px-4 mt-12" dir="rtl">
@@ -62,7 +62,19 @@ const Stepper = () => (
             number: "3", 
             title: "השוו והחליטו", 
             desc: "קבלו לינק ישיר לזאפ להשוואה!",
-            additionalContent: window.innerWidth >= 1024 && (
+            zaplink: 
+            <img 
+                src={zapLinkShow} 
+                alt="השוואת מחירים בזאפ"
+                style={{ 
+                    marginTop: '0.75rem',  // mt-3
+                    width: '8rem',         // w-32
+                    height: 'auto',        // h-auto
+                    marginLeft: 'auto',    // mx-auto
+                    marginRight: 'auto'    // mx-auto
+                  }}                
+              />
+            ,additionalContent: window.innerWidth >= 1024 && (
               <img 
                 src={laptopComparison} 
                 alt="השוואת מחירים בזאפ"
@@ -90,10 +102,11 @@ const Stepper = () => (
               <div style={{ display: window.innerWidth < 768 ? 'block' : 'none' }}>
                 <p style={{ color: "rgb(75, 85, 99)" }} className="text-center text-sm">{step.desc}</p>
                 {step.progressBar}
+                {step.zaplink}
                 {step.tasks && (
                 <div>
                     {step.tasks.map((task, index) => (
-                    <div key={task} className="flex items-center  ">
+                    <div key={task} className="flex items-center gap-2 ">
                         <p style={{ color: "rgb(75, 85, 99)" }} className="text-center text-sm">
                         {index + 1}. 
                         </p>
