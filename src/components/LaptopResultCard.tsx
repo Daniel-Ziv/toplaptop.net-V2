@@ -7,6 +7,7 @@ import {useComparison}  from './ComparisonContext';
 import styles from "./ProductCard.module.css";
 import { motion } from "framer-motion";
 import LaptopDetailsModal from './LaptopDetailsModal';
+import LazyImage from "./LazyLaptopImgLoader";
 
 interface ComponentScore {
   name: string;
@@ -276,13 +277,11 @@ export default function LaptopResultCard({
               
           {/* Product Image */}
           <div className="relative shrink-0">
-            <img
-              src={product_img}
-              alt={name}
-              className="object-contain"
-              width="200"
-              height="200"
-            />
+          <LazyImage
+            src={product_img}
+            alt={name}
+            className="relative shrink-0"
+          />
           </div>
         </div>
         

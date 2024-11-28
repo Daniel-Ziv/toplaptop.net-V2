@@ -680,14 +680,14 @@ for (const [feature, selectedValue] of Object.entries(features)) {
             : laptopFeatureValue;
 
         if (!normalizedSelectedValue.includes(normalizedLaptopValue)) {
-            console.log(`Mismatch for feature ${feature}: Selected ${normalizedSelectedValue} vs Laptop ${normalizedLaptopValue}`);
+            //console.log(`Mismatch for feature ${feature}: Selected ${normalizedSelectedValue} vs Laptop ${normalizedLaptopValue}`);
             return { finalScore: 0, componentScores: [] };
         }
     }
     // Check for boolean fields (like `flippingScreen`)
     else if (typeof selectedValue === "boolean") {
         if (laptopFeatureValue !== selectedValue && laptopFeatureValue !== true) {
-            console.log(`Boolean mismatch for feature ${feature}: Selected ${selectedValue} vs Laptop ${laptopFeatureValue}`);
+            //console.log(`Boolean mismatch for feature ${feature}: Selected ${selectedValue} vs Laptop ${laptopFeatureValue}`);
             return { finalScore: 0, componentScores: [] };
         }
     }
@@ -702,7 +702,7 @@ for (const [feature, selectedValue] of Object.entries(features)) {
             : laptopFeatureValue;
 
         if (normalizedLaptopValue !== normalizedSelectedValue) {
-            console.log(`Direct mismatch for feature ${feature}: Selected ${normalizedSelectedValue} vs Laptop ${normalizedLaptopValue}`);
+            //console.log(`Direct mismatch for feature ${feature}: Selected ${normalizedSelectedValue} vs Laptop ${normalizedLaptopValue}`);
             return { finalScore: 0, componentScores: [] };
         }
     }
@@ -773,7 +773,7 @@ for (const [feature, selectedValue] of Object.entries(features)) {
     }
   });
 
-  console.log("Combined Task Requirements:", combinedTaskRequirements);
+  //console.log("Combined Task Requirements:", combinedTaskRequirements);
   
 
 
@@ -795,14 +795,14 @@ const normalizedGpuScore = (gpuScore / 10) * 100;
 const normalizedStorageSpaceScore = (storageSpaceScore / 10) * 100;
 const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
 
-  console.log("Component Scores:", {
+  /*console.log("Component Scores:", {
     normalizedCpuScore,
     normalizedRamScore,
     normalizedRamTypeScore,
     normalizedGpuScore,
     normalizedStorageSpaceScore,
     normalizedStorageTypeScore,
-  });
+  });*/
 
   // Calculate individual component scores based on requirements
   const componentScoresMap = {
@@ -848,7 +848,7 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
     answers.screenSize.sizeImportance
   );
 
-  console.log("screen size importance", answers.screenSize.sizeImportance);
+  //console.log("screen size importance", answers.screenSize.sizeImportance);
    // Normalize importance weights
    const totalImportance =
      answers.budget.priceImportance +
@@ -856,12 +856,12 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
      answers.screenSize.sizeImportance;
  
    const taskImportance = 1 - totalImportance;
-   console.log("Importance Weights:", {
+   /*console.log("Importance Weights:", {
       taskImportance,
       priceImportance: answers.budget.priceImportance,
       weightImportance: answers.weightImportance,
       sizeImportance: answers.screenSize.sizeImportance,
-    });
+    });*/
     
     
 
@@ -886,7 +886,7 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
      { name: "גודל מסך", score: Math.round(screenSizeScore) },
    ];
  
-   console.log("Scores Breakdown:", {
+   /*console.log("Scores Breakdown:", {
     taskFinalScore,
     priceScore,
     weightScore,
@@ -894,7 +894,7 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
     taskImportance,
     finalScore,
     componentScores
-  }); 
+  }); */
    return {
      finalScore: Math.round(finalScore),
      componentScores: componentScores,
