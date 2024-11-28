@@ -167,13 +167,12 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
                 backgroundColor: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
-                border: '0.5px solid #000000',
+                border: '0.5px solid rgba(0, 0, 0, 0.3)',
                 justifyContent: 'center',
                 gap: '0.5rem',
                 padding: '0.5rem 1rem',
                 borderRadius: '0.5rem',
                 flexDirection: 'row-reverse',
-                marginTop: '0.5rem',
               }}
              
               aria-label="שתפו את הדף"

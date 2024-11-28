@@ -29,7 +29,7 @@ export default function SortToggleButtons({ onSortByPrice, onSortByPerformance, 
     <>
       <div className="flex justify-center mt-1 w-full max-w-4xl mx-auto mb-1 relative gap-2" dir="rtl">
         <button
-          className={`flex-grow h-full w-full px-4 py-2 border border-gray-300 rounded-md text-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center justify-center
+          className={`flex-grow h-full w-full px-4 py-2 border border-gray-500 rounded-md text-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center justify-center
             ${activeButton === 'price'
               ? 'bg-gray-300 text-gray-700'
               : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'}`}
@@ -40,7 +40,7 @@ export default function SortToggleButtons({ onSortByPrice, onSortByPerformance, 
         </button>
 
         <button
-          className={`flex-grow h-full w-full px-4 py-2 border border-gray-300 rounded-md text-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center justify-center
+          className={`flex-grow h-full w-full px-4 py-2 border border-gray-500 rounded-md text-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center justify-center
             ${activeButton === 'performance'
               ? 'bg-gray-300 text-gray-700'
               : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'}`}
