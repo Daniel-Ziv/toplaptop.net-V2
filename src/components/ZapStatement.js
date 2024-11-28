@@ -1,9 +1,8 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import KSP_logo from '../assets/KSP_logo.png'
-
-export default function KspPartnershipBanner() {
+import zapLogo from '../assets/zapLogo.png';
+export default function ZapStatement() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -21,10 +20,10 @@ export default function KspPartnershipBanner() {
         >
           <div className="flex items-center space-x-2 rtl:space-x-reverse" dir="rtl">
           <div className="bg-white  rounded-md px-3 py-1 flex items-center">
-            <span className="text-lg font-normal text-gray-800 lg:text-xl dark:text-gray-700 text-center ml-2">בשיתוף פעולה עם</span>
+            <span className="text-lg font-normal text-gray-800 lg:text-xl dark:text-gray-700 text-center ml-2">כל המידע מבוסס על</span>
             
               
-                <img src={KSP_logo} width={100} height={100} alt="Ksp-logo"></img>
+                <img src={zapLogo} width={100} height={100} alt="zap logo"></img>
             </div>
           </div>
         </motion.div>

@@ -1,5 +1,5 @@
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button} from "@nextui-org/react";
-
+import { Linkedin } from 'lucide-react';
 
 function CustomNavbar() {
   return (
@@ -22,7 +22,7 @@ function CustomNavbar() {
         
         <NavbarItem>
           <Button as={Link} color="primary" target="_blank" href="https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.linkedin.com/in/daniel-ziv&ved=2ahUKEwjgkPGK-PKJAxUZSvEDHZXEDY0QFnoECBwQAQ&usg=AOvVaw253MXdEAe5MQ8qwYq4fcfm" variant="flat">
-            צור קשר
+          <Linkedin strokeWidth={1} />
           </Button>
         </NavbarItem>
       </NavbarContent>
