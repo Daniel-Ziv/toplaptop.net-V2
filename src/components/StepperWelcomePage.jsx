@@ -35,10 +35,11 @@ const Stepper = () => (
                  <CircularProgressbar
                     value={92}
                     text={`${92}%`}
+                    strokeWidth={4}
                     styles={{
-                      path: { stroke: "#0029a3", strokeLinecap: "butt" },
+                      path: { stroke: "#0029a3", strokeLinecap: "butt"  },
                       text: { fill: "#4B5563", fontSize: "24px" },
-                      root: { width: "70%", height: "70%" }
+                      root: { width: "60%", height: "60%" }
                     }}
                   />
                 </div>
