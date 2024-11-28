@@ -163,7 +163,7 @@ function ScreensizeQuestion({
         touchscreen: touchscreen
       }
     });
-    console.log("touchscreen:", touchscreen);
+    //console.log("touchscreen:", touchscreen);
 
   };
 

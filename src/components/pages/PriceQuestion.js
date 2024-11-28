@@ -15,7 +15,7 @@ function PriceQuestion({ nextStep, prevStep, onAnswer, savedBudget = { price: 30
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
 
-console.log('tasks:', savedBudget.tasks);
+//console.log('tasks:', savedBudget.tasks);
 
 
   // First useEffect: Initialize recommended budget, slider value, and importance
@@ -181,7 +181,7 @@ const handleRecommendedBudget = () => {
     const additionalBudget = additionalTasks * 500;
     
     const finalBudget = Math.min(maxBudget + additionalBudget, 20000); // Changed to 20000 to match your slider max
-    console.log('Final calculated budget:', finalBudget);
+    //console.log('Final calculated budget:', finalBudget);
     return finalBudget;
   };
   

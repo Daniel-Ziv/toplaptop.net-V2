@@ -407,7 +407,7 @@ const ComparisonPopup = ({ isOpen, onClose, laptops, handleSelectLaptop }) => {
           if (cpuScore1 === cpuScore2) {
               return { comparison: 'מעבד זהה', winner: 'tie' };
           }
-          console.log(cpuScore1, cpuScore2);
+          //console.log(cpuScore1, cpuScore2);
           return {
               comparison: `מעבד חזק יותר`,
               winner: cpuScore1 > cpuScore2 ? 'laptop1' : 'laptop2',
@@ -493,7 +493,7 @@ const ComparisonPopup = ({ isOpen, onClose, laptops, handleSelectLaptop }) => {
             
           const gpuScore1 = gpuModelScores[value1] || 0;
           const gpuScore2 = gpuModelScores[value2] || 0;
-          console.log(gpuScore1, gpuScore2);
+          //console.log(gpuScore1, gpuScore2);
           if (gpuScore1 === gpuScore2) {
             
               return { comparison: 'כרטיסי מסך עם כח זהה', winner: 'tie' };
