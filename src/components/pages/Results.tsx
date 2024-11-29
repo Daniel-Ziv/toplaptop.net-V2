@@ -388,8 +388,8 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
           {sortedLaptops.length === 0 ? (
               // Show message if no laptops match
               <p className="text-center text-gray-600 text-xl mt-8">
-                אין מחשבים שעומדים בדרישות. ייתכן שהמאפיינים שהגדרת מחמירים מדי.
-                נסה להרפות כמה מהתנאים לקבלת תוצאות נוספות.
+                אין מחשבים שעומדים בדרישות. ייתכן שהמאפיינים שהגדרתם מחמירים מדי.
+                נסו להרפות כמה מהתנאים לקבלת תוצאות נוספות.
               </p>
               ) : (
               sortedLaptops.slice(0, displayCount).map((laptop, index) => ( // Use sortedLaptops here
