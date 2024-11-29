@@ -212,41 +212,23 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
                 backgroundColor: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
-                border: '0.5px solid rgba(0, 0, 0, 0.3)',
                 justifyContent: 'center',
                 gap: '0.5rem',
-                padding: '0.5rem 1rem',
-                borderRadius: '0.5rem',
+                padding: '0.5rem 0.5rem',
+                marginTop: '0.2rem',
                 flexDirection: 'row-reverse',
               }}
              
               aria-label="שתפו את הדף"
             >
-              <Share color="#000000" style={{ height: '1.25rem', width: '1.25rem' }} />
+              <Share color="#000000" style={{ height: '1.5rem', width: '1.5rem' }} />
               
             </button>
             <Header
               text="ההמלצות שלנו!"
               className="mb-3 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
             />
-             <button
-              onClick={() => prevStep()}
-              style={{
-                backgroundColor: '#FFFFFF',
-                display: 'flex',
-                alignItems: 'center',
-                marginTop: '0.3rem',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 0rem',
-                flexDirection: 'row-reverse',
-              }}
              
-              aria-label="חזרו-אחורה"
-            >
-              <ArrowRight strokeWidth={1.3} color="#000000" style={{ height: '1.75rem', width: '1.75rem'}} />
-              
-            </button>
           </div>
 
            
@@ -429,7 +411,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
                 />
               ))
             )}
-              <div className="mb-6">
+              <div className="mb-6" dir='rtl'>
               <NavigationButtons onNext={showMore} onBack={prevStep} disableNext={!hasMoreLaptops} nextText="הצג עוד" backText="חזרה לשאלון"/>
               </div>
             </div>

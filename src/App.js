@@ -187,7 +187,7 @@ function AppContent() {
 
   return (
     <div className="App" dir="rtl">
-      <CustomNavbar />
+      <CustomNavbar currentStep={step}  prevStep={step === 7 ? prevStep : undefined}  />
       <Routes>
         <Route 
           path="/results" 
