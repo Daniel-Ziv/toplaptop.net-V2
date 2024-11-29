@@ -39,7 +39,7 @@ function CustomNavbar({ currentStep, prevStep, nextStep }){
         target="_blank"
         color="primary"
         variant="flat"
-        className="flex items-center gap-0"
+        className="flex items-center gap-0 mt-1"
       >
         <Linkedin color="#01348a" strokeWidth={1} />
       </Button>
