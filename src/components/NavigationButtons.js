@@ -17,17 +17,18 @@ const NavigationButtons = ({ onNext, onBack, disableNext = false, nextText = "ה
 </Button>
 
 
-      <Button 
+     {/* <Button 
         color="" 
         size="lg" // Make the button larger
         onClick={onBack}
         className="w-full max-w-md gap-1" // Center and limit button width
       >
                
-               <ArrowRight size={20} className="" /> {/* Back arrow icon */}
+               <ArrowRight size={20} className="" /> 
 
-        {backText} {/* Text passed as prop */}
+        {backText} 
       </Button>
+      */}
     </div>
   );
 };

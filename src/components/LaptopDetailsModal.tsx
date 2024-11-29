@@ -137,6 +137,7 @@ export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPerc
       scrollBehavior="inside"
       size="2xl"
       className="h-[98vh]"
+      hideCloseButton={true}
 
       
     >

@@ -58,7 +58,7 @@ function Welcome({ onAnswer, nextStep }) {
     size="lg"
     dir="rtl"
     endContent={<MousePointerClick />}
-    className="w-full max-w-md text-xl font-bold text-white text-center bg-black mt-2"
+    className="w-full max-w-md text-xl font-bold text-white text-center bg-black mt-2 gap-1"
     onClick={nextStep}
     
   >

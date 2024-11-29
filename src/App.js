@@ -72,7 +72,13 @@ function AppContent() {
   }, [searchParams]);
 
  
-    
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  }, [step]);
 
   
   const nextStep = () => {
@@ -187,7 +193,7 @@ function AppContent() {
 
   return (
     <div className="App" dir="rtl">
-      <CustomNavbar currentStep={step}  prevStep={step === 7 ? prevStep : undefined}  />
+      <CustomNavbar currentStep={step}  prevStep={step != 1 ? prevStep : undefined} nextStep={step != 1 && step != 7 ? nextStep : undefined}  />
       <Routes>
         <Route 
           path="/results" 

@@ -411,13 +411,13 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
                 />
               ))
             )}
-              <div className="mb-6" dir='rtl'>
+              <div className="mb-3" dir='rtl'>
               <div className="flex flex-col items-center  ">
                 <Button 
-                  color="default"  // Keep color as default for consistent hover and focus behavior
-                  size="lg" // Larger button size
+                  color="default"  
+                  size="lg" 
                   onClick={showMore} 
-                  disabled={!hasMoreLaptops} // Disables if `disableNext` is true
+                  disabled={!hasMoreLaptops} 
                   className={`w-full max-w-md ${hasMoreLaptops ? 'bg-black text-white' : 'default-700 text-gray-500'}`} // Black when enabled, gray when disabled
                 >
                   הצג עוד {/* Text passed as prop */}
