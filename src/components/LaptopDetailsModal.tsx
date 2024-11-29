@@ -135,10 +135,12 @@ export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPerc
       isOpen={isOpen}
       onClose={onClose}
       scrollBehavior="inside"
-      placement="center"
       size="2xl"
+      className="h-[98vh]"
+
+      
     >
-      <ModalContent>
+      <ModalContent className="h-full max-h-[98vh]">
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1 text-center">פירוט התאמה</ModalHeader>
@@ -231,8 +233,9 @@ export default function LaptopDetailsModal({ isOpen, onClose, answers, matchPerc
                   .map((component, index) => renderScoreCard(component, index))}
               </div>
             </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose} className="items-center">
+            <ModalFooter className="flex justify-center items-center">
+              
+              <Button color="danger" variant="light" onPress={onClose} className="items-center ">
                 סגור
               </Button>
             </ModalFooter>

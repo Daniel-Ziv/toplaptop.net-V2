@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import LaptopResultCard from '../LaptopResultCard'
 import Header from '../Header'
-import laptops from '../../data/laptops.json'
 import FloatingCompareButton from '../FloatingCompareButton'
 import { ComparisonProvider } from '../ComparisonContext';
 import {calculateLaptopScore} from '../algo/calculateLaptopScore';
@@ -77,12 +76,35 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
   const handleCopy = async () => {
     const encoded = encodeParameters(answers);
     const shareableUrl = `${window.location.origin}${window.location.pathname}?q=${encoded}`;
+    
     try {
-      await navigator.clipboard.writeText(shareableUrl);
+      // Try the modern clipboard API first
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(shareableUrl);
+      } else {
+        // Fallback to the older execCommand method
+        const textArea = document.createElement('textarea');
+        textArea.value = shareableUrl;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        const successful = document.execCommand('copy');
+        textArea.remove();
+        
+        if (!successful) {
+          throw new Error('Failed to copy text');
+        }
+      }
+      
       setHasCopied(true);
       setTimeout(() => setHasCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
+      // You might want to show a user-friendly error message here
     }
   };
   
@@ -96,11 +118,21 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
   useEffect(() => {
     const calculateScores = async () => {
       setIsLoading(true);
+
+      try {
+        // Fetch laptops.json
+        const response = await fetch('/data/laptops.json');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch laptops.json: ${response.statusText}`);
+        }
+        
+        const laptops = await response.json(); // Parse the JSON data
+      
       const encodedParams = searchParams.get('q');
       const answersToUse = encodedParams ? decodeParameters(encodedParams) : answers;
     
       if (answersToUse) {
-        const scoredLaptops: Laptop[] = laptops.map((laptop) => {
+        const scoredLaptops: Laptop[] = laptops.map((laptop: Laptop) => {
           const { finalScore, componentScores, cpuScore, gpuScore } = calculateLaptopScore(laptop, answersToUse);
           return {
             ...laptop,
@@ -123,10 +155,15 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
         window.history.replaceState({}, '', window.location.pathname);
       }
       setIsLoading(false);
+      }
+      catch (error) {
+        console.error('Failed to load laptops:', error);
+        setIsLoading(false);
+      }
     };
   
     calculateScores();
-  }, [answers]);
+  }, [answers, searchParams]);
 
 
   const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(JSON.stringify(answers))}`

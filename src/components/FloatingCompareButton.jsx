@@ -973,13 +973,13 @@ return (
   onClose={onClose}
   size="2xl"
   scrollBehavior="inside"
-  className="rtl h-[90vh] sm:h-auto mx-auto w-full max-w-full sm:max-w-4xl"
+  className="rtl h-[95dvh] sm:h-auto mx-auto w-full max-w-full sm:max-w-4xl"
   hideCloseButton
   isDismissable={true}
   onClickOutside={onClose}
   
 >
-  <ModalContent className="h-full" dir="rtl">
+  <ModalContent className="h-full max-h-[98vh] " dir="rtl">
     <ModalHeader className="flex flex-col gap-1 border-b text-center">
       השוואת מחשבים ניידים
     </ModalHeader>
