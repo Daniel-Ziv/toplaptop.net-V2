@@ -3,7 +3,7 @@ import { Linkedin , ArrowRight} from 'lucide-react';
 
 function CustomNavbar({ currentStep, prevStep }){
   return (
-    <Navbar position="static">
+    <Navbar position={currentStep === 7 ? 'sticky' : 'static'} className="h-12">
     <NavbarContent justify="start">
      <NavbarItem>
        <Button

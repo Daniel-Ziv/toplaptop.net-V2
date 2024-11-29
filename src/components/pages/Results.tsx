@@ -5,7 +5,7 @@ import FloatingCompareButton from '../FloatingCompareButton'
 import { ComparisonProvider } from '../ComparisonContext';
 import {calculateLaptopScore} from '../algo/calculateLaptopScore';
 import NavigationButtons from '../NavigationButtons'
-import { Skeleton, Spinner } from "@nextui-org/react";
+import { Button, Skeleton, Spinner } from "@nextui-org/react";
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { encodeParameters, decodeParameters } from '../../assets/utils/urlParams';
 import { Check, Copy, Share, X, ArrowRight } from 'lucide-react'
@@ -412,7 +412,17 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
               ))
             )}
               <div className="mb-6" dir='rtl'>
-              <NavigationButtons onNext={showMore} onBack={prevStep} disableNext={!hasMoreLaptops} nextText="הצג עוד" backText="חזור"/>
+              <div className="flex flex-col items-center  ">
+                <Button 
+                  color="default"  // Keep color as default for consistent hover and focus behavior
+                  size="lg" // Larger button size
+                  onClick={showMore} 
+                  disabled={!hasMoreLaptops} // Disables if `disableNext` is true
+                  className={`w-full max-w-md ${hasMoreLaptops ? 'bg-black text-white' : 'default-700 text-gray-500'}`} // Black when enabled, gray when disabled
+                >
+                  הצג עוד {/* Text passed as prop */}
+                </Button>
+                </div>
               </div>
             </div>
           </div>
