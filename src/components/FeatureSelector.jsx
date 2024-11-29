@@ -879,6 +879,7 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
               <ModalHeader className="sticky top-0 z-10 bg-white shadow-sm">
                 <div className="w-full flex flex-col gap-4">
                   <h3>בחר {currentFeature}</h3>
+                  {(currentFeature === 'מעבד' || currentFeature === 'כרטיס מסך') && (
                   <Input
                     type="text"
                     placeholder="חפש..."
@@ -887,6 +888,7 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
                     startContent={<Search className="text-default-400" size={20} />}
                     size="sm"
                   />
+                )}
                 </div>
               </ModalHeader>
               <ModalBody className="overflow-y-auto ">

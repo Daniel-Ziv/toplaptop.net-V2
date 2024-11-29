@@ -234,7 +234,7 @@ const handleRecommendedBudget = () => {
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
                 <div className="flex flex-col items-center mb-4">
-                <Button color="default" variant="flat"  dir="rtl" onClick={handleRecommendedBudget}>
+                <Button color="default" variant="flat"  dir="rtl" onClick={handleRecommendedBudget} className="bg-gray-200">
                     כמה כדאי?
                   </Button>
                 </div>
