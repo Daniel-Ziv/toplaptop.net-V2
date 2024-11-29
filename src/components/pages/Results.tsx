@@ -412,7 +412,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
               ))
             )}
               <div className="mb-6" dir='rtl'>
-              <NavigationButtons onNext={showMore} onBack={prevStep} disableNext={!hasMoreLaptops} nextText="הצג עוד" backText="חזרה לשאלון"/>
+              <NavigationButtons onNext={showMore} onBack={prevStep} disableNext={!hasMoreLaptops} nextText="הצג עוד" backText="חזור"/>
               </div>
             </div>
           </div>

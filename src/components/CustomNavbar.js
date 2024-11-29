@@ -17,7 +17,7 @@ function CustomNavbar({ currentStep, prevStep }){
          {currentStep === 7 ? (
            <>
            <ArrowRight strokeWidth={1.3} />
-             חזרה
+              חזור
              
            </>
          ) : (
