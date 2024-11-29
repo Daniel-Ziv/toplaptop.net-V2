@@ -8,7 +8,7 @@ import NavigationButtons from '../NavigationButtons'
 import { Skeleton, Spinner } from "@nextui-org/react";
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { encodeParameters, decodeParameters } from '../../assets/utils/urlParams';
-import { Check, Copy, Share, X, Info } from 'lucide-react'
+import { Check, Copy, Share, X, ArrowRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import SortToggleButtons from '../SortToggleButtons'
 
@@ -143,9 +143,17 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
           };
         });
     
-        const filteredLaptops = scoredLaptops.filter(laptop => 
+        const isGaming = hasGamingTask(answersToUse.tasks);
+
+        const filteredLaptops = scoredLaptops.filter(laptop =>
           laptop.matchPercentage && laptop.matchPercentage > 0
-        ).sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
+         ).sort((a, b) => {
+          const percentDiff = (b.matchPercentage || 0) - (a.matchPercentage || 0);
+          if (percentDiff === 0 && isGaming) {
+            return b.for_gaming ? 1 : -1;
+          }
+          return percentDiff;
+         });
         
         setOriginalOrder([...filteredLaptops]);
         setSortedLaptops(filteredLaptops);
@@ -221,6 +229,24 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
               text="ההמלצות שלנו!"
               className="mb-3 text-4xl font-bold text-center leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black font-display"
             />
+             <button
+              onClick={() => prevStep()}
+              style={{
+                backgroundColor: '#FFFFFF',
+                display: 'flex',
+                alignItems: 'center',
+                marginTop: '0.3rem',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                padding: '0.5rem 0rem',
+                flexDirection: 'row-reverse',
+              }}
+             
+              aria-label="חזרו-אחורה"
+            >
+              <ArrowRight strokeWidth={1.3} color="#000000" style={{ height: '1.75rem', width: '1.75rem'}} />
+              
+            </button>
           </div>
 
            
