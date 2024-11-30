@@ -4,41 +4,28 @@
 
 ## 🚀 **Overview**
 
-TopLaptop.net is a laptop recommendation platform designed for the Israeli market, offering **personalized recommendations** based on users' needs. The project combines **human-friendly design**, a powerful algorithm, and real-time price comparison to make buying a laptop stress-free. Whether you're a gamer, student, or creative professional, the site ensures you'll find the right match.
+TopLaptop.net is a laptop recommendation platform tailored for the Israeli market, offering **personalized laptop suggestions** based on user needs. With a clean design and a smart recommendation algorithm, it simplifies the laptop selection process for everyone—gamers, students, and professionals alike.
 
 ### **Key Features**
-1. **Human-Friendly Questionnaire**:
-   - Simplifies the decision-making process with a set of quirky, easy-to-answer questions about the user's laptop needs.
-   - Covers tasks like gaming, programming, video editing, photo editing, and more.
+1. **Friendly Questionnaire**:
+   - Answer simple, intuitive questions about your tasks and preferences to get tailored recommendations.
 
-2. **Advanced Recommendation Algorithm**:
-   - Calculates a **compatibility score** for each laptop based on user preferences using a **hybrid model**:
-     - **Euclidean Distance**: Matches user needs with laptop specifications.
-     - **Ideal Ranges**: Evaluates how closely a laptop fits "ideal" values for certain tasks.
-   - Takes into account tasks, budget, and priorities.
+2. **Smart Algorithm**:
+   - Uses a hybrid approach:
+     - **Euclidean Distance** to match specifications.
+     - **Ideal Ranges** to fit tasks like gaming, programming, or video editing.
 
-3. **Comprehensive Laptop Database**:
-   - Includes detailed specs for 4000+ laptops:
-     - **Key Features**: Manufacturer, price range, weight, and series.
-     - **Technical Details**: Processor type, RAM, storage, display type, and more.
-     - **Connectivity**: Wireless, USB ports, and security options.
-   - Uses data from **Zap** and other sources to provide the most up-to-date information.
+3. **Extensive Laptop Database**:
+   - Over 4000 laptops with detailed specifications (CPU, RAM, display, connectivity, etc.).
+   - Data sourced from **Zap** to ensure accuracy.
 
 4. **Price Comparison**:
-   - Links users to **Zap** or Google to check and compare real-time prices across retailers.
+   - Direct links to **Zap** for real-time price comparison.
 
-5. **Dynamic URLs**:
-   - Generates shareable URLs for every search result, allowing users to revisit or share their results.
-
-6. **Scalable Design**:
-   - Built to support **future growth**, including the ability to:
-     - Add new features like direct price comparisons with retailers (similar to Zap).
-     - Expand the laptop database.
-
-7. **Optimized User Experience**:
-   - **Fast loading times** using lazy image loading.
-   - **Mobile-friendly interface** for seamless access across devices.
-   - **Modern UI/UX** with Tailwind CSS.
+5. **Optimized Experience**:
+   - **Fast-loading** with lazy image loading.
+   - Fully **mobile-friendly** for on-the-go access.
+   - Designed for **future scalability** with potential feature expansions.
 
 ---
 
