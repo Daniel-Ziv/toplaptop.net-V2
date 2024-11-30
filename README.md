@@ -62,10 +62,11 @@ TopLaptop.net is a laptop recommendation platform tailored for the Israeli marke
 TopLaptop.net was developed by **Daniel Ziv**, a computer science student from HIT with a proven track record in both technical expertise and user-focused project development. Here’s more about Daniel:
 - **Academic Excellence**: Maintains a 96.51 average in computer science.
 - **Past Projects**:
+  - **[TopLaptop.net(v1)](https://github.com/Daniel-Ziv/toplaptop.net)**: A cutting-edge laptop recommendation platform designed for accessibility and ease of use.
   - **EasyScraper**: A Python-based web scraper using Selenium.
   - **Spotiapi**: A Spotify API project.
 - **Teaching Experience**: Lecturer at Exioma, Cybersecurity instructor at Magshimim, and AWS Certified Cloud Practitioner.
-- **Entrepreneurial Spirit**: Former e-commerce entrepreneur generating over ₪70K monthly.
+- **AWS Certified Cloud Practitioner**: Demonstrates a strong grasp of cloud technologies and scalable architectures.
 
 ---
 
