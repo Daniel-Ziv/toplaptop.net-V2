@@ -1,12 +1,10 @@
 import React from "react";
 import Container from "../Container.js";
 import '../../styles/output.css';
-import CountAnimation from '../CountAnimation.js';
 import ZapStatement from '../ZapStatement.js';
 import {Button, ButtonGroup} from "@nextui-org/button";
 import { MousePointerClick } from 'lucide-react';
 import Stepper from "../StepperWelcomePage.jsx";
-import stackedImgWelcomePage from '../../assets/stackedImgWelcomePage.png';
 
 
 

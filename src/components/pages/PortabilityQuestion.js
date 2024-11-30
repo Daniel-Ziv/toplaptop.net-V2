@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import NavigationButtons from "../NavigationButtons";
 import Container from "../Container";
 import Header from "../Header";
-import CustomCheckbox from "../CustomCheckbox";
 import { RadioGroup } from "@nextui-org/react";
 import CustomRadio from "../CustomRadiobox";
 import { motion, AnimatePresence } from "framer-motion";

@@ -2,7 +2,6 @@ import React from 'react';
 import personilizedResults from '../assets/personilizedResults.png';
 import laptopComparison from '../assets/laptopComparison.png';
 import { CircularProgressbar } from 'react-circular-progressbar';
-import zapLinkShow from '../assets/zapLinkShow.png';
 import { ExternalLink } from 'lucide-react';
 
 const Stepper = () => (
