@@ -1,70 +1,131 @@
-# Getting Started with Create React App
+# 🌐 Live Demo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Visit the live site: TopLaptop.net
 
-## Available Scripts
+# TopLaptop.net
 
-In the project directory, you can run:
+Welcome to **TopLaptop.net**, a user-friendly and smart website designed to help users find the best laptop for their needs. With a quirky questionnaire, cutting-edge algorithms, and a sleek, modern design, this project simplifies laptop selection for everyone, even those without technical expertise.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🚀 **Overview**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+TopLaptop.net is a laptop recommendation platform designed for the Israeli market, offering **personalized recommendations** based on users' needs. The project combines **human-friendly design**, a powerful algorithm, and real-time price comparison to make buying a laptop stress-free. Whether you're a gamer, student, or creative professional, the site ensures you'll find the right match.
 
-### `npm test`
+### **Key Features**
+1. **Human-Friendly Questionnaire**:
+   - Simplifies the decision-making process with a set of quirky, easy-to-answer questions about the user's laptop needs.
+   - Covers tasks like gaming, programming, video editing, photo editing, and more.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. **Advanced Recommendation Algorithm**:
+   - Calculates a **compatibility score** for each laptop based on user preferences using a **hybrid model**:
+     - **Euclidean Distance**: Matches user needs with laptop specifications.
+     - **Ideal Ranges**: Evaluates how closely a laptop fits "ideal" values for certain tasks.
+   - Takes into account tasks, budget, and priorities.
 
-### `npm run build`
+3. **Comprehensive Laptop Database**:
+   - Includes detailed specs for 4000+ laptops:
+     - **Key Features**: Manufacturer, price range, weight, and series.
+     - **Technical Details**: Processor type, RAM, storage, display type, and more.
+     - **Connectivity**: Wireless, USB ports, and security options.
+   - Uses data from **Zap** and other sources to provide the most up-to-date information.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. **Price Comparison**:
+   - Links users to **Zap** or Google to check and compare real-time prices across retailers.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. **Dynamic URLs**:
+   - Generates shareable URLs for every search result, allowing users to revisit or share their results.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+6. **Scalable Design**:
+   - Built to support **future growth**, including the ability to:
+     - Add new features like direct price comparisons with retailers (similar to Zap).
+     - Expand the laptop database.
 
-### `npm run eject`
+7. **Optimized User Experience**:
+   - **Fast loading times** using lazy image loading.
+   - **Mobile-friendly interface** for seamless access across devices.
+   - **Modern UI/UX** with Tailwind CSS.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🛠️ **Tech Stack**
+- **Frontend**: React.js, Tailwind CSS
+- **Backend**: None (client-side calculations only)
+- **Data Handling**: JSON files with dynamically updated data from sources like Zap.
+- **Hosting**: Deployed on AWS for scalability and reliability.
+- **Tools Used**:
+  - `Vanilla JavaScript` for custom functionalities.
+  - `Selenium` for automated data scraping.
+  - `GitHub` for version control.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📖 **How to Use**
+1. **Answer the Questionnaire**:
+   - Select your tasks and requirements in the friendly quiz.
+   - Enter your budget and priorities.
 
-## Learn More
+2. **View Recommendations**:
+   - Get a ranked list of laptops that fit your needs.
+   - Explore detailed specs and scores.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+3. **Compare Prices**:
+   - Click on the price comparison button to find the best deals on Zap or Google.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+4. **Share Results**:
+   - Use the shareable URL to revisit or share your results with friends.
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🌟 **What Makes It Unique**
+- **User-Centric**: Designed to make laptop selection intuitive and stress-free.
+- **Algorithm-Driven Recommendations**: Balances technical precision with human simplicity.
+- **Targeted for Israeli Market**: Focused on popular laptop models and retailers in Israel.
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🧑‍💻 **About the Creator**
+TopLaptop.net was developed by **Daniel Ziv**, a computer science student from HIT with a proven track record in both technical expertise and user-focused project development. Here’s more about Daniel:
+- **Academic Excellence**: Maintains a 96.51 average in computer science.
+- **Past Projects**:
+  - **EasyScraper**: A Python-based web scraper using Selenium.
+  - **Spotiapi**: A Spotify API project.
+- **Teaching Experience**: Lecturer at Exioma, Cybersecurity instructor at Magshimim, and AWS Certified Cloud Practitioner.
+- **Entrepreneurial Spirit**: Former e-commerce entrepreneur generating over ₪70K monthly.
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🔧 **Installation (For Developers)**
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Daniel-Ziv/toplaptop.net.git
+   cd toplaptop.net
+2. Install dependencies:
+    ```bash
+    npm install
+3. Start the development server:
+     ```bash
+     npm start
+4. Access the app in your browser at http://localhost:3000.
 
-### Advanced Configuration
+## 🤝 Contributing
+Want to contribute? Here’s how:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. Fork the repository.
+2. Create a feature branch:
+   ```bash  
+    git checkout -b feature-name
+3. Commit your changes:
+    ```bash  
+    git commit -m "Add feature-name"
+4. Push to the branch:
+    ```bash  
+    git push origin feature-name
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 📩 Contact
 
-### `npm run build` fails to minify
+For questions, feedback, or collaboration:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Email: contact.danielziv@gmail.com
+LinkedIn: [Daniel Ziv](https://www.linkedin.com/in/daniel-ziv/)
