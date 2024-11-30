@@ -1,11 +1,5 @@
-# 🌐 Live Demo
-
-## Visit the live site: TopLaptop.net
-
-# TopLaptop.net
-
-Welcome to **TopLaptop.net**, a user-friendly and smart website designed to help users find the best laptop for their needs. With a quirky questionnaire, cutting-edge algorithms, and a sleek, modern design, this project simplifies laptop selection for everyone, even those without technical expertise.
-
+# 🌐 [Live Demo - CLICK HERE!](toplaptop.net)
+## LinkedIn: [Daniel Ziv](https://www.linkedin.com/in/daniel-ziv/)
 ---
 
 ## 🚀 **Overview**
@@ -77,13 +71,6 @@ TopLaptop.net is a laptop recommendation platform designed for the Israeli marke
 
 ---
 
-## 🌟 **What Makes It Unique**
-- **User-Centric**: Designed to make laptop selection intuitive and stress-free.
-- **Algorithm-Driven Recommendations**: Balances technical precision with human simplicity.
-- **Targeted for Israeli Market**: Focused on popular laptop models and retailers in Israel.
-
----
-
 ## 🧑‍💻 **About the Creator**
 TopLaptop.net was developed by **Daniel Ziv**, a computer science student from HIT with a proven track record in both technical expertise and user-focused project development. Here’s more about Daniel:
 - **Academic Excellence**: Maintains a 96.51 average in computer science.
@@ -128,4 +115,3 @@ Want to contribute? Here’s how:
 For questions, feedback, or collaboration:
 
 Email: contact.danielziv@gmail.com
-LinkedIn: [Daniel Ziv](https://www.linkedin.com/in/daniel-ziv/)
