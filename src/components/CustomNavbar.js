@@ -49,7 +49,7 @@ function CustomNavbar({ currentStep, prevStep, nextStep }){
     {!showNext ? (
        <NavbarBrand className="justify-end ">
          <a href="/" className="flex items-center">
-           <p className="font-bold text-inherit">
+           <p className="font-bold text-inherit mt-1">
              <mark className="px-2 text-white bg-black rounded dark:bg-black mr-0.5">top</mark> laptop
            </p>
          </a>
