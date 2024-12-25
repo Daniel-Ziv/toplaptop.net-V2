@@ -826,36 +826,7 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
   };
   
 
-  const selectAll = () => {
-    const englishName = featureNameMapping[currentFeature];
-    const currentSelections = tempSelections[englishName] || [];
-    
-    if (englishName === 'ram_size') {
-      const numericOptions = filteredOptions.map(option => parseInt(option.split(' ')[0]));
-      const allSelected = numericOptions.every(option => currentSelections.includes(option));
-      setTempSelections(prev => ({
-        ...prev,
-        [englishName]: allSelected ? [] : numericOptions
-      }));
-      return;
-    }
   
-    if (englishName === 'storage_space' || englishName === 'screenhz') {
-      const numericOptions = filteredOptions.map(option => parseInt(option));
-      const allSelected = numericOptions.every(option => currentSelections.includes(option));
-      setTempSelections(prev => ({
-        ...prev,
-        [englishName]: allSelected ? [] : numericOptions
-      }));
-      return;
-    }
-  
-    const allSelected = filteredOptions.every(option => currentSelections.includes(option));
-    setTempSelections(prev => ({
-      ...prev,
-      [englishName]: allSelected ? [] : filteredOptions
-    }));
-  };
 
   
   const renderCategorySection = (title, items, category) => {
@@ -990,9 +961,7 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
                 )}
               </ModalBody>
               <ModalFooter className="sticky bottom-0 z-10 bg-white shadow-sm">
-                <Button color="black" variant="light" onPress={selectAll}>
-                  בחר הכל
-                </Button>
+                
                 <Button color="danger" variant="light" onPress={onClose}>
                   ביטול
                 </Button>
