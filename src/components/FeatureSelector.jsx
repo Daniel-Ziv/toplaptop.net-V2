@@ -39,21 +39,12 @@ const subSelections = {
     "Intel Pentium"
   ],
   'ראם': [
+    "4 ג״ב",  // 68
     "16 ג״ב", // 2371
+    "64 ג״ב", // 103
     "8 ג״ב",  // 991
     "32 ג״ב", // 952
-    "64 ג״ב", // 103
-    "4 ג״ב",  // 68
-    "24 ג״ב", // 49
-    "36 ג״ב", // 13
-    "3 ג״ב",  // 6
-    "2 ג״ב",  // 6
-    "18 ג״ב", // 5
-    "12 ג״ב", // 4
     "128 ג״ב", // 2
-    "96 ג״ב",  // 2
-    "48 ג״ב",  // 2
-    "93 ג״ב"   // 1
 ],
   'סוג זכרון': [
     "DDR5",
@@ -67,13 +58,11 @@ const subSelections = {
     "250 ג״ב",     // 1
     "256 ג״ב",     // 475
     "320 ג״ב",     // 7
-    "500 ג״ב",     // 6
     "512 ג״ב",     // 1946
     "640 ג״ב",     // 2
     "750 ג״ב",     // 7
     "1000 ג״ב",    // 1848
     "1256 ג״ב", // 5
-    "1512 ג״ב", // 3
     "2000 ג״ב",    // 191
     "3000 ג״ב",    // 1
     "4000 ג״ב", // 16
@@ -96,7 +85,6 @@ const subSelections = {
     "2880x1620",
     "2880x1800",
     "3000x2000",
-    "3024x1964",
     "3072x1920",
     "3200x2000",
     "3456x2160",
@@ -683,19 +671,52 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
   }
 
   
-
+  const sortFeatureOptions = (options, featureName) => {
+    const numericFeatures = ['ראם', 'נפח-אחסון', 'קצב רענון', 'רזולוציית מסך'];
+  
+    if (numericFeatures.includes(featureName)) {
+      // Sort numerically
+      const sorted = [...options].sort((a, b) => {
+        const numA = parseInt(a.match(/\d+/)[0]);
+        const numB = parseInt(b.match(/\d+/)[0]);
+        return numA - numB;
+      });
+  
+      // Arrange into columns
+      const columnCount = 3; // Adjust for the number of columns you want
+      const rowCount = Math.ceil(sorted.length / columnCount);
+      const result = Array(sorted.length);
+  
+      sorted.forEach((item, index) => {
+        const row = index % rowCount;
+        const col = Math.floor(index / rowCount);
+        const newIndex = row * columnCount + col;
+        result[newIndex] = item;
+      });
+  
+      return result.filter(Boolean);
+    }
+  
+    // Alphabetical sort for non-numeric features
+    return options.sort((a, b) => a.localeCompare(b));
+  };
+  
    
   
-   const filteredOptions = useMemo(() => {
+  const filteredOptions = useMemo(() => {
     if (!currentFeature || !searchQuery) {
-      return subSelections[currentFeature] || [];
+      return sortFeatureOptions(subSelections[currentFeature] || [], currentFeature);
     }
     
-    return subSelections[currentFeature].filter(option =>
+    const filtered = subSelections[currentFeature].filter(option =>
       option.toLowerCase().includes(searchQuery.toLowerCase())
     );
+    return sortFeatureOptions(filtered, currentFeature);
   }, [currentFeature, searchQuery]);
 
+
+
+  
   const categorizedOptions = useMemo(() => {
     if (!currentFeature) return { items: [] };
 
