@@ -113,7 +113,7 @@ const handleRecommendedBudget = () => {
     {
       value: 0,
       sizeName: {
-        name: "אין לי תקציב",
+        name: "אין לי הגבלת תקציב",
         description: "אני בחיפושים אחר המחשב הכי טוב שיש, ללא הגבלת תקציב",
 
       }
