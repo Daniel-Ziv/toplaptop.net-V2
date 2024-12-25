@@ -734,15 +734,43 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
 
   const toggleSubSelection = (item) => {
     const englishName = featureNameMapping[currentFeature];
-    const cleanedItem = englishName === 'storage_space' ? parseInt(item) : 
-      ["ram_size", "screenhz"].includes(englishName) ? parseInt(item) : item;
+    
+    if (englishName === 'ram_size') {
+      const numericValue = parseInt(item.split(' ')[0]);
+      setTempSelections(prev => {
+        const current = prev[englishName] || [];
+        return {
+          ...prev,
+          [englishName]: current.includes(numericValue) 
+            ? current.filter(i => i !== numericValue)
+            : [...current, numericValue]
+        };
+      });
+      return;
+    }
+  
+    if (englishName === 'storage_space' || englishName === 'screenhz') {
+      const numericValue = parseInt(item);
+      setTempSelections(prev => {
+        const current = prev[englishName] || [];
+        return {
+          ...prev,
+          [englishName]: current.includes(numericValue)
+            ? current.filter(i => i !== numericValue)
+            : [...current, numericValue]
+        };
+      });
+      return;
+    }
   
     setTempSelections(prev => {
       const current = prev[englishName] || [];
-      const newSelections = current.includes(cleanedItem)
-        ? current.filter(i => i !== cleanedItem)
-        : [...current, cleanedItem];
-      return { ...prev, [englishName]: newSelections };
+      return {
+        ...prev,
+        [englishName]: current.includes(item)
+          ? current.filter(i => i !== item)
+          : [...current, item]
+      };
     });
   };
 
@@ -783,22 +811,49 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
 
   const isItemSelected = (item) => {
     const englishName = featureNameMapping[currentFeature];
-    const cleanedItem = englishName === 'storage_space' ? parseInt(item) : 
-      ["ram_size", "screenhz"].includes(englishName) ? parseInt(item) : item;
-    return tempSelections[englishName]?.includes(cleanedItem);
+    
+    if (englishName === 'ram_size') {
+      const numericValue = parseInt(item.split(' ')[0]);
+      const currentSelections = tempSelections[englishName] || [];
+      return currentSelections.includes(numericValue);
+    }
+  
+    if (englishName === 'storage_space' || englishName === 'screenhz') {
+      return tempSelections[englishName]?.includes(parseInt(item)) || false;
+    }
+  
+    return tempSelections[englishName]?.includes(item) || false;
   };
+  
 
   const selectAll = () => {
     const englishName = featureNameMapping[currentFeature];
     const currentSelections = tempSelections[englishName] || [];
-    const availableOptions = filteredOptions;
     
-    // If all options are currently selected, clear selections
-    const allSelected = availableOptions.every(option => currentSelections.includes(option));
-    
+    if (englishName === 'ram_size') {
+      const numericOptions = filteredOptions.map(option => parseInt(option.split(' ')[0]));
+      const allSelected = numericOptions.every(option => currentSelections.includes(option));
+      setTempSelections(prev => ({
+        ...prev,
+        [englishName]: allSelected ? [] : numericOptions
+      }));
+      return;
+    }
+  
+    if (englishName === 'storage_space' || englishName === 'screenhz') {
+      const numericOptions = filteredOptions.map(option => parseInt(option));
+      const allSelected = numericOptions.every(option => currentSelections.includes(option));
+      setTempSelections(prev => ({
+        ...prev,
+        [englishName]: allSelected ? [] : numericOptions
+      }));
+      return;
+    }
+  
+    const allSelected = filteredOptions.every(option => currentSelections.includes(option));
     setTempSelections(prev => ({
       ...prev,
-      [englishName]: allSelected ? [] : availableOptions
+      [englishName]: allSelected ? [] : filteredOptions
     }));
   };
 
