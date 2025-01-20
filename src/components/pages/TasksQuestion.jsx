@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Popover, PopoverTrigger, PopoverContent, Radio, RadioGroup } from "@nextui-org/react";
-import { Info, Brush, Video, Music, Code, Globe, VideoIcon, Cpu, Edit3, Monitor, Bot, InfoIcon } from "lucide-react";
+import { CircleHelp, Brush, Video, Music, Code, Globe, VideoIcon, Cpu, Edit3, Monitor, Bot, InfoIcon } from "lucide-react";
 import NavigationButtons from "../NavigationButtons";
 import Container from "../Container"
 import Header from "../Header";
@@ -163,7 +163,7 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
       <p className=" text-center mb-4 text-success-600 lg:text-xl">
         <span className="inline-flex items-center gap-1 whitespace-nowrap mt-1">
           לעוד מידע על כל אפשרות  לחצו על הסמל הזה:
-          <Info className="w-4 h-4 text-black " />
+          <CircleHelp className="w-4 h-4 text-black " />
         </span>
       </p>
       </div>
@@ -199,7 +199,7 @@ const TasksQuestion = ({ nextStep, prevStep, onAnswer, selectedTasks = [] }) => 
                         className="p-1"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Info className="w-4 h-4" />
+                        <CircleHelp className="w-4 h-4" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent>

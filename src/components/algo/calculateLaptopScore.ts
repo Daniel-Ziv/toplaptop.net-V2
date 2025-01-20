@@ -1,3 +1,5 @@
+//הוספתי נסיונות לשנות את ה penalty של המחיר ככה שהוא יהיה יותר מדוייק
+//גם הוספתי את האם של הגיימינג שזה יחשב ציון אחרת לגמרי אם ככה 
 interface ComponentScoreRange {
   min: number;
   max: number;
@@ -506,6 +508,8 @@ function calculatePriceScore(laptopPrice: number, userBudget: number, priceImpor
   // Calculate over-budget percentage
   const overBudgetPercentage = (laptopPrice - userBudget) / userBudget;
 
+
+  
   // Penalize based on importance
   const penaltyMultiplier = priceImportance === 0.125 ? 5 : 2; // Adjust penalty based on importance
   const penalty = Math.min(100, Math.pow(overBudgetPercentage * penaltyMultiplier, 2) * 100);
@@ -602,9 +606,25 @@ function calculateScreenSizeScore(
 
 // Main function to calculate laptop score
 export function calculateLaptopScore(laptop: any, answers: any): { finalScore: number; componentScores: { name: string; score: number; }[]; cpuScore?: number; gpuScore?: number; } {
+  const { tasks, features } = answers;
+  const hasGamingTasks = answers.tasks.some((task: any) => task.task === "gaming");
+  const isGamingLaptop = laptop.for_gaming === true;
+
+  const priceScore = calculatePriceScore(laptop.price, answers.budget.price, answers.budget.priceImportance);
+  const weightScore = calculateWeightScore(laptop.weight, answers.weightImportance);
+  const screenSizeScore = calculateScreenSizeScore(
+   laptop.screen_size,
+   answers.screenSize.selectedScreenSizes,
+   answers.screenSize.sizeImportance
+ );
+ const getMinimumAcceptableScore = (importance: number) => {
+  if (importance === 0) return 0;
+  if (importance === 0.125) return 80; // Allow some flexibility
+  if (importance === 0.25) return 100;  // Strict requirement
+  return 0;
+};
 
   //we dont want any laptops that are over the budget when its important to him
-  
   if (answers.budget.priceImportance === 0.25 && laptop.price > answers.budget.price) {
     return {
       finalScore: 0,
@@ -621,6 +641,54 @@ export function calculateLaptopScore(laptop: any, answers: any): { finalScore: n
       ],
       cpuScore: 0,
       gpuScore: 0
+    };
+  }
+
+  // If gaming tasks are selected but laptop is not for gaming, return 0 score
+  if (hasGamingTasks && !isGamingLaptop) {
+    return {
+      finalScore: 0,
+      componentScores: [
+        { name: "מעבד", score: 0 },
+        { name: "כרטיס מסך", score: 0 },
+        { name: "זיכרון RAM", score: 0 },
+        { name: "סוג זיכרון", score: 0 },
+        { name: "נפח אחסון", score: 0 },
+        { name: "סוג אחסון", score: 0 },
+        { name: "מחיר", score: 0 },
+        { name: "משקל", score: 0 },
+        { name: "גודל מסך", score: 0 },
+      ],
+      cpuScore: 0,
+      gpuScore: 0
+    };
+  }
+
+   // For gaming laptops with gaming tasks, only use price, weight, and screen size
+   if (hasGamingTasks && isGamingLaptop) {
+    // For gaming laptops, only calculate final score based on price, weight, and screen size
+    const totalImportance = answers.budget.priceImportance + answers.weightImportance + answers.screenSize.sizeImportance;
+    const finalScore = (
+      (priceScore * answers.budget.priceImportance) +
+      (weightScore * answers.weightImportance) +
+      (screenSizeScore * answers.screenSize.sizeImportance)
+    ) / totalImportance;
+  
+    return {
+      finalScore: Math.round(finalScore),
+      componentScores: [
+        { name: "מעבד", score: 100 },
+        { name: "כרטיס מסך", score: 100 },
+        { name: "זיכרון RAM", score: 100 },
+        { name: "סוג זיכרון", score: 100 },
+        { name: "נפח אחסון", score: 100 },
+        { name: "סוג אחסון", score: 100 },
+        { name: "מחיר", score: Math.round(priceScore) },
+        { name: "משקל", score: Math.round(weightScore) },
+        { name: "גודל מסך", score: Math.round(screenSizeScore) },
+      ],
+      cpuScore: cpuModelScores[laptop.cpu],
+      gpuScore: gpuModelScores[laptop.gpu]
     };
   }
 
@@ -657,7 +725,6 @@ export function calculateLaptopScore(laptop: any, answers: any): { finalScore: n
   }
 
   
-  const { tasks, features } = answers;
 
 for (const [feature, selectedValue] of Object.entries(features)) {
     // Skip if the selected value is empty (e.g., no CPUs were selected)
@@ -707,8 +774,6 @@ for (const [feature, selectedValue] of Object.entries(features)) {
         }
     }
 }
-
-
 
 
 
@@ -840,13 +905,18 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
     Object.values(weightedScores).reduce((sum, score) => sum + score, 0) / taskComponentTotalWeight;
 
    // New price, weight, and screen size scores based on answers format
-   const priceScore = calculatePriceScore(laptop.price, answers.budget.price, answers.budget.priceImportance);
-   const weightScore = calculateWeightScore(laptop.weight, answers.weightImportance);
-   const screenSizeScore = calculateScreenSizeScore(
-    laptop.screen_size,
-    answers.screenSize.selectedScreenSizes,
-    answers.screenSize.sizeImportance
-  );
+  
+
+  // Define minimum acceptable scores based on importance(match component precent acceptable)
+ 
+
+   // Check if any critical scores are below minimum acceptable thresholds
+   const priceMinimum = getMinimumAcceptableScore(answers.budget.priceImportance);
+   const weightMinimum = getMinimumAcceptableScore(answers.weightImportance);
+   const screenSizeMinimum = getMinimumAcceptableScore(answers.screenSize.sizeImportance);
+ 
+   // If any important criterion fails, significantly reduce the final score
+  
 
   //console.log("screen size importance", answers.screenSize.sizeImportance);
    // Normalize importance weights
@@ -896,6 +966,24 @@ const normalizedStorageTypeScore = (storageTypeScore / 10) * 100;
     finalScore,
     componentScores
   }); */
+
+  if (priceScore < priceMinimum || weightScore < weightMinimum || screenSizeScore < screenSizeMinimum) {
+    const worstScore = Math.min(
+      priceScore < priceMinimum ? priceScore : 100,
+      weightScore < weightMinimum ? weightScore : 100,
+      screenSizeScore < screenSizeMinimum ? screenSizeScore : 100
+    );
+    
+    // Calculate a heavily penalized score
+    const penaltyMultiplier = 0.15; // This will ensure the final score is much lower
+    return {
+      finalScore: Math.round(worstScore * penaltyMultiplier),
+      componentScores: componentScores,
+      cpuScore: cpuModelScores[laptop.cpu],
+      gpuScore: gpuModelScores[laptop.gpu]
+    };
+  }
+  
    return {
      finalScore: Math.round(finalScore),
      componentScores: componentScores,
