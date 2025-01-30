@@ -734,6 +734,18 @@ for (const [feature, selectedValue] of Object.entries(features)) {
 
     const laptopFeatureValue = laptop[feature]; // Value from laptop JSON data
 
+    // Special handling for screen_hz since it's an array in the laptop data
+    if (feature === 'screen_hz') {
+        if (!Array.isArray(laptopFeatureValue) || 
+            !Array.isArray(selectedValue) || 
+            !selectedValue.some((val: number | string) => laptopFeatureValue.includes(
+                typeof val === 'string' ? parseInt(val) : val
+            ))) {
+            return { finalScore: 0, componentScores: [] };
+        }
+        continue;
+    }
+
     // Check if feature is an array (like `cpu`, `gpu`, etc.)
     if (Array.isArray(selectedValue)) {
         const normalizedSelectedValue = selectedValue.map(val =>

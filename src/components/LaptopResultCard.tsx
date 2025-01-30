@@ -33,7 +33,7 @@ interface ProductCardProps {
   for_gaming: boolean;
   cpu: string;
   cpu_ghz: number;
-  screenhz: number;
+  screen_hz: number;
   screenRes: string;
   screenType: string;
   connections: string[];
@@ -66,7 +66,7 @@ export default function LaptopResultCard({
   for_gaming,
   cpu,
   cpu_ghz,
-  screenhz,
+  screen_hz,
   screenRes,
   screenType,
   connections,
@@ -111,7 +111,7 @@ export default function LaptopResultCard({
       for_gaming,
       cpu,
       cpu_ghz,
-      screenhz,
+      screen_hz,
       screenRes,
       screenType,
       connections,
@@ -147,7 +147,7 @@ export default function LaptopResultCard({
     { value: ram_type, label: '' },
     { value: cpu, label: '' },
     { value: screenType, label: '' },
-    { value: screenhz, label: 'hz' }
+    { value: screen_hz, label: 'hz' }
   ];
 
   const isValidPrice = (price: number, answers: any) => {

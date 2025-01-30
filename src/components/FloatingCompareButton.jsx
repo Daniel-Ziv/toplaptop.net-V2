@@ -538,9 +538,13 @@ const ComparisonPopup = ({ isOpen, onClose, laptops, handleSelectLaptop }) => {
             }
             return null;
 
-        case 'screenhz':
-            const rate1 = parseInt(value1);
-            const rate2 = parseInt(value2);
+        case 'screen_hz':
+          const getMaxRate = (rateArray) => 
+            Array.isArray(rateArray) ? Math.max(...rateArray.map(rate => parseInt(rate))) : NaN;
+         
+            const rate1 = getMaxRate(value1);
+            const rate2 = getMaxRate(value2);
+
             if (!isNaN(rate1) && !isNaN(rate2)) {
                 if (rate1 === rate2) return { comparison: 'קצב רענון זהה', winner: 'tie' };
                 return {
@@ -665,7 +669,7 @@ const ComparisonPopup = ({ isOpen, onClose, laptops, handleSelectLaptop }) => {
     { key: 'storage_space', label: 'נפח אחסון' }, 
     { key: 'storage_type', label: 'סוג אחסון' }, 
     { key: 'screen_size', label: 'גודל מסך' }, 
-    { key: 'screenhz', label: 'קצב רענון מסך' },
+    { key: 'screen_hz', label: 'קצב רענון מסך' },
     { key: 'screenRes', label: 'רזולוציה' }, 
     { key: 'screenType', label: 'סוג מסך' }, 
     { key: 'for_gaming', label: 'לגיימינג' },
@@ -744,7 +748,7 @@ const generateSummary = () => {
         return 'נפח אחסון גדול יותר';
       case 'storage_type':
         return 'סוג אחסון מהיר יותר';
-      case 'screenhz':
+      case 'screen_hz':
         return 'קצב רענון מסך גבוה יותר';
       case 'gpu':
         return 'כרטיס מסך חזק יותר';
@@ -1088,7 +1092,7 @@ return (
               marginTop: '1rem'
             }}
           >
-            {Array.isArray(laptops[0][spec.key]) 
+            {Array.isArray(laptops[1][spec.key]) 
               ? laptops[1][spec.key].map((connection, idx) => {
                   const isUnique = !laptops[0][spec.key]?.includes(connection) && !connection.includes('לא כולל');
                   return (

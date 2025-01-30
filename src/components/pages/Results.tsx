@@ -42,7 +42,7 @@ interface Laptop {
   for_gaming: boolean;
   cpu: string;
   cpu_ghz: number;
-  screenhz: number;
+  screen_hz: number;
   screenRes: string;
   screenType: string;
   connections: string[];
@@ -394,7 +394,7 @@ const Results: React.FC<ResultsProps> = ({ prevStep, answers, setIsLoading, isLo
                 for_gaming={laptop.for_gaming}        
                 cpu={laptop.cpu}
                 cpu_ghz={laptop.cpu_ghz}              
-                screenhz={laptop.screenhz}
+                screen_hz={laptop.screen_hz}
                 screenRes={laptop.screenRes}
                 screenType={laptop.screenType}
                 connections={laptop.connections}

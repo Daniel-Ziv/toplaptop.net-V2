@@ -17,7 +17,7 @@ interface Laptop {
     for_gaming: boolean;
     cpu: string;
     cpu_ghz: number;
-    screenhz: number;
+    screen_hz: number;
     screenRes: string;
     screenType: string;
     connections: string[];

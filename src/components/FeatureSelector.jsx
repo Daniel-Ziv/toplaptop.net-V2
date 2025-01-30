@@ -202,7 +202,7 @@ const featureNameMapping = {
   'סוג זכרון': 'ram_type',
   'נפח-אחסון': 'storage_space',
   'רזולוציית מסך': 'screenRes',
-  'קצב רענון': 'screenhz',
+  'קצב רענון': 'screen_hz',
   'יצרן': 'manufacturer',
   'כרטיס מסך': 'gpu',
   'אבטחה': 'security',
@@ -749,8 +749,22 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
       return;
     }
   
-    if (englishName === 'storage_space' || englishName === 'screenhz') {
+    if (englishName === 'storage_space') {
       const numericValue = parseInt(item);
+      setTempSelections(prev => {
+        const current = prev[englishName] || [];
+        return {
+          ...prev,
+          [englishName]: current.includes(numericValue)
+            ? current.filter(i => i !== numericValue)
+            : [...current, numericValue]
+        };
+      });
+      return;
+    }
+  
+    if (englishName === 'screen_hz') {
+      const numericValue = parseInt(item); // item is already a number
       setTempSelections(prev => {
         const current = prev[englishName] || [];
         return {
@@ -818,8 +832,13 @@ export default function FeatureSelector({ selectedFeatures, onSelectionChange })
       return currentSelections.includes(numericValue);
     }
   
-    if (englishName === 'storage_space' || englishName === 'screenhz') {
+    if (englishName === 'storage_space') {
       return tempSelections[englishName]?.includes(parseInt(item)) || false;
+    }
+  
+    if (englishName === 'screen_hz') {
+      const numericValue = parseInt(item); // item is already a number
+      return tempSelections[englishName]?.includes(numericValue) || false;
     }
   
     return tempSelections[englishName]?.includes(item) || false;
