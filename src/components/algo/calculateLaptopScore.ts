@@ -748,21 +748,32 @@ for (const [feature, selectedValue] of Object.entries(features)) {
 
     // Check if feature is an array (like `cpu`, `gpu`, etc.)
     if (Array.isArray(selectedValue)) {
-        const normalizedSelectedValue = selectedValue.map(val =>
-            typeof val === "string"
-                ? val.trim().toLowerCase()
-                : val
+      // Normalize the user selection
+      const normalizedSelectedValue = selectedValue.map(val =>
+        typeof val === "string" ? val.trim().toLowerCase() : val
+      );
+    
+      // Check if laptopFeatureValue is an array
+      if (Array.isArray(laptopFeatureValue)) {
+        const normalizedLaptopValues = laptopFeatureValue.map(val =>
+          typeof val === "string" ? val.trim().toLowerCase() : val
         );
-        
-        const normalizedLaptopValue = typeof laptopFeatureValue === "string"
+        // Check if at least one selected value exists in the laptop's array
+        if (!normalizedSelectedValue.some(val => normalizedLaptopValues.includes(val))) {
+          return { finalScore: 0, componentScores: [] };
+        }
+      } else {
+        // If laptopFeatureValue is not an array, normalize it as before
+        const normalizedLaptopValue =
+          typeof laptopFeatureValue === "string"
             ? laptopFeatureValue.trim().toLowerCase()
             : laptopFeatureValue;
-
         if (!normalizedSelectedValue.includes(normalizedLaptopValue)) {
-            //console.log(`Mismatch for feature ${feature}: Selected ${normalizedSelectedValue} vs Laptop ${normalizedLaptopValue}`);
-            return { finalScore: 0, componentScores: [] };
+          return { finalScore: 0, componentScores: [] };
         }
+      }
     }
+    
     // Check for boolean fields (like `flippingScreen`)
     else if (typeof selectedValue === "boolean") {
         if (laptopFeatureValue !== selectedValue && laptopFeatureValue !== true) {
