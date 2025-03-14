@@ -450,7 +450,7 @@ const taskRequirements: Record<string, TaskRequirements> = {
     storageType: { min: 6, max: 10, weight: 0.05 }    // Storage type matters somewhat for loading data quickly.
   },
   "light-programming": {
-    cpu: { min: 5, max: 8, weight: 0.2 },            // CPU is helpful but doesn’t need to be very high.
+    cpu: { min: 5, max: 8, weight: 0.2 },            // CPU is helpful but doesn't need to be very high.
     ram: { min: 4, max: 8, weight: 0.25 },           // RAM is valuable for handling larger projects.
     ramType: { min: 3, max: 10, weight: 0.1 },       // RAM type matters moderately.
     gpu: { min: 3, max: 10, weight: 0.1 },            // GPU is less critical for light programming.
@@ -556,6 +556,11 @@ function calculateScreenSizeScore(
   selectedScreenSizes: string[],
   screenSizeImportance: number
 ): number {
+  
+  if (screenSizeImportance === 0 || selectedScreenSizes.length === 0) {
+    return 100; // Return perfect score if no preferences set
+  }
+
   // Define screen size ranges for each category
   const screenSizeRanges = {
     small: { min: 0, max: 13 },
@@ -609,6 +614,8 @@ export function calculateLaptopScore(laptop: any, answers: any): { finalScore: n
   const { tasks, features } = answers;
   const hasGamingTasks = answers.tasks.some((task: any) => task.task === "gaming");
   const isGamingLaptop = laptop.for_gaming === true;
+
+  
 
   const priceScore = calculatePriceScore(laptop.price, answers.budget.price, answers.budget.priceImportance);
   const weightScore = calculateWeightScore(laptop.weight, answers.weightImportance);
@@ -668,6 +675,27 @@ export function calculateLaptopScore(laptop: any, answers: any): { finalScore: n
    if (hasGamingTasks && isGamingLaptop) {
     // For gaming laptops, only calculate final score based on price, weight, and screen size
     const totalImportance = answers.budget.priceImportance + answers.weightImportance + answers.screenSize.sizeImportance;
+    
+    // If no preferences set (all importances are 0), return perfect score
+    if (totalImportance === 0) {
+      return {
+        finalScore: 100,
+        componentScores: [
+          { name: "מעבד", score: 100 },
+          { name: "כרטיס מסך", score: 100 },
+          { name: "זיכרון RAM", score: 100 },
+          { name: "סוג זיכרון", score: 100 },
+          { name: "נפח אחסון", score: 100 },
+          { name: "סוג אחסון", score: 100 },
+          { name: "מחיר", score: 100 },
+          { name: "משקל", score: 100 },
+          { name: "גודל מסך", score: 100 },
+        ],
+        cpuScore: cpuModelScores[laptop.cpu],
+        gpuScore: gpuModelScores[laptop.gpu]
+      };
+    }
+    
     const finalScore = (
       (priceScore * answers.budget.priceImportance) +
       (weightScore * answers.weightImportance) +
@@ -821,6 +849,7 @@ for (const [feature, selectedValue] of Object.entries(features)) {
         break;
       case "gaming":
         taskKey = taskObj.level === "heavy" ? "gaming-heavy" : "gaming-light";
+        console.log("taskKey", taskKey);
         break;
       case "modeling/animation":
         taskKey = "modeling/animation";  // Assuming this is the key in taskRequirements
